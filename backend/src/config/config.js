@@ -34,6 +34,11 @@ const config = {
 
   cors: {
     origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-side requests)
+      if (!origin) {
+        return callback(null, true);
+      }
+
       const allowedOrigins = [
         'http://localhost:3000',
         'http://127.0.0.1:3000',
@@ -53,11 +58,6 @@ const config = {
         'https://api.office.kunaltilak.com',
         'https://dev.api.office.kunaltilak.com'
       ];
-
-      // Allow requests with no origin (like mobile apps, curl, server-side requests)
-      if (!origin) {
-        return callback(null, true);
-      }
 
       // Check explicit allowed origins
       if (allowedOrigins.includes(origin)) {
@@ -82,9 +82,13 @@ const config = {
         return callback(null, true);
       }
 
-      return callback(new Error(`Blocked by CORS policy for origin: ${origin}`));
+      return callback(null, false);
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin', 'Cookie', 'Cache-Control', 'Pragma'],
+    exposedHeaders: ['Set-Cookie'],
+    optionsSuccessStatus: 204
   },
 
   rateLimits: {

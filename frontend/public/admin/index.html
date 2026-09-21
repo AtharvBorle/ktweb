@@ -38,11 +38,11 @@
       <form id="adminLoginForm">
         <div class="formGroup">
           <label>Username</label>
-          <input type="text" id="loginUsername" placeholder="e.g. admin" required />
+          <input type="text" id="loginUsername" placeholder="e.g. admin" required autocomplete="username" />
         </div>
         <div class="formGroup">
           <label>Password</label>
-          <input type="password" id="loginPassword" placeholder="••••••••" required />
+          <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password" />
         </div>
         <button type="submit" class="btnLogin">Login to Dashboard &rarr;</button>
       </form>
@@ -1052,15 +1052,15 @@
       <form id="changePasswordForm">
         <div class="formGroup" style="margin-bottom: 16px;">
           <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">Current Password</label>
-          <input type="password" id="currentAdminPassword" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
+          <input type="password" id="currentAdminPassword" required autocomplete="current-password" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
         </div>
         <div class="formGroup" style="margin-bottom: 16px;">
           <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">New Password</label>
-          <input type="password" id="newAdminPassword" required minlength="8" placeholder="At least 8 characters" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
+          <input type="password" id="newAdminPassword" required minlength="8" placeholder="At least 8 characters" autocomplete="new-password" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
         </div>
         <div class="formGroup" style="margin-bottom: 24px;">
           <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">Confirm New Password</label>
-          <input type="password" id="confirmAdminPassword" required minlength="8" placeholder="Re-enter new password" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
+          <input type="password" id="confirmAdminPassword" required minlength="8" placeholder="Re-enter new password" autocomplete="new-password" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
         </div>
         <div style="display: flex; justify-content: flex-end; gap: 10px;">
           <button type="button" id="btnCancelChangePassword" style="padding: 10px 18px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancel</button>
