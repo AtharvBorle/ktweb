@@ -1,0 +1,688 @@
+/**
+ * Universal Site Enhancements CSS
+ * Ensures consistent slider layout, typography, cards, and responsive design across all pages
+ */
+
+/* 1. Universal Initiatives Slider (.jKBbUA / #bengaluru) */
+.jKBbUA,
+.initiativesSection {
+  padding-top: 60px !important;
+  padding-bottom: 40px !important;
+  overflow: hidden !important;
+}
+
+.jKBbUA .cointainer h2,
+.initiativesSection .cointainer h2 {
+  font-family: 'Alegreya', serif !important;
+  font-size: 38px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+  color: #212121 !important;
+  margin-bottom: 20px !important;
+}
+
+@media screen and (max-width: 768px) {
+  .jKBbUA .cointainer h2,
+  .initiativesSection .cointainer h2 {
+    font-size: 26px !important;
+  }
+}
+
+.jKBbUA .cointainer .sliderWrapper,
+.initiativesSection .sliderWrapper {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
+  padding: 15px 0 40px !important;
+  margin-bottom: 40px !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .slick-slider,
+.initiativesSection .sliderWrapper .slick-slider {
+  overflow: hidden !important;
+  width: 100% !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .slick-list,
+.initiativesSection .sliderWrapper .slick-list {
+  overflow: hidden !important;
+  width: 100% !important;
+  padding: 5px 0 !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .slick-track,
+.initiativesSection .sliderWrapper .slick-track {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 25px !important;
+  transition: transform 0.4s ease !important;
+  width: max-content !important;
+  padding: 5px 0 !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .sliderItem,
+.initiativesSection .sliderWrapper .sliderItem {
+  width: 350px !important;
+  max-width: 350px !important;
+  flex-shrink: 0 !important;
+  background: #ffffff !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.07) !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  border: 1px solid #f0f0f0 !important;
+}
+
+@media screen and (max-width: 768px) {
+  .jKBbUA .cointainer .sliderWrapper .sliderItem,
+  .initiativesSection .sliderWrapper .sliderItem {
+    width: 280px !important;
+    max-width: 280px !important;
+  }
+}
+
+.jKBbUA .cointainer .sliderWrapper .sliderItem img,
+.initiativesSection .sliderWrapper .sliderItem img {
+  width: 100% !important;
+  height: 200px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  margin-bottom: 12px !important;
+  display: block !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .sliderItem strong,
+.initiativesSection .sliderWrapper .sliderItem strong {
+  font-family: 'Alegreya', serif !important;
+  font-size: 19px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  letter-spacing: 0.2px !important;
+  text-transform: uppercase !important;
+  color: #212121 !important;
+  margin-bottom: 8px !important;
+  display: block !important;
+  min-height: 48px !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .sliderItem p,
+.initiativesSection .sliderWrapper .sliderItem p {
+  font-family: "IBM Plex Sans", sans-serif !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  color: #555555 !important;
+  margin-bottom: 12px !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;
+  -webkit-box-orient: vertical !important;
+  min-height: 63px !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .sliderItem small.readMore,
+.initiativesSection .sliderWrapper .sliderItem small.readMore {
+  color: #F4821E !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+  text-transform: uppercase !important;
+  margin-top: auto !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .sliderItem small.readMore:hover {
+  text-decoration: underline !important;
+}
+
+/* 2. Slider Navigation Arrows & Direction Rotations */
+.sc-dIEoRj .sliderWrapper .slick-arrow,
+.jKBbUA .cointainer .sliderWrapper .slick-arrow,
+.initiativesSection .sliderWrapper .slick-arrow,
+#bengaluru .sliderWrapper .slick-arrow {
+  position: absolute !important;
+  top: 38% !important;
+  transform: translateY(-50%) !important;
+  width: auto !important;
+  height: auto !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.sc-dIEoRj .sliderWrapper .slick-arrow img,
+.jKBbUA .cointainer .sliderWrapper .slick-arrow img,
+.initiativesSection .sliderWrapper .slick-arrow img,
+#bengaluru .sliderWrapper .slick-arrow img {
+  width: 45px !important;
+  height: 45px !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+/* Rotate UP arrow to LEFT for prev button */
+.sc-dIEoRj .sliderWrapper .slick-prev img,
+.jKBbUA .cointainer .sliderWrapper .slick-prev img,
+.initiativesSection .sliderWrapper .slick-prev img,
+#bengaluru .sliderWrapper .slick-prev img {
+  transform: rotate(-90deg) !important;
+}
+
+/* Rotate UP arrow to RIGHT for next button */
+.sc-dIEoRj .sliderWrapper .slick-next img,
+.jKBbUA .cointainer .sliderWrapper .slick-next img,
+.initiativesSection .sliderWrapper .slick-next img,
+#bengaluru .sliderWrapper .slick-next img {
+  transform: rotate(90deg) !important;
+}
+
+.sc-dIEoRj .sliderWrapper .slick-prev,
+.jKBbUA .cointainer .sliderWrapper .slick-prev,
+.initiativesSection .sliderWrapper .slick-prev,
+#bengaluru .sliderWrapper .slick-prev {
+  left: 5px !important;
+}
+
+.sc-dIEoRj .sliderWrapper .slick-next,
+.jKBbUA .cointainer .sliderWrapper .slick-next,
+.initiativesSection .sliderWrapper .slick-next,
+#bengaluru .sliderWrapper .slick-next {
+  right: 5px !important;
+}
+
+
+/* 3. Universal Gallery Double Slider Formatting with Auto-Slide (Row 1: Right-to-Left, Row 2: Left-to-Right) */
+@keyframes gallerySlideLeft {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes gallerySlideRight {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.sliderWrapper .sliders.sliderOneWrapper,
+.sliderWrapper .sliders.sliderTwoWrapper {
+  overflow: hidden !important;
+  width: 100% !important;
+  position: relative !important;
+  padding: 8px 0 !important;
+}
+
+.sliderWrapper .sliders .slick-list {
+  overflow: hidden !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Row 1: Auto Slide Right to Left (Moving Leftward) */
+.sliderWrapper .sliders.sliderOneWrapper .slick-track {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 20px !important;
+  width: max-content !important;
+  left: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  animation: gallerySlideLeft 35s linear infinite !important;
+  will-change: transform !important;
+}
+
+/* Row 2: Auto Slide Left to Right (Moving Rightward - Vice Versa) */
+.sliderWrapper .sliders.sliderTwoWrapper .slick-track {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 20px !important;
+  width: max-content !important;
+  left: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  animation: gallerySlideRight 35s linear infinite !important;
+  will-change: transform !important;
+}
+
+/* Pause on Hover */
+.sliderWrapper .sliders.sliderOneWrapper:hover .slick-track,
+.sliderWrapper .sliders.sliderTwoWrapper:hover .slick-track,
+.sliderWrapper .sliders .slick-track:hover {
+  animation-play-state: paused !important;
+}
+
+.sliderWrapper .sliders .slick-slide {
+  width: auto !important;
+  float: none !important;
+  display: flex !important;
+  flex-shrink: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sliderWrapper .sliders .slideItem {
+  flex-shrink: 0 !important;
+  display: block !important;
+  cursor: pointer !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.sliderWrapper .sliders .slideItem:hover {
+  transform: translateY(-4px) scale(1.02) !important;
+}
+
+.sliderWrapper .sliders .slideItem img {
+  width: 290px !important;
+  height: 190px !important;
+  object-fit: cover !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+  display: block !important;
+}
+
+@media screen and (max-width: 768px) {
+  .sliderWrapper .sliders.sliderOneWrapper .slick-track {
+    animation-duration: 22s !important;
+    gap: 12px !important;
+  }
+  .sliderWrapper .sliders.sliderTwoWrapper .slick-track {
+    animation-duration: 22s !important;
+    gap: 12px !important;
+  }
+  .sliderWrapper .sliders .slideItem img {
+    width: 220px !important;
+    height: 150px !important;
+  }
+}
+
+/* 4. Universal Report Card Wrapper */
+.reportCardWrapper {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 15px !important;
+  align-items: center !important;
+}
+
+.reportCardWrapper a.last {
+  background: #F4821E !important;
+  color: #ffffff !important;
+  padding: 10px 18px !important;
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-decoration: none !important;
+  transition: background 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.reportCardWrapper a.last:hover {
+  background: #d96f12 !important;
+}
+
+/* 5. Header Branding & Navigation Uniformity */
+header .linkWrap img,
+.menuWrap .linkWrap img {
+  object-fit: contain !important;
+}
+
+/* 6. BJYM Section Uniformity */
+.bjymWrapper {
+  width: 100% !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+/* 7. Strict 1180px Uniform Section Width Alignment across all homepage sections */
+.dQDszw .container,
+.jKBbUA .cointainer,
+#bengaluru,
+.initiativesSection .cointainer {
+  width: 100% !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  box-sizing: border-box !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper,
+.initiativesSection .sliderWrapper,
+.gkPqiL .sliderWrapper {
+  width: 100% !important;
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding: 0 20px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* 8. BJYM Center Hero Image Sizing & Position Adjustment */
+.jKBbUA .cointainer .bjymWrapper .TSimage,
+.bjymWrapper .TSimage {
+  position: absolute !important;
+  bottom: 25px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  max-width: 490px !important;
+  width: 100% !important;
+  z-index: 2 !important;
+}
+
+.jKBbUA .cointainer .bjymWrapper .TSimage img,
+.bjymWrapper .TSimage img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+/* 9. Meet Kunal (About Section) Hero Image Sizing & Position Adjustment */
+.dQDszw .container .leaderContainer .left img,
+#press-coverage .leaderContainer .left img {
+  max-width: 480px !important;
+  margin-left: -25px !important;
+}
+
+/* 10. Hero Portrait Cutout & Floating Report Button Position Stability */
+.dIzsqs .right .imgWrap,
+.leaderWrap .right .imgWrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  position: absolute !important;
+  bottom: 0px !important;
+  left: 0px !important;
+  right: 0px !important;
+}
+
+/* Keep candidate portrait photo in optimal elevated position */
+.dIzsqs .right .imgWrap > img:first-child,
+.leaderWrap .right .imgWrap > img:first-child {
+  position: relative !important;
+  top: 15px !important;
+  margin-bottom: 58px !important;
+}
+
+/* Report button sits half on the candidate image and half below the bottom edge */
+.dIzsqs .reportButton,
+a.reportButton {
+  position: absolute !important;
+  bottom: 25px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 10 !important;
+  max-width: 220px !important;
+}
+
+/* 11. Key Highlights & Section Slider Arrow Interactivity */
+.sc-hOayVG .slick-arrow,
+.keyHighlightsSection .slick-arrow {
+  cursor: pointer !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+.sc-hOayVG .slick-arrow.slick-disabled,
+.keyHighlightsSection .slick-arrow.slick-disabled {
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
+}
+
+/* 12. Slick Dots Interactivity & Visual Highlight Styling */
+.slick-dots {
+  display: flex !important;
+  gap: 8px !important;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 15px 0 0 0 !important;
+  align-items: center !important;
+}
+
+.slick-dots li {
+  display: inline-block !important;
+  margin: 0 !important;
+}
+
+.slick-dots li button::before,
+.slick-dots li button::after {
+  display: none !important;
+  content: "" !important;
+}
+
+.slick-dots li button {
+  width: 10px !important;
+  height: 10px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: #d0d0d0 !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-size: 0 !important;
+  color: transparent !important;
+  transition: all 0.3s ease !important;
+  position: relative !important;
+}
+
+.slick-dots li button:hover {
+  background: #F4821E !important;
+  opacity: 0.8 !important;
+}
+
+.slick-dots li.slick-active button {
+  background: #F4821E !important;
+  width: 24px !important;
+  border-radius: 6px !important;
+  opacity: 1 !important;
+}
+
+/* 13. Hide Initiatives Subtitle Up Arrow Icon */
+.sc-dIEoRj .up .imgWrap,
+#bengaluru .up .imgWrap,
+.initiativesSection .up .imgWrap {
+  display: none !important;
+}
+
+/* 14. Smooth Scrolling & Contact Button Interactivity */
+html {
+  scroll-behavior: smooth !important;
+}
+
+#contact-me,
+section.contactSection,
+.sc-fwdjSP,
+.sc-iUeHef {
+  scroll-margin-top: 50px !important;
+}
+
+.sc-bcPKhP button,
+.btnWrap button,
+.mobileMenuWrap button {
+  cursor: pointer !important;
+  transition: transform 0.15s ease, opacity 0.15s ease, background 0.2s ease !important;
+}
+
+.sc-bcPKhP button:hover,
+.btnWrap button:hover,
+.mobileMenuWrap button:hover {
+  opacity: 0.92 !important;
+}
+
+.sc-bcPKhP button:active,
+.btnWrap button:active,
+.mobileMenuWrap button:active {
+  transform: scale(0.96) !important;
+}
+
+/* 15. Universal Slide-out Mobile Drawer & Backdrop Overlay */
+#mobileDrawerOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 99998;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#mobileDrawerOverlay.active,
+#mobileDrawerOverlay.open {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+#mobileDrawer {
+  position: fixed;
+  top: 0;
+  right: -450px;
+  width: 360px;
+  height: 100vh;
+  background: #151522;
+  color: #ffffff;
+  z-index: 99999;
+  box-shadow: -5px 0 35px rgba(0, 0, 0, 0.75);
+  transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  padding: 40px 30px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+@media screen and (max-width: 480px) {
+  #mobileDrawer {
+    width: 85vw;
+  }
+}
+
+#mobileDrawer.open,
+#mobileDrawer.active {
+  right: 0 !important;
+}
+
+.mobileDrawerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding-bottom: 20px;
+  margin-bottom: 30px;
+}
+
+.mobileDrawerHeader h3 {
+  font-family: Alegreya, serif;
+  font-size: 24px;
+  color: #F4821E;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.mobileDrawerClose {
+  font-size: 32px;
+  color: #aaaaaa;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+  user-select: none;
+}
+
+.mobileDrawerClose:hover {
+  color: #ffffff;
+}
+
+.mobileDrawerNav {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+}
+
+.mobileDrawerNav li a {
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #dcdcdc;
+  text-transform: uppercase;
+  text-decoration: none;
+  display: block;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.mobileDrawerNav li a:hover {
+  color: #F4821E;
+  transform: translateX(5px);
+}
+
+.sNxBf .mobileMenu,
+.mobileMenuWrap .mobileMenu,
+.rightBar .mobileMenu,
+div.mobileMenu {
+  cursor: pointer !important;
+  display: block !important;
+}
+
+/* Completely remove the duplicate menu button beside Contact Me */
+.btnWrap .mobileMenu,
+.btnWrap button.mobileMenu,
+header .btnWrap .mobileMenu,
+.cttLvF .btnWrap .mobileMenu,
+.sc-eKQWOK .btnWrap .mobileMenu {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Hide #myBlog section and its vertical text when no initiatives exist */
+#myBlog:not(.has-initiatives),
+section.sc-jTIKuF:not(.has-initiatives) {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+#myBlog:not(.has-initiatives) .left,
+#myBlog:not(.has-initiatives) .left h2,
+section.sc-jTIKuF:not(.has-initiatives) .left,
+section.sc-jTIKuF:not(.has-initiatives) .left h2 {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  font-size: 0 !important;
+}
+

@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kunal Tilak Admin CMS Dashboard</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    .btnRemoveImg {
+      background: #dc3545;
+      color: #ffffff;
+      border: none;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 8px;
+      display: inline-block;
+    }
+    .btnRemoveImg:hover {
+      background: #bd2130;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="loginContainer">
+    <div class="loginCard">
+      <div class="loginHeader">
+        <h2>Kunal Tilak CMS</h2>
+        <p>Enter administrative credentials to manage website content live</p>
+      </div>
+      <form id="adminLoginForm">
+        <div class="formGroup">
+          <label>Username</label>
+          <input type="text" id="loginUsername" placeholder="e.g. admin" required />
+        </div>
+        <div class="formGroup">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btnLogin">Login to Dashboard &rarr;</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MAIN ADMIN APP -->
+  <div id="adminApp" class="appContainer" style="display: none;">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="brand">
+        <h2>Kunal Tilak</h2>
+        <span>Official Website CMS</span>
+      </div>
+      <ul class="navTabs">
+        <li><a href="#" class="navTab active" data-tab="dashboard">Dashboard</a></li>
+        <li><a href="#" class="navTab" data-tab="general">Header & Branding</a></li>
+        <li><a href="#" class="navTab" data-tab="hero">Hero Banner & Graphics</a></li>
+        <li><a href="#" class="navTab" data-tab="highlights">Key Highlights & Issues</a></li>
+        <li><a href="#" class="navTab" data-tab="meet">Meet Kunal Biography</a></li>
+        <li><a href="#" class="navTab" data-tab="initiatives">Constituency Initiatives</a></li>
+        <li><a href="#" class="navTab" data-tab="parliament">In Parliament Page</a></li>
+        <li><a href="#" class="navTab" data-tab="projects">Constituency Projects Page</a></li>
+        <li><a href="#" class="navTab" data-tab="sectors">Sector Sub-Pages (6 Pages)</a></li>
+
+        <li><a href="#" class="navTab" data-tab="org">BJYM & Organization</a></li>
+        <li><a href="#" class="navTab" data-tab="blog">Blog & Press Coverage</a></li>
+        <li><a href="#" class="navTab" data-tab="gallery">Gallery Photos & Videos</a></li>
+        <li><a href="#" class="navTab" data-tab="report-cards">Report Cards (PDFs)</a></li>
+        <li><a href="#" class="navTab" data-tab="messages">Messages Inbox</a></li>
+        <li style="margin-top: auto; padding-top: 20px;"><a href="/" target="_blank" style="color: #F4821E; font-weight: bold;">View Live Website &rarr;</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="mainContent">
+      <header class="topBar">
+        <h2 id="currentTabTitle">Dashboard Overview</h2>
+        <div class="userBadge" style="display: flex; align-items: center; gap: 10px;">
+          <span id="adminNameDisplay">Admin</span>
+          <button type="button" id="btnOpenChangePassword" style="background: #4f46e5; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 6px;">🔒 Change Password</button>
+          <button class="btnLogout" id="logoutBtn">Logout</button>
+        </div>
+      </header>
+
+      <div class="contentBody">
+        <!-- Security Recommendation Banner -->
+        <div id="securityAlertBanner" style="display: none; background: #fef2f2; border-left: 5px solid #ef4444; padding: 14px 20px; border-radius: 6px; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); align-items: center; justify-content: space-between; gap: 15px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">⚠️</span>
+            <div>
+              <strong style="color: #991b1b; font-size: 14px;">Security Notice: Default Admin Password Active</strong>
+              <p style="color: #b91c1c; font-size: 13px; margin: 3px 0 0 0;">Your admin account is currently using the initial default password ('admin123'). Please change it to ensure maximum security.</p>
+            </div>
+          </div>
+          <button type="button" id="btnBannerChangePassword" style="background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; white-space: nowrap;">Change Password Now</button>
+        </div>
+
+        <!-- TAB 1: Dashboard -->
+        <section class="tabSection active" id="tab-dashboard">
+          <div class="statsGrid">
+            <div class="statCard">
+              <h4>Initiatives</h4>
+              <div class="statNumber" id="statInitiatives">0</div>
+            </div>
+            <div class="statCard">
+              <h4>Published Blogs</h4>
+              <div class="statNumber" id="statBlogs">0</div>
+            </div>
+            <div class="statCard">
+              <h4>Gallery Items</h4>
+              <div class="statNumber" id="statGallery">0</div>
+            </div>
+            <div class="statCard">
+              <h4>Total Messages</h4>
+              <div class="statNumber" id="statMessages">0</div>
+            </div>
+          </div>
+
+          <div class="cardBox">
+            <h3>Quick Management Actions</h3>
+            <p style="margin-bottom: 15px; color: #555;">Welcome to the official content management system for Kunal Tilak's website. Edit any image, title, card, or graphic live.</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+              <button class="btnSubmit navTabTrigger" data-tab="general">Edit Header & Logos</button>
+              <button class="btnSubmit navTabTrigger" data-tab="hero">Edit Hero Cutout & PDF</button>
+              <button class="btnSubmit navTabTrigger" data-tab="initiatives">Add / Edit Initiative</button>
+              <button class="btnSubmit navTabTrigger" data-tab="gallery">Manage Gallery</button>
+              <button class="btnSubmit navTabTrigger" data-tab="blog">New Blog Post</button>
+            </div>
+          </div>
+
+          <!-- SECTION ACTIVATION & DEACTIVATION CONTROLS -->
+          <div class="cardBox" style="border-top: 4px solid #10b981;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+              <div>
+                <h3 style="color: #1e293b; margin: 0;">Website Sections Visibility Controls (Activate / Deactivate)</h3>
+                <p style="color: #64748b; font-size: 13px; margin-top: 4px;">Toggle any section ON or OFF. Deactivated sections are completely removed from the live website immediately.</p>
+              </div>
+              <button type="button" class="btnSubmit" id="btnSaveVisibility" style="background: #10b981; padding: 8px 18px;">Save Visibility Status</button>
+            </div>
+
+            <form id="visibilityForm">
+              <div class="visibilityGrid">
+                
+                <div class="visibilityCard">
+                  <div>
+                    <h4>🚀 Hero Banner</h4>
+                    <p>Headline, Candidate Cutout & Background</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visHero" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>🌟 Key Highlights</h4>
+                    <p>Left Graphic & Focus Issue Cards</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visKeyHighlights" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>👤 Meet Kunal Biography</h4>
+                    <p>Leader Portrait & Bio Slides</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visMeetKunal" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>📋 Constituency Initiatives</h4>
+                    <p>Schemes & Development Slider Cards</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visInitiatives" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>🇮🇳 BJYM & Organization Wing</h4>
+                    <p>Youth Wing Section & Center Image</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visBjym" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>🖼️ Gallery (Photos & Videos)</h4>
+                    <p>Double Image & Video Sliders</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visGallery" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>🔗 Sector Sub-Pages Grid</h4>
+                    <p>Quick links to Education, Health, etc.</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visSectorLinks" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>📊 5-Year Report Card Bar</h4>
+                    <p>Report Card Download CTA Strip</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visReportCard" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>✉️ Connect / Contact Form</h4>
+                    <p>Reach Out Form & Office Information</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visContact" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+                <div class="visibilityCard">
+                  <div>
+                    <h4>📌 Footer Section</h4>
+                    <p>Footer Links & Social Media Icons</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="visFooter" checked />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 2: Header & Branding -->
+        <section class="tabSection" id="tab-general">
+          <div class="cardBox">
+            <h3>General & Header Branding Settings</h3>
+            <form id="settingsForm">
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Candidate Name</label>
+                  <input type="text" id="settingCandidateName" required />
+                </div>
+                <div class="formGroup">
+                  <label>Designation (Header Badge)</label>
+                  <input type="text" id="settingDesignation" required />
+                </div>
+                <div class="formGroup">
+                  <label>Constituency Name</label>
+                  <input type="text" id="settingConstituency" required />
+                </div>
+                <div class="formGroup">
+                  <label>Votes Count Stat</label>
+                  <input type="text" id="settingVotesCount" required />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Votes Counter Description</label>
+                  <input type="text" id="settingVotesDescription" required />
+                </div>
+
+                <div class="formGroup">
+                  <label>Upload Party Logo (BJP)</label>
+                  <input type="file" id="settingBjpLogoFile" accept="image/*" />
+                  <input type="hidden" id="settingBjpLogoPath" />
+                  <div>
+                    <img id="settingBjpLogoPreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('settingBjpLogoPath', 'settingBjpLogoPreview', 'settingBjpLogoFile')">Remove Image</button>
+                  </div>
+                </div>
+                <div class="formGroup">
+                  <label>Upload Candidate Logo / Signature</label>
+                  <input type="file" id="settingCandLogoFile" accept="image/*" />
+                  <input type="hidden" id="settingCandLogoPath" />
+                  <div>
+                    <img id="settingCandLogoPreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('settingCandLogoPath', 'settingCandLogoPreview', 'settingCandLogoFile')">Remove Image</button>
+                  </div>
+                </div>
+
+                <div class="formGroup fullWidth">
+                  <label>Short Biography</label>
+                  <textarea id="settingShortBio" required></textarea>
+                </div>
+                <div class="formGroup">
+                  <label>Contact Email</label>
+                  <input type="email" id="settingContactEmail" />
+                </div>
+                <div class="formGroup">
+                  <label>Contact Phone</label>
+                  <input type="text" id="settingContactPhone" />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Office Address</label>
+                  <input type="text" id="settingOfficeAddress" />
+                </div>
+
+                <div class="formGroup">
+                  <label>WhatsApp Channel Link</label>
+                  <input type="url" id="settingWhatsappChannel" />
+                </div>
+                <div class="formGroup">
+                  <label>Auto-Generated WhatsApp QR Code</label>
+                  <input type="hidden" id="settingWhatsappQrPath" />
+                  <div style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px dashed #cbd5e1; text-align: center;">
+                    <img id="settingWhatsappQrPreview" class="imagePreview" src="" style="margin: 0 auto; max-width: 140px; border-radius: 6px; display: none;" />
+                    <small style="color: #64748b; display: block; margin-top: 6px; font-size: 12px;">✨ Automatically generated from your WhatsApp Channel Link above</small>
+                  </div>
+                </div>
+
+                <div class="formGroup"><label>Instagram URL</label><input type="url" id="settingInstagramUrl" /></div>
+                <div class="formGroup"><label>Facebook URL</label><input type="url" id="settingFacebookUrl" /></div>
+                <div class="formGroup"><label>YouTube URL</label><input type="url" id="settingYoutubeUrl" /></div>
+                <div class="formGroup"><label>LinkedIn URL</label><input type="url" id="settingLinkedinUrl" /></div>
+
+                <div class="formGroup fullWidth" style="margin-top: 15px; padding-top: 15px; border-top: 1px dashed #e2e8f0;">
+                  <label>Upload Sub-Pages Header Banner Image (In Parliament & Blogs Header)</label>
+                  <input type="file" id="settingSubpageBannerFile" accept="image/*" />
+                  <input type="hidden" id="settingSubpageBannerPath" />
+                  <div>
+                    <img id="settingSubpageBannerPreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('settingSubpageBannerPath', 'settingSubpageBannerPreview', 'settingSubpageBannerFile')">Remove Image</button>
+                  </div>
+                </div>
+
+              </div>
+              <button type="submit" class="btnSubmit" style="margin-top: 15px;">Save Header & Branding</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 3: Hero Banner -->
+        <section class="tabSection" id="tab-hero">
+          <div class="cardBox">
+            <h3>Hero Banner Configuration & Images</h3>
+            <form id="heroForm">
+              <div class="formGroup">
+                <label>Main Headline</label>
+                <input type="text" id="heroHeadlineInput" required />
+              </div>
+              <div class="formGroup">
+                <label>Sub-Headline</label>
+                <input type="text" id="heroSubheadlineInput" />
+              </div>
+              <div class="formGroup">
+                <label>Hero Short Bio Paragraph</label>
+                <textarea id="heroBioInput" required></textarea>
+              </div>
+
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Upload Candidate Hero Cutout Image</label>
+                  <input type="file" id="heroPortraitFile" accept="image/*" />
+                  <input type="hidden" id="heroPortraitPath" />
+                  <div>
+                    <img id="heroPortraitPreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('heroPortraitPath', 'heroPortraitPreview', 'heroPortraitFile')">Remove Image</button>
+                  </div>
+                </div>
+                <div class="formGroup">
+                  <label>Upload Hero Background Graphic Image</label>
+                  <input type="file" id="heroBgFile" accept="image/*" />
+                  <input type="hidden" id="heroBgPath" />
+                  <div>
+                    <img id="heroBgPreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('heroBgPath', 'heroBgPreview', 'heroBgFile')">Remove Image</button>
+                  </div>
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Upload 5-Year Report Card (PDF)</label>
+                  <input type="file" id="reportCardPdfFile" accept="application/pdf" />
+                  <input type="hidden" id="reportCardPdfPath" />
+                </div>
+              </div>
+
+              <button type="submit" class="btnSubmit" style="margin-top: 15px;">Save Hero Banner</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 4: Key Highlights -->
+        <section class="tabSection" id="tab-highlights">
+          <div class="cardBox">
+            <h3>Key Highlights Section Controls</h3>
+            <form id="highlightSectionForm" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+              <div class="formGroup">
+                <label>Section Main Headline</label>
+                <input type="text" id="hlSectionHeadingInput" required />
+              </div>
+              <div class="formGroup">
+                <label>Upload Left Section Graphic Image</label>
+                <input type="file" id="hlSectionImgFile" accept="image/*" />
+                <input type="hidden" id="hlSectionImgPath" />
+                <div>
+                  <img id="hlSectionImgPreview" class="imagePreview" src="" />
+                  <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('hlSectionImgPath', 'hlSectionImgPreview', 'hlSectionImgFile')">Remove Image</button>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Section Headline & Image</button>
+            </form>
+
+            <h3>Add / Edit Key Highlight Card</h3>
+            <form id="highlightForm">
+              <input type="hidden" id="highlightId" />
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Title</label>
+                  <input type="text" id="highlightTitle" required />
+                </div>
+                <div class="formGroup">
+                  <label>Issue Tagline</label>
+                  <input type="text" id="highlightIssue" placeholder="e.g. Issue: Traffic Congestion" required />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Description</label>
+                  <textarea id="highlightDesc" required></textarea>
+                </div>
+                <div class="formGroup">
+                  <label>Support / Donate Link (Optional)</label>
+                  <input type="url" id="highlightDonateUrl" />
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Highlight Card</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Highlights</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Issue Tag</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="highlightsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB 5: Meet Kunal Slides -->
+        <section class="tabSection" id="tab-meet">
+          <div class="cardBox">
+            <h3>Meet Kunal Section Controls</h3>
+            <form id="meetSectionForm" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+              <div class="formGroup">
+                <label>Section Title</label>
+                <input type="text" id="meetSectionTitleInput" required />
+              </div>
+              <div class="formGroup">
+                <label>Upload Leader Portrait Image</label>
+                <input type="file" id="meetLeaderImgFile" accept="image/*" />
+                <input type="hidden" id="meetLeaderImgPath" />
+                <div>
+                  <img id="meetLeaderImgPreview" class="imagePreview" src="" />
+                  <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('meetLeaderImgPath', 'meetLeaderImgPreview', 'meetLeaderImgFile')">Remove Image</button>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Title & Image</button>
+            </form>
+
+            <h3>Add / Edit Biography Slide</h3>
+            <form id="meetForm">
+              <input type="hidden" id="meetId" />
+              <div class="formGroup">
+                <label>Slide Title</label>
+                <input type="text" id="meetTitle" required />
+              </div>
+              <div class="formGroup">
+                <label>Slide Content / Bio</label>
+                <textarea id="meetContent" required></textarea>
+              </div>
+              <button type="submit" class="btnSubmit">Save Slide</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Meet Kunal Slides</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Content</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="meetTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB 6: Initiatives -->
+        <section class="tabSection" id="tab-initiatives">
+          <!-- Sector Initiatives & Sub-Page Intros -->
+          <div class="cardBox" style="border-top: 4px solid #F4821E; margin-bottom: 30px;">
+            <h3>Sector Initiatives (Homepage &amp; Sub-Page Intros)</h3>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">
+              Manage the sector initiative cards displayed on the Home Page and their dedicated Sub-Page header introductions. Add as many initiatives as needed.
+            </p>
+            <form id="initiativePillarForm">
+              <input type="hidden" id="pillarId" />
+              <input type="hidden" id="pillarLink" />
+              <div class="formGrid">
+                <div class="formGroup fullWidth">
+                  <label>Initiative Title</label>
+                  <input type="text" id="pillarTitle" placeholder="e.g. Education, Health, Sports, Youth Leadership..." required />
+                  <div style="margin-top: 6px; font-size: 13px; color: #475569; display: flex; align-items: center; gap: 8px;">
+                    <span>Auto-Generated Route:</span>
+                    <code id="pillarAutoUrlBadge" style="background: #e0f2fe; padding: 4px 10px; border-radius: 4px; font-family: monospace; color: #0369a1; font-weight: 700;">/initiatives/...</code>
+                  </div>
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Sub-Page Header Introduction (Displayed after opening page)</label>
+                  <textarea id="pillarIntro" rows="4" placeholder="Enter the full introduction text displayed at the top of this initiative subpage..." required></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Initiative</button>
+              <button type="button" id="btnCancelPillar" class="btnCancel" style="display:none; margin-left:10px; padding: 10px 18px; background: #64748b; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Cancel Edit</button>
+            </form>
+          </div>
+
+          <div class="cardBox" style="margin-bottom: 30px;">
+            <h3 id="pillarsSectionTitle">Active Initiatives &amp; Page Intros</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th style="width: 20%;">Title</th>
+                  <th style="width: 25%;">Target URL</th>
+                  <th style="width: 40%;">Sub-Page Header Intro</th>
+                  <th style="width: 15%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="pillarsTableBody"></tbody>
+          </div>
+
+          <div class="cardBox">
+            <h3>Constituency Initiatives Carousel Cards (Homepage Slider)</h3>
+            <form id="initiativesSectionForm" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+              <div class="formGroup">
+                <label>Section Main Title</label>
+                <input type="text" id="initSectionTitleInput" required />
+              </div>
+              <div class="formGroup">
+                <label>Section Sub-Text Paragraph</label>
+                <textarea id="initSectionDescInput" required></textarea>
+              </div>
+              <button type="submit" class="btnSubmit">Save Section Header</button>
+            </form>
+
+            <h3>Add / Edit Initiative Card</h3>
+            <form id="initiativeForm">
+              <input type="hidden" id="initiativeId" />
+              <div class="formGrid">
+                <div class="formGroup fullWidth">
+                  <label>Initiative Title</label>
+                  <input type="text" id="initiativeTitle" placeholder="Enter initiative title..." required />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Short Description (Card View)</label>
+                  <input type="text" id="initiativeShortDesc" required />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Full Description (Modal Popup)</label>
+                  <textarea id="initiativeFullDesc" required></textarea>
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Upload Initiative Image</label>
+                  <input type="file" id="initiativeImageFile" accept="image/*" />
+                  <input type="hidden" id="initiativeImagePath" />
+                  <div>
+                    <img id="initiativeImagePreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('initiativeImagePath', 'initiativeImagePreview', 'initiativeImageFile')">Remove Image</button>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Initiative Card</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Initiatives</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th style="width: 15%;">Image</th>
+                  <th style="width: 65%;">Title</th>
+                  <th style="width: 20%;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="initiativesTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB 7: Organization Work -->
+        <section class="tabSection" id="tab-org">
+          <div class="cardBox">
+            <h3>Bharatiya Janata Yuva Morcha (BJYM) Section</h3>
+            <form id="orgForm">
+              <div class="formGroup">
+                <label>Section Title</label>
+                <input type="text" id="orgSectionTitle" required />
+              </div>
+              <div class="formGroup">
+                <label>Main Bio Paragraph</label>
+                <textarea id="orgMainDesc" required></textarea>
+              </div>
+              <div class="formGroup">
+                <label>Upload Center Cutout Image</label>
+                <input type="file" id="orgMainImgFile" accept="image/*" />
+                <input type="hidden" id="orgMainImgPath" />
+                <div>
+                  <img id="orgMainImgPreview" class="imagePreview" src="" />
+                  <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('orgMainImgPath', 'orgMainImgPreview', 'orgMainImgFile')">Remove Image</button>
+                </div>
+              </div>
+
+              <h4 style="margin: 20px 0 10px; color: #F4821E;">Sub Card 1 (Left Bottom)</h4>
+              <div class="formGroup"><label>Title</label><input type="text" id="orgCard1Title" /></div>
+              <div class="formGroup"><label>Description</label><textarea id="orgCard1Desc"></textarea></div>
+
+              <h4 style="margin: 20px 0 10px; color: #F4821E;">Sub Card 2 (Right Top)</h4>
+              <div class="formGroup"><label>Title</label><input type="text" id="orgCard2Title" /></div>
+              <div class="formGroup"><label>Description</label><textarea id="orgCard2Desc"></textarea></div>
+
+              <h4 style="margin: 20px 0 10px; color: #F4821E;">Sub Card 3 (Right Bottom)</h4>
+              <div class="formGroup"><label>Title</label><input type="text" id="orgCard3Title" /></div>
+              <div class="formGroup"><label>Description</label><textarea id="orgCard3Desc"></textarea></div>
+
+              <button type="submit" class="btnSubmit" style="margin-top: 15px;">Save BJYM Section</button>
+            </form>
+          </div>
+        </section>
+
+        <!-- TAB 8: Blogs & Press -->
+        <section class="tabSection" id="tab-blog">
+          <div class="cardBox">
+            <h3>Create / Edit Blog / Press Post</h3>
+            <form id="blogForm">
+              <input type="hidden" id="blogId" />
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Post Title</label>
+                  <input type="text" id="blogTitle" required />
+                </div>
+                <div class="formGroup">
+                  <label>Category</label>
+                  <select id="blogCategory" required>
+                    <option value="">-- Select Category --</option>
+                  </select>
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Excerpt / Summary</label>
+                  <input type="text" id="blogExcerpt" required />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Full Content</label>
+                  <textarea id="blogContent" required></textarea>
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Featured Image</label>
+                  <input type="file" id="blogImageFile" accept="image/*" />
+                  <input type="hidden" id="blogImagePath" />
+                  <div>
+                    <img id="blogImagePreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('blogImagePath', 'blogImagePreview', 'blogImageFile')">Remove Image</button>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Publish Post</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Posts</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="blogsTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- Category Management Box -->
+          <div class="cardBox" style="margin-top: 30px;">
+            <h3>Category Management</h3>
+            <form id="categoryForm" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+              <input type="hidden" id="categoryId" />
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Category Name</label>
+                  <input type="text" id="categoryName" placeholder="e.g. Health, Education, Press Coverage" required />
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Category</button>
+              <button type="button" id="btnCancelCategory" class="btnCancel" style="display:none; margin-left:10px; padding: 10px 18px; background: #64748b; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Cancel Edit</button>
+            </form>
+
+            <h4 style="margin-bottom: 15px;">Existing Categories</h4>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Category Name</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="categoriesTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB 9: Gallery -->
+        <section class="tabSection" id="tab-gallery">
+          <div class="cardBox">
+            <h3>Add / Edit Gallery Item</h3>
+            <form id="galleryForm">
+              <input type="hidden" id="galleryId" />
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Title / Caption</label>
+                  <input type="text" id="galleryTitle" required />
+                </div>
+                <div class="formGroup">
+                  <label>Media Type</label>
+                  <select id="galleryType">
+                    <option value="image">Image</option>
+                    <option value="video">Video (YouTube Embed URL)</option>
+                  </select>
+                </div>
+                <div class="formGroup fullWidth" id="galleryImageUploadGroup">
+                  <label>Upload Image</label>
+                  <input type="file" id="galleryImageFile" accept="image/*" />
+                  <input type="hidden" id="galleryImagePath" />
+                  <div>
+                    <img id="galleryImagePreview" class="imagePreview" src="" />
+                    <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('galleryImagePath', 'galleryImagePreview', 'galleryImageFile')">Remove Image</button>
+                  </div>
+                </div>
+                <div class="formGroup fullWidth" id="galleryVideoUrlGroup" style="display: none;">
+                  <label>YouTube Embed Link</label>
+                  <input type="url" id="galleryVideoUrl" placeholder="https://www.youtube.com/embed/VIDEO_ID" />
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Gallery Item</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Gallery Items</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Type</th>
+                  <th>Preview</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="galleryTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        
+        <!-- TAB 11: In Parliament Page -->
+        <section class="tabSection" id="tab-parliament">
+          <div class="cardBox">
+            <h3>In Parliament Page Settings & Stats</h3>
+            <form id="parliamentSettingsForm">
+              <div class="formGrid">
+                <div class="formGroup fullWidth">
+                  <label>Page Header Title</label>
+                  <input type="text" id="parliamentPageTitleInput" required />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Introductory Paragraph</label>
+                  <textarea id="parliamentIntroTextInput" required></textarea>
+                </div>
+                <div class="formGroup">
+                  <label>Attendance Stat (%)</label>
+                  <input type="text" id="parliamentAttendanceInput" placeholder="e.g. 92%" required />
+                </div>
+                <div class="formGroup">
+                  <label>Debates Participated</label>
+                  <input type="text" id="parliamentDebatesInput" placeholder="e.g. 35" required />
+                </div>
+                <div class="formGroup">
+                  <label>Questions Asked</label>
+                  <input type="text" id="parliamentQuestionsInput" placeholder="e.g. 290" required />
+                </div>
+                <div class="formGroup">
+                  <label>Zero Hour Mentions</label>
+                  <input type="text" id="parliamentZeroHourInput" placeholder="e.g. 12" required />
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit" style="margin-top: 15px;">Save Parliament Settings & Stats</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Add / Edit Parliamentary Work Item</h3>
+            <form id="parliamentItemForm">
+              <input type="hidden" id="parliamentItemId" />
+              <div class="formGroup">
+                <label>Item Title</label>
+                <input type="text" id="parliamentItemTitle" required />
+              </div>
+              <div class="formGroup">
+                <label>Item Description / Speech Summary</label>
+                <textarea id="parliamentItemDesc" required></textarea>
+              </div>
+              <button type="submit" class="btnSubmit">Save Parliamentary Item</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Parliamentary Items</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="parliamentTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB 12: Constituency Projects Page -->
+        <section class="tabSection" id="tab-projects">
+          <div class="cardBox">
+            <h3>Constituency Projects Page Settings</h3>
+            <form id="projectsSettingsForm">
+              <div class="formGroup fullWidth">
+                <label>Page Header Title</label>
+                <input type="text" id="projectsPageTitleInput" required />
+              </div>
+              <div class="formGroup fullWidth">
+                <label>Introductory Paragraph</label>
+                <textarea id="projectsIntroTextInput" required></textarea>
+              </div>
+              <button type="submit" class="btnSubmit" style="margin-top: 15px;">Save Projects Settings</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Add / Edit Constituency Project Item</h3>
+            <form id="constituencyProjectForm">
+              <input type="hidden" id="constituencyProjectId" />
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Project Title</label>
+                  <input type="text" id="constituencyProjectTitle" required />
+                </div>
+                <div class="formGroup">
+                  <label>Category</label>
+                  <input type="text" id="constituencyProjectCategory" placeholder="Infrastructure / Education / Healthcare" required />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Project Description & Impact</label>
+                  <textarea id="constituencyProjectDesc" required></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Constituency Project</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Constituency Projects</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Description</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="constituencyProjectsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        
+        <!-- TAB 13: Sector Sub-Pages Manager (6 Pages) -->
+        <section class="tabSection" id="tab-sectors">
+          <div class="cardBox" style="border-top: 4px solid #F4821E;">
+            <h3>Sector Sub-Pages Manager (Education, Health, Transport, Labour, Security, Sports)</h3>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Manage initiatives displayed on dedicated sub-pages (/education, /health, /infrastructure-transport-mobility, /labour, /security, /sports).</p>
+            <form id="sectorInitiativeForm">
+              <input type="hidden" id="sectorItemId" />
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Select Target Sector Page</label>
+                  <select id="sectorPageSelect" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: bold; background: #f8fafc;">
+                    <option value="education">🎓 Education (Namo Vidyanidhi & BEST)</option>
+                    <option value="health">🏥 Healthcare (Janaushadhi & Teleconsultation)</option>
+                    <option value="infrastructure">🚇 Infrastructure & Transport Mobility</option>
+                    <option value="labour">💼 Labour & Gig Workers Welfare</option>
+                    <option value="security">🛡️ Security & Public Safety</option>
+                    <option value="sports">🏆 Sports & Youth Festivals</option>
+                  </select>
+                </div>
+                <div class="formGroup">
+                  <label>Item Title</label>
+                  <input type="text" id="sectorItemTitle" required placeholder="e.g. Setting up Janaushadhi Kendras" />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Issue / Focus Area Subtitle</label>
+                  <input type="text" id="sectorItemIssue" placeholder="e.g. Issue: Affordable Healthcare & Medicines" />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Full Content & Impact Description</label>
+                  <textarea id="sectorItemDesc" required placeholder="Describe the initiative, key outcomes, and constituent benefits..."></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Sector Initiative Item</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Sector Sub-Pages Items</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Sector Page</th>
+                  <th>Title</th>
+                  <th>Issue / Focus</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="sectorItemsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB 14: Report Cards (PDFs) -->
+        <section class="tabSection" id="tab-report-cards">
+          <div class="cardBox" style="border-top: 4px solid #F4821E;">
+            <h3>Upload / Edit Report Card PDF</h3>
+            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Manage downloadable annual & 5-year report card PDFs displayed in the Report Card section and Hero Banner.</p>
+            <form id="reportCardForm">
+              <input type="hidden" id="reportCardId" />
+              <div class="formGrid">
+                <div class="formGroup">
+                  <label>Report Card Title (Button Text)</label>
+                  <input type="text" id="reportCardTitle" placeholder="e.g. Download Report 2023" required />
+                </div>
+                <div class="formGroup">
+                  <label>Year / Badge Label</label>
+                  <input type="text" id="reportCardYear" placeholder="e.g. 2023 / 5 Years" />
+                </div>
+                <div class="formGroup fullWidth">
+                  <label>Upload Report Card (PDF Document)</label>
+                  <input type="file" id="reportCardPdfUploadFile" accept="application/pdf" />
+                  <input type="hidden" id="reportCardPdfUploadPath" required />
+                  <div id="reportCardFileStatus" style="margin-top: 8px; font-size: 13px; color: #10b981; font-weight: bold; display: none;">
+                    📄 PDF File Attached: <span id="reportCardFileNameDisplay"></span>
+                  </div>
+                </div>
+              </div>
+              <button type="submit" class="btnSubmit">Save Report Card PDF</button>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>Existing Downloadable Report Cards</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Year / Label</th>
+                  <th>PDF Document</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="reportCardsTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- TAB 10: Messages Inbox -->
+        <section class="tabSection" id="tab-messages">
+          <div class="cardBox">
+            <h3>Constituent Contact Submissions</h3>
+            <table class="adminTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Subject</th>
+                  <th>Message</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="messagesTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="changePasswordModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(2px);">
+    <div style="background: white; border-radius: 12px; width: 100%; max-width: 440px; padding: 28px; box-shadow: 0 20px 30px rgba(0,0,0,0.2); position: relative; margin: 20px;">
+      <button type="button" id="btnCloseChangePasswordModal" style="position: absolute; top: 18px; right: 18px; background: none; border: none; font-size: 24px; cursor: pointer; color: #64748b; line-height: 1;">&times;</button>
+      <h3 style="margin: 0 0 8px 0; color: #1e293b; font-size: 20px; display: flex; align-items: center; gap: 8px;">🔒 Change Admin Password</h3>
+      <p style="margin: 0 0 20px 0; color: #64748b; font-size: 13px;">Ensure your new password has at least 8 characters and includes at least one number or special symbol.</p>
+      <form id="changePasswordForm">
+        <div class="formGroup" style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">Current Password</label>
+          <input type="password" id="currentAdminPassword" required style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+        <div class="formGroup" style="margin-bottom: 16px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">New Password</label>
+          <input type="password" id="newAdminPassword" required minlength="8" placeholder="At least 8 characters" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+        <div class="formGroup" style="margin-bottom: 24px;">
+          <label style="display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px;">Confirm New Password</label>
+          <input type="password" id="confirmAdminPassword" required minlength="8" placeholder="Re-enter new password" style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box;" />
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 10px;">
+          <button type="button" id="btnCancelChangePassword" style="padding: 10px 18px; background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: 600; cursor: pointer;">Cancel</button>
+          <button type="submit" style="padding: 10px 20px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Save New Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.service.js?v=1787833737597"></script>
+  <script src="js/admin.ui.js?v=1787833737597"></script>
+  <script src="js/admin.js?v=1787833737597"></script>
+</body>
+</html>

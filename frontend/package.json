@@ -1,0 +1,17 @@
+{
+  "name": "kunaltilak-frontend",
+  "version": "2.0.0",
+  "description": "Client Frontend & Admin Dashboard for Kunal Tilak Official Website",
+  "scripts": {
+    "start": "npx -y serve public -p 3000",
+    "dev": "npx -y serve public -p 3000",
+    "build": "node scripts/build.js"
+  },
+  "keywords": [
+    "frontend",
+    "client",
+    "kunal-tilak"
+  ],
+  "author": "Kunal Tilak Tech Team",
+  "license": "ISC"
+}

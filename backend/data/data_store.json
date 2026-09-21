@@ -1,0 +1,368 @@
+{
+  "settings": {
+    "id": 1,
+    "candidateName": "Kunal Tilak",
+    "designation": "MEMBER OF LEGISLATIVE ASSEMBLY",
+    "constituency": "Kasba Peth Constituency, Pune",
+    "partyName": "Bharatiya Janata Party",
+    "bjpLogo": "/_next/static/media/BJP-logo.e6dbeb2f.png",
+    "candidateLogo": "/uploads/ChatGPT_Image_Aug_11__2026__05_41_09_PM-removebg-p_1787811594164_865010.png",
+    "votesCount": "3.31 LAKH VOTES",
+    "votesDescription": "Elected with immense support and trust from the citizens of Kasba Peth",
+    "shortBio": "Kunal Tilak serves as a dedicated leader and voice for youth, committing to social transformation, urban development, and constituent empowerment.",
+    "contactEmail": "office@kunaltilak.in",
+    "contactPhone": "+91 98765 43210",
+    "officeAddress": "Office of Kunal Tilak, Kasba Peth, Pune, Maharashtra",
+    "whatsappChannel": "https://whatsapp.com/channel/0029Va5tflV002TDPDgwyi3D",
+    "whatsappQrCode": "/_next/static/media/url-qr-code.7bed1177.png",
+    "instagramUrl": "https://instagram.com",
+    "facebookUrl": "https://facebook.com",
+    "youtubeUrl": "https://youtube.com",
+    "linkedinUrl": "https://linkedin.com",
+    "twitterUrl": "",
+    "subpageHeaderBanner": "/uploads/OIP__1__1787811613215_64219.webp",
+    "parliamentPageTitle": "Policy & Parliamentary Work of Kunal Tilak",
+    "parliamentIntroText": "Kunal Tilak has been a proactive and dedicated representative in the Assembly:",
+    "parliamentAttendance": "92%",
+    "parliamentDebates": "35",
+    "parliamentQuestions": "290",
+    "parliamentZeroHour": "12",
+    "projectsPageTitle": "Constituency Projects & Development in Kasba Peth",
+    "projectsIntroText": "Key infrastructure, healthcare, education, and accessibility projects launched in Kasba Peth:",
+    "blogPageTitle": "Blog, Press Releases & Media Coverage",
+    "blogIntroText": "Stay updated with the latest news, speeches, and initiatives from the Office of Kunal Tilak:",
+    "keyHighlightsHeading": "Nurturing Civilizational Roots, Building Modern Infrastructure, Empowering the Needy, Shaping Ideas for the Future",
+    "keyHighlightsImage": "/uploads/08ac4fab-063f-4cdd-9b05-662dbc4dfba4_1787811729870_402112.png",
+    "meetKunalSectionTitle": "Meet Kunal",
+    "meetKunalImage": "/uploads/ChatGPT_Image_Aug_11__2026__06_15_00_PM_1787811779775_661000.png",
+    "initiativesSectionTitle": "EXPLORE VARIOUS INITIATIVES BY KUNAL TILAK",
+    "initiativesSectionDesc": "Kunal has introduced a range of schemes, catering to diverse needs in education, healthcare and infrastructure in Kasba Peth.",
+    "bjymSectionTitle": "Bharatiya Janata Yuva Morcha",
+    "bjymMainDesc": "Kunal Tilak actively organizes youth welfare programs, employment drives, and leadership training camps to groom the next generation of public leaders.",
+    "bjymMainImage": "/_next/static/media/bjymTS.d44621e8.png",
+    "bjymCard1Title": "Youth Leadership Summits",
+    "bjymCard1Desc": "Organizing state-level youth conferences promoting entrepreneurship, public service, and civil service awareness.",
+    "bjymCard2Title": "Citizen Assistance & Teleconsultation",
+    "bjymCard2Desc": "Setting up citizen assistance helplines providing free medical and social support during critical times.",
+    "bjymCard3Title": "Karyakarta Skill Training",
+    "bjymCard3Desc": "Developing skill development workshops and digital learning modules for grassroots volunteers.",
+    "sectionVisibility": {
+      "hero": true,
+      "keyHighlights": true,
+      "meetKunal": true,
+      "initiatives": true,
+      "bjym": true,
+      "gallery": true,
+      "sectorLinks": true,
+      "reportCard": true,
+      "contact": true,
+      "footer": true
+    }
+  },
+  "hero": {
+    "id": 1,
+    "headline": "Kunal Tilak: Voice for Yuva & Progressive Governance",
+    "subheadline": "Grassroots Dedication, Visionary Development, Constituent Welfare",
+    "heroBio": "Kunal Tilak serves as the dedicated leader for Kasba Peth, Pune, committing to youth empowerment, urban development, and social welfare.",
+    "heroPortrait": "/uploads/ChatGPT_Image_Aug_11__2026__06_02_46_PM_1787811701511_260285.png",
+    "heroBackground": "/uploads/ChatGPT_Image_Aug_11__2026__05_51_53_PM_1787811714495_786401.png",
+    "reportCardPdf": "/assets/downloads/5years-report-card.pdf",
+    "reportCardTitle": "5 Years Report Card"
+  },
+  "keyHighlights": [
+    {
+      "id": 1,
+      "title": "Kasba Peth Infrastructure & Traffic Management",
+      "category": "Infrastructure",
+      "issue": "Issue: Urban Mobility & Congestion",
+      "description": "Kunal is actively advancing key infrastructure projects in Kasba Peth. He plays a pivotal role in expediting approvals for flyovers, road widening, and parking management.",
+      "donateUrl": null,
+      "orderIndex": 1
+    },
+    {
+      "id": 2,
+      "title": "Education - NaMo Vidyanidhi Scholarships",
+      "category": "Education",
+      "issue": "Issue: Access to Higher Education",
+      "description": "Through the NaMo Vidyanidhi initiative, hundreds of deserving students in Kasba Peth receive direct financial scholarships to pursue their academic dreams.",
+      "donateUrl": "#",
+      "orderIndex": 2
+    },
+    {
+      "id": 3,
+      "title": "Healthcare - Free Medical & Teleconsultation Drives",
+      "category": "Healthcare",
+      "issue": "Issue: Affordable Healthcare",
+      "description": "Regular health camps, free diagnostic drives, and generic medicine centers set up across the constituency to support senior citizens and families.",
+      "donateUrl": null,
+      "orderIndex": 3
+    }
+  ],
+  "meetKunal": [
+    {
+      "id": 1,
+      "title": "Kunal Tilak is a dedicated grassroots leader advancing public welfare",
+      "subtitle": "Grassroots Worker",
+      "content": "Kunal Tilak represents Kasba Peth with an emphasis on citizen engagement, youth leadership, and transparent public service.",
+      "image": "/_next/static/media/meet-kunal.81e03335.png",
+      "orderIndex": 1
+    },
+    {
+      "id": 2,
+      "title": "Leader of the New Generation in Youth Governance",
+      "subtitle": "Youth Leadership",
+      "content": "Organizing state-level youth conferences, skill development modules, and digital learning platforms for grassroots volunteers.",
+      "image": "/_next/static/media/meet-kunal.81e03335.png",
+      "orderIndex": 2
+    },
+    {
+      "id": 3,
+      "title": "Social Transformation & Constituent Empowerment",
+      "subtitle": "Public Service",
+      "content": "Working continuously to ensure zero school dropouts, clean water supply, and modern municipal infrastructure.",
+      "image": "/_next/static/media/meet-kunal.81e03335.png",
+      "orderIndex": 3
+    }
+  ],
+  "initiatives": [
+    {
+      "id": "",
+      "createdAt": "2026-09-02T12:43:09.136Z",
+      "title": "yova",
+      "category": "Education",
+      "shortDesc": "efs",
+      "fullDesc": "sfe",
+      "image": "/uploads/insurance_sample_1788352987990_750367.png"
+    },
+    {
+      "id": 2,
+      "createdAt": "2026-09-03T07:14:57.379Z",
+      "title": "Security Test Initiative",
+      "shortDesc": "Normal description",
+      "fullDesc": "Testing <img src=\"x\">  Clean Text"
+    },
+    {
+      "id": 3,
+      "createdAt": "2026-09-03T07:15:23.688Z",
+      "title": "Security Test Initiative",
+      "shortDesc": "Normal description",
+      "fullDesc": "Testing <img src=\"x\">  Clean Text"
+    },
+    {
+      "id": "",
+      "createdAt": "2026-09-03T09:16:22.620Z",
+      "title": "Health",
+      "shortDesc": "health is welth",
+      "fullDesc": "dfsfsfsfwefsdfsdafssdfasfdsfsdfsdf",
+      "image": "/uploads/pic_sample_1788426978905_298385.png"
+    }
+  ],
+  "parliamentItems": [
+    {
+      "id": 1,
+      "title": "Intervention on Urban Mobility & Traffic Infrastructure",
+      "description": "Spearheaded Assembly discussions on fast-tracking urban flyovers, metro connectivity, and traffic management in Pune.",
+      "orderIndex": 1
+    },
+    {
+      "id": 2,
+      "title": "Private Member Motion on Youth Skill Development",
+      "description": "Proposed targeted skill development modules and vocational training centers for youth seeking employment.",
+      "orderIndex": 2
+    }
+  ],
+  "sectorInitiatives": [],
+  "constituencyProjects": [
+    {
+      "id": 1,
+      "title": "SWAMIH Funds for Housing Completion",
+      "description": "Facilitated funding support for key residential housing projects to ensure construction resumption and timely delivery for citizens.",
+      "category": "Infrastructure",
+      "orderIndex": 1
+    },
+    {
+      "id": 2,
+      "title": "Accessible Public Places & Wheelchair Ramps",
+      "description": "Installed wheelchair ramps across key public spaces, market areas, and government offices for complete accessibility.",
+      "category": "Accessibility",
+      "orderIndex": 2
+    },
+    {
+      "id": 3,
+      "title": "Public School Modernization & Cleanliness Drives",
+      "description": "Upgraded digital classrooms, science labs, and sanitation infrastructure across municipal schools.",
+      "category": "Education",
+      "orderIndex": 3
+    }
+  ],
+  "organization": {
+    "sectionTitle": "Bharatiya Janata Yuva Morcha",
+    "mainHeadline": "Voice of Youth across Maharashtra & Bharat",
+    "mainDesc": "Kunal Tilak actively organizes youth welfare programs, employment drives, and leadership training camps to groom the next generation of public leaders.",
+    "mainImage": "/uploads/ChatGPT_Image_Aug_11__2026__06_15_00_PM_1787811868405_851644.png",
+    "card1Title": "Youth Leadership Summits",
+    "card1Desc": "Organizing state-level youth conferences promoting entrepreneurship, public service, and civil service awareness.",
+    "card2Title": "Citizen Assistance Helpline",
+    "card2Desc": "Setting up citizen assistance helplines providing free medical and social support during critical times.",
+    "card3Title": "Karyakarta Skill Training",
+    "card3Desc": "Developing skill development workshops and digital learning modules for grassroots volunteers."
+  },
+  "blogs": [],
+  "gallery": [
+    {
+      "id": 1,
+      "title": "humpa",
+      "type": "image",
+      "url": "/uploads/caracter_sample_1788245218599_758575.png"
+    },
+    {
+      "id": "",
+      "title": "education",
+      "type": "image",
+      "url": "/uploads/pic_sample_1788427047873_759458.png"
+    }
+  ],
+  "messages": [
+    {
+      "id": 4,
+      "name": "Verification User",
+      "email": "verify@example.com",
+      "phone": "9876543210",
+      "subject": "Inquiry",
+      "message": "Testing contact flow",
+      "createdAt": "2026-09-02T09:25:31.612Z"
+    },
+    {
+      "id": 3,
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "9876543210",
+      "subject": "General Inquiry",
+      "message": "Hello",
+      "createdAt": "2026-09-02T09:23:46.207Z"
+    },
+    {
+      "id": 2,
+      "name": "Test User",
+      "email": "test@example.com",
+      "phone": "",
+      "subject": "General Inquiry",
+      "message": "Test message",
+      "createdAt": "2026-08-27T05:19:25.287Z"
+    },
+    {
+      "id": 1,
+      "name": "Citizen Rahul",
+      "email": "rahul@test.com",
+      "phone": "9876543210",
+      "subject": "Support",
+      "message": "Excellent work in Kasba Peth!",
+      "createdAt": "2026-08-27T05:15:13.877Z"
+    }
+  ],
+  "adminUsers": [
+    {
+      "id": 1,
+      "username": "admin",
+      "passwordHash": "$2a$10$rb0abu8AAoq0MMF0Zwgx1eI3Cb7QdCBtm9MCnOHJNtg40VvUrZNnm",
+      "name": "Kunal Tilak Admin",
+      "role": "SUPER_ADMIN"
+    }
+  ],
+  "reportCards": [
+    {
+      "id": 1,
+      "title": "Download Report 2022",
+      "year": "2022",
+      "pdfUrl": "/assets/images/yearly-report-2022.pdf"
+    },
+    {
+      "id": 2,
+      "title": "Download Report 2023",
+      "year": "2023",
+      "pdfUrl": "/assets/images/yearly-report.pdf"
+    },
+    {
+      "id": 3,
+      "title": "Download 5 Year Report Card",
+      "year": "5 Years",
+      "pdfUrl": "/assets/images/kunal-surya-5years-report-card.pdf"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Education"
+    },
+    {
+      "id": 2,
+      "name": "Health"
+    },
+    {
+      "id": 3,
+      "name": "Infrastructure - Transport & Mobility"
+    },
+    {
+      "id": 4,
+      "name": "Labour"
+    },
+    {
+      "id": 5,
+      "name": "Sports"
+    },
+    {
+      "id": 6,
+      "name": "Policy and Parliamentary work"
+    },
+    {
+      "id": 7,
+      "name": "Constituency Projects"
+    },
+    {
+      "id": 8,
+      "name": "Security"
+    },
+    {
+      "id": 9,
+      "name": "Press Coverage"
+    }
+  ],
+  "initiativePillars": [
+    {
+      "id": 1,
+      "title": "education",
+      "link": "/initiatives/education",
+      "intro": "education is very important in our life because without education we are nothing."
+    },
+    {
+      "id": 2,
+      "title": "Health",
+      "link": "/initiatives/health",
+      "intro": "Health is wealth"
+    },
+    {
+      "id": 3,
+      "title": "sports",
+      "link": "/initiatives/sports",
+      "intro": "sports sports ports"
+    },
+    {
+      "id": 4,
+      "title": "leadership",
+      "link": "/initiatives/leadership",
+      "intro": "leadership of the youth."
+    },
+    {
+      "id": 5,
+      "title": "politics",
+      "link": "/initiatives/politics",
+      "intro": "politics politics politics"
+    },
+    {
+      "id": 6,
+      "title": "initiative",
+      "link": "/initiatives/initiative",
+      "intro": "initiative initiative"
+    }
+  ]
+}

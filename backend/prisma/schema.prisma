@@ -1,0 +1,194 @@
+// Prisma Schema for Kunal Tilak Official Website & Admin CMS
+// Supports NeonDB (PostgreSQL) and SQLite
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model SiteSetting {
+  id                      Int      @id @default(autoincrement())
+  candidateName           String   @default("Kunal Tilak")
+  designation             String   @default("MEMBER OF LEGISLATIVE ASSEMBLY")
+  constituency            String   @default("Kasba Peth Constituency, Pune")
+  partyName               String   @default("Bharatiya Janata Party")
+  bjpLogo                 String   @default("/_next/static/media/BJP-logo.e6dbeb2f.png")
+  candidateLogo           String   @default("/_next/static/media/colorLogo.54e4cb38.png")
+  votesCount              String   @default("3.31 LAKH VOTES")
+  votesDescription        String   @default("Elected with immense support and trust from the citizens of Kasba Peth")
+  shortBio                String   @default("Kunal Tilak serves as a dedicated leader and voice for youth, committing to social transformation, urban development, and constituent empowerment.")
+  contactEmail            String   @default("office@kunaltilak.in")
+  contactPhone            String   @default("+91 98765 43210")
+  officeAddress           String   @default("Office of Kunal Tilak, Kasba Peth, Pune, Maharashtra")
+  whatsappChannel         String   @default("https://whatsapp.com")
+  whatsappQrCode          String   @default("/_next/static/media/url-qr-code.7bed1177.png")
+  instagramUrl            String   @default("https://instagram.com")
+  facebookUrl             String   @default("https://facebook.com")
+  youtubeUrl              String   @default("https://youtube.com")
+  linkedinUrl             String   @default("https://linkedin.com")
+  twitterUrl              String   @default("https://twitter.com")
+  subpageHeaderBanner     String   @default("/assets/images/aboutDetailBanner.png")
+  keyHighlightsHeading    String   @default("Nurturing Civilizational Roots, Building Modern Infrastructure, Empowering the Needy, Shaping Ideas for the Future")
+  keyHighlightsImage      String   @default("/_next/static/media/keyHighLights1.56ca94e0.png")
+  meetKunalSectionTitle   String   @default("Meet Kunal")
+  meetKunalImage          String   @default("/_next/static/media/meet-kunal.81e03335.png")
+  initiativesSectionTitle String   @default("EXPLORE VARIOUS INITIATIVES BY KUNAL TILAK")
+  initiativesSectionDesc  String   @default("Kunal has introduced a range of schemes, catering to diverse needs in education, healthcare and infrastructure in Kasba Peth.")
+  bjymSectionTitle        String   @default("Bharatiya Janata Yuva Morcha")
+  bjymMainDesc            String   @default("Kunal Tilak actively organizes youth welfare programs, employment drives, and leadership training camps to groom the next generation of public leaders.")
+  bjymMainImage           String   @default("/_next/static/media/bjymTS.d44621e8.png")
+  bjymCard1Title          String   @default("Youth Leadership Summits")
+  bjymCard1Desc           String   @default("Organizing state-level youth conferences promoting entrepreneurship, public service, and civil service awareness.")
+  bjymCard2Title          String   @default("Citizen Assistance & Teleconsultation")
+  bjymCard2Desc           String   @default("Setting up citizen assistance helplines providing free medical and social support during critical times.")
+  bjymCard3Title          String   @default("Karyakarta Skill Training")
+  bjymCard3Desc           String   @default("Developing skill development workshops and digital learning modules for grassroots volunteers.")
+  
+  // Parliamentary Page Header & Performance Stats
+  parliamentPageTitle     String   @default("Policy & Parliamentary Work of Kunal Tilak")
+  parliamentIntroText     String   @default("Kunal Tilak has been a proactive and dedicated representative in the Assembly:")
+  parliamentAttendance    String   @default("92%")
+  parliamentDebates       String   @default("35")
+  parliamentQuestions     String   @default("290")
+  parliamentZeroHour      String   @default("12")
+
+  // Constituency Projects Page Header
+  projectsPageTitle       String   @default("Constituency Projects & Development in Kasba Peth")
+  projectsIntroText       String   @default("Key infrastructure, healthcare, education, and accessibility projects launched in Kasba Peth:")
+
+  // Blog Page Header
+  blogPageTitle           String   @default("Blog, Press Releases & Media Coverage")
+  blogIntroText           String   @default("Stay updated with the latest news, speeches, and initiatives from the Office of Kunal Tilak:")
+
+  updatedAt               DateTime @updatedAt
+}
+
+model HeroSection {
+  id              Int      @id @default(autoincrement())
+  headline        String   @default("Kunal Tilak: Voice for Yuva & Progressive Governance")
+  subheadline     String   @default("Grassroots Dedication, Visionary Development, Constituent Welfare")
+  heroBio         String   @default("Kunal Tilak serves as the dedicated leader for Kasba Peth, Pune, committing to youth empowerment, urban development, and social welfare.")
+  heroPortrait    String   @default("/_next/static/media/bannerTS-removebg.75334595.png")
+  heroBackground  String   @default("/_next/static/media/bannerBg.0a25a5ba.png")
+  reportCardPdf   String   @default("/assets/downloads/5years-report-card.pdf")
+  reportCardTitle String   @default("5 Years Report Card")
+  updatedAt       DateTime @updatedAt
+}
+
+model KeyHighlight {
+  id          Int      @id @default(autoincrement())
+  title       String
+  category    String   @default("General")
+  issue       String   @default("Issue: Focus Area")
+  description String
+  donateUrl   String?
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MeetKunalSlide {
+  id          Int      @id @default(autoincrement())
+  title       String
+  subtitle    String?
+  content     String
+  image       String?
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Initiative {
+  id          Int      @id @default(autoincrement())
+  title       String
+  shortDesc   String
+  fullDesc    String
+  image       String
+  category    String   @default("General")
+  featured    Boolean  @default(false)
+  readMoreUrl String?
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ParliamentItem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ConstituencyProjectItem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  category    String   @default("Infrastructure")
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SectorInitiativeItem {
+  id          Int      @id @default(autoincrement())
+  sector      String   @default("education")
+  title       String
+  issue       String?
+  description String
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BlogPost {
+  id          Int      @id @default(autoincrement())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String
+  image       String
+  author      String   @default("Office of Kunal Tilak")
+  category    String   @default("Press Coverage")
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model GalleryItem {
+  id         Int      @id @default(autoincrement())
+  title      String
+  type       String   @default("image")
+  url        String
+  thumbnail  String?
+  category   String   @default("Events")
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  phone     String?
+  subject   String?
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model AdminUser {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  name      String   @default("Kunal Tilak Admin")
+  role      String   @default("SUPER_ADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

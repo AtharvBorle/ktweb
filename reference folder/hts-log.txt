@@ -1,0 +1,16 @@
+HTTrack3.49-2+htsswf+htsjava launched on Sat, 18 Jul 2026 16:00:07 at https://tejasvisurya.in/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2%Ps2u1%s%uN0%I0p3DaK0H0%kf2A25000%f#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://tejasvisurya.in/ -%L https://tejasvisurya.in/ -O1 "C:\xampp\htdocs\tejasvi\https___tejasvisurya.in_" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+16:00:08	Error: 	Could not include URL list: https://tejasvisurya.in/
+16:00:42	Error: 	"Not Found" (404) at link https://tejasvisurya.in/favicon.ico (from https://tejasvisurya.in/)
+16:00:54	Error: 	"Not Found" (404) at link https://tejasvisurya.in/index.php/dashboard/ (from https://tejasvisurya.in/)
+16:00:54	Error: 	"Not Found" (404) at link https://tejasvisurya.in/assets/images/tejasvi-surya-5years-report-card/ (from https://tejasvisurya.in/)
+16:01:12	Error: 	"Not Found" (404) at link https://tejasvisurya.in/infrastructure/ (from https://tejasvisurya.in/constituency-projects/)
+
+HTTrack Website Copier/3.49-2 mirror complete in 1 minutes 4 seconds : 90 links scanned, 85 files written (94428720 bytes overall) [93483086 bytes received at 1460673 bytes/sec], 1359860 bytes transferred using HTTP compression in 40 files, ratio 25%, 29.4 requests per connection
+(5 errors, 0 warnings, 0 messages)
