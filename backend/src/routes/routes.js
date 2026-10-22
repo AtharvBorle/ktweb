@@ -31,7 +31,7 @@ router.post('/contact', contactLimiter, apiController.submitContact);
 router.post('/admin/login', authLimiter, checkLoginLockout, adminController.login);
 
 // Check current session
-router.get('/admin/me', adminController.getMe);
+router.get('/admin/me', requireAdmin, adminController.getMe);
 
 // Logout
 router.post('/admin/logout', adminController.logout);

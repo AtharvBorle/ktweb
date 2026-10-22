@@ -15,6 +15,9 @@ const {
 
 const app = express();
 
+// Trust reverse proxy (Nginx / CloudPanel SSL termination)
+app.set('trust proxy', 1);
+
 // Disable information disclosure headers
 app.disable('x-powered-by');
 

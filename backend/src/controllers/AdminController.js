@@ -19,11 +19,23 @@ class AdminController {
       // Clear any failed attempts for this IP
       clearFailedLogin(ip);
 
-      // Session Regeneration against Session Fixation attacks
-      req.session.regenerate((err) => {
-        req.session.admin = admin;
+      // Handle session saving safely
+      if (req.session) {
+        req.session.regenerate((err) => {
+          if (err) {
+            logger.warn(`Session regenerate warning: ${err.message}`);
+          }
+          req.session.admin = admin;
+          req.session.save((saveErr) => {
+            if (saveErr) {
+              logger.warn(`Session save warning: ${saveErr.message}`);
+            }
+            return res.status(200).json(ApiResponse.success({ admin, token }, 'Login successful'));
+          });
+        });
+      } else {
         return res.status(200).json(ApiResponse.success({ admin, token }, 'Login successful'));
-      });
+      }
     } catch (err) {
       trackFailedLogin(ip);
       throw err;
@@ -31,9 +43,15 @@ class AdminController {
   });
 
   getMe = asyncHandler(async (req, res) => {
-    const admin = req.session && req.session.admin ? req.session.admin : req.admin;
+    let admin = (req.session && req.session.admin) ? req.session.admin : req.admin;
     if (!admin) {
       return res.status(401).json(ApiResponse.error('Not authenticated', 401));
+    }
+    if (admin.id && !admin.name) {
+      try {
+        const fullAdmin = await authService.getProfile(admin.id);
+        if (fullAdmin) admin = fullAdmin;
+      } catch (e) {}
     }
     return res.status(200).json(ApiResponse.success({ admin }, 'Authenticated'));
   });

@@ -38,6 +38,7 @@ async function initializeAdminApp() {
     window.adminUI.showAdminApp(authRes.data.admin);
     await refreshAdminData();
   } else {
+    if (window.adminService) window.adminService.removeToken();
     window.adminUI.showLoginScreen();
   }
 }

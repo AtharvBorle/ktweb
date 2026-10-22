@@ -105,19 +105,58 @@ class AdminService {
     return finalUrl.includes('?') ? finalUrl : `${finalUrl}?_t=${Date.now()}`;
   }
 
+  getToken() {
+    try {
+      return localStorage.getItem('kt_admin_token') || sessionStorage.getItem('kt_admin_token') || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  setToken(token) {
+    try {
+      if (token) {
+        localStorage.setItem('kt_admin_token', token);
+        sessionStorage.setItem('kt_admin_token', token);
+      } else {
+        this.removeToken();
+      }
+    } catch (e) {}
+  }
+
+  removeToken() {
+    try {
+      localStorage.removeItem('kt_admin_token');
+      sessionStorage.removeItem('kt_admin_token');
+      localStorage.removeItem('kt_admin_user');
+      sessionStorage.removeItem('kt_admin_user');
+    } catch (e) {}
+  }
+
   async request(endpoint, options = {}) {
     try {
       const url = `${this.baseUrl}${endpoint}${endpoint.includes('?') ? '&' : '?'}_t=${Date.now()}`;
       const defaultHeaders = options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' };
+      
+      const token = this.getToken();
+      const authHeaders = (token && token !== 'undefined' && token !== 'null') ? { 'Authorization': `Bearer ${token}` } : {};
 
       const res = await fetch(url, {
         ...options,
         headers: {
           ...defaultHeaders,
+          ...authHeaders,
           ...(options.headers || {})
         },
         credentials: 'include'
       });
+
+      if (res.status === 401) {
+        if (!endpoint.includes('/admin/login')) {
+          this.removeToken();
+        }
+      }
+
       return await res.json();
     } catch (err) {
       console.error(`Admin API Error [${endpoint}]:`, err);
@@ -131,14 +170,29 @@ class AdminService {
   }
 
   async login(username, password) {
-    return this.request('/admin/login', {
+    const res = await this.request('/admin/login', {
       method: 'POST',
       body: JSON.stringify({ username, password })
     });
+    if (res && res.success && res.data) {
+      if (res.data.token) {
+        this.setToken(res.data.token);
+      }
+      if (res.data.admin) {
+        try {
+          localStorage.setItem('kt_admin_user', JSON.stringify(res.data.admin));
+        } catch (e) {}
+      }
+    }
+    return res;
   }
 
   async logout() {
-    return this.request('/admin/logout', { method: 'POST' });
+    try {
+      return await this.request('/admin/logout', { method: 'POST' });
+    } finally {
+      this.removeToken();
+    }
   }
 
   async changePassword(currentPassword, newPassword) {

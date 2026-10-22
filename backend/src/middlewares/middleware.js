@@ -150,19 +150,38 @@ const verifyAdminOrigin = (req, res, next) => {
 
   try {
     const originUrl = new URL(origin);
-    const host = req.headers.host;
-    if (originUrl.host === host) {
+    const originHost = originUrl.host.toLowerCase();
+    const serverHost = (req.headers.host || '').toLowerCase();
+
+    // 1. Same-host request
+    if (originHost === serverHost) {
       return next();
     }
-    const allowed = [
+
+    // 2. Allowed domain names (including subdomains of kunaltilak.com and kunaltilak.in)
+    if (
+      originHost.endsWith('kunaltilak.com') ||
+      originHost.endsWith('kunaltilak.in') ||
+      originHost.includes('kunaltilak')
+    ) {
+      return next();
+    }
+
+    // 3. Localhost development environments
+    const allowedLocal = [
       'localhost:5000',
       '127.0.0.1:5000',
+      'localhost:5001',
+      '127.0.0.1:5001',
       'localhost:3000',
-      '127.0.0.1:3000'
+      '127.0.0.1:3000',
+      'localhost:5500',
+      '127.0.0.1:5500'
     ];
-    if (allowed.includes(originUrl.host)) {
+    if (allowedLocal.includes(originHost)) {
       return next();
     }
+
     return res.status(403).json(ApiResponse.error('Cross-site request blocked by origin verification.', 403));
   } catch (e) {
     return res.status(403).json(ApiResponse.error('Invalid request origin.', 403));
@@ -177,14 +196,16 @@ const requireAdmin = (req, res, next) => {
   // Check Bearer JWT token
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer ')) {
-    const jwt = require('jsonwebtoken');
     const token = authHeader.split(' ')[1];
-    try {
-      const decoded = jwt.verify(token, config.jwt.secret);
-      req.admin = decoded;
-      return next();
-    } catch (e) {
-      throw new UnauthorizedError('Invalid or expired token. Please login again.');
+    if (token && token !== 'undefined' && token !== 'null') {
+      const jwt = require('jsonwebtoken');
+      try {
+        const decoded = jwt.verify(token, config.jwt.secret);
+        req.admin = decoded;
+        return next();
+      } catch (e) {
+        throw new UnauthorizedError('Invalid or expired token. Please login again.');
+      }
     }
   }
 
