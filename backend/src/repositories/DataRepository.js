@@ -160,6 +160,18 @@ class DataRepository {
 
   // --- Aggregate Queries ---
 
+  isStorageHealthy() {
+    try {
+      if (!fs.existsSync(this.storePath)) {
+        return false;
+      }
+      fs.accessSync(this.storePath, fs.constants.R_OK | fs.constants.W_OK);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   getFullContent() {
     return this.readStore();
   }

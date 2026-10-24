@@ -5,6 +5,7 @@ const fs = require('fs');
 
 const config = require('./config/config');
 const routes = require('./routes/routes');
+const apiController = require('./controllers/ApiController');
 const {
   corsMiddleware,
   securityHeaders,
@@ -60,6 +61,9 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// 1.8. System Health Check Endpoint (Direct Root access for Load Balancers & Monitoring)
+app.get('/health-check', apiController.healthCheck);
 
 // 2. API Routes (Global API Rate Limiting Applied)
 app.use('/api', apiLimiter, routes);

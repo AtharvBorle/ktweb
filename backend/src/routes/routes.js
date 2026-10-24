@@ -17,6 +17,9 @@ const {
 // PUBLIC ROUTES
 // =================================================================
 
+// Health Check Endpoint (Monitoring & Probe)
+router.get('/health-check', apiController.healthCheck);
+
 // Get all website content
 router.get('/content', apiController.getContent);
 

@@ -10,6 +10,10 @@ class ContentService {
   /**
    * Retrieves full aggregated site content for public display
    */
+  isStorageHealthy() {
+    return dataRepo.isStorageHealthy();
+  }
+
   async getFullContent() {
     return dataRepo.getFullContent();
   }
