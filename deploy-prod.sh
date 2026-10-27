@@ -58,43 +58,53 @@ fi
 echo "🔍 Checking Nginx configuration for /health-check routing on kunaltilak.com..."
 NGINX_NEED_RELOAD=$(node -e '
 const fs = require("fs");
-const files = [
-  "/etc/nginx/sites-enabled/kunaltilak.com.conf",
-  "/etc/nginx/sites-available/kunaltilak.com.conf",
-  "/etc/nginx/conf.d/kunaltilak.com.conf"
-];
+const path = require("path");
+const dirs = ["/etc/nginx/sites-enabled", "/etc/nginx/sites-available", "/etc/nginx/conf.d"];
 let changed = false;
-for (const file of files) {
-  if (!fs.existsSync(file)) continue;
-  let content = fs.readFileSync(file, "utf8");
-  if (content.includes("/health-check")) continue;
-  const proxyBlock = `
+
+const proxyBlock = `
   # Health Check & API Reverse Proxy to Backend (Port 5000)
   location /health-check {
     proxy_pass http://127.0.0.1:5000;
     proxy_http_version 1.1;
     proxy_set_header Host api.kunaltilak.com;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
   }
 
   location /api/ {
     proxy_pass http://127.0.0.1:5000;
     proxy_http_version 1.1;
     proxy_set_header Host api.kunaltilak.com;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto \$scheme;
   }
 `;
-  const locIdx = content.indexOf("location / {");
-  if (locIdx !== -1) {
-    fs.writeFileSync(file + ".bak", content, "utf8");
-    content = content.slice(0, locIdx) + proxyBlock + "\n  " + content.slice(locIdx);
-    fs.writeFileSync(file, content, "utf8");
-    changed = true;
-    console.error("🔧 Injected /health-check proxy into " + file);
+
+for (const dir of dirs) {
+  if (!fs.existsSync(dir)) continue;
+  let entries = [];
+  try { entries = fs.readdirSync(dir); } catch (e) { continue; }
+  for (const entry of entries) {
+    const file = path.join(dir, entry);
+    try {
+      if (!fs.statSync(file).isFile()) continue;
+      let c = fs.readFileSync(file, "utf8");
+      if (c.includes("kunaltilak.com") && c.includes("server_name")) {
+        if (!c.includes("/health-check")) {
+          const locIdx = c.indexOf("location / {");
+          if (locIdx !== -1) {
+            fs.writeFileSync(file + ".bak", c, "utf8");
+            c = c.slice(0, locIdx) + proxyBlock + "\n  " + c.slice(locIdx);
+            fs.writeFileSync(file, c, "utf8");
+            changed = true;
+            console.error("🔧 Injected /health-check proxy into " + file);
+          }
+        }
+      }
+    } catch (err) {}
   }
 }
 if (changed) console.log("1");
