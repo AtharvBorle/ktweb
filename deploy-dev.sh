@@ -20,7 +20,7 @@ echo "📥 [1/5] Fetching latest changes from Git..."
 if [ -d ".git" ]; then
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "dev")
   echo "Current branch: $CURRENT_BRANCH"
-  git pull origin dev 2>/dev/null || git pull origin "$CURRENT_BRANCH" || echo "Git pull completed or already up to date."
+  git pull origin "$CURRENT_BRANCH" 2>/dev/null || git pull origin dev 2>/dev/null || git pull origin main 2>/dev/null || echo "Git pull completed or already up to date."
 else
   echo "ℹ️  No .git directory found at root; skipping git pull."
 fi
