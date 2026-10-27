@@ -54,6 +54,64 @@ if [ -d "$DEV_STATIC_ROOT" ] && [ "$SCRIPT_DIR/frontend/public" != "$DEV_STATIC_
   echo "✅ Frontend static files updated and permissions set at $DEV_STATIC_ROOT"
 fi
 
+# 3.5. Ensure /health-check reverse proxy is configured in Nginx on dev.kunaltilak.com
+echo "🔍 Checking Nginx configuration for /health-check routing on dev.kunaltilak.com..."
+NGINX_NEED_RELOAD=$(node -e '
+const fs = require("fs");
+const files = [
+  "/etc/nginx/sites-enabled/dev.kunaltilak.com.conf",
+  "/etc/nginx/sites-available/dev.kunaltilak.com.conf",
+  "/etc/nginx/conf.d/dev.kunaltilak.com.conf"
+];
+let changed = false;
+for (const file of files) {
+  if (!fs.existsSync(file)) continue;
+  let content = fs.readFileSync(file, "utf8");
+  if (content.includes("/health-check")) continue;
+  const proxyBlock = `
+  # Health Check & API Reverse Proxy to Backend (Port 5001)
+  location /health-check {
+    proxy_pass http://127.0.0.1:5001;
+    proxy_http_version 1.1;
+    proxy_set_header Host dev.api.kunaltilak.com;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location /api/ {
+    proxy_pass http://127.0.0.1:5001;
+    proxy_http_version 1.1;
+    proxy_set_header Host dev.api.kunaltilak.com;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+`;
+  const locIdx = content.indexOf("location / {");
+  if (locIdx !== -1) {
+    fs.writeFileSync(file + ".bak", content, "utf8");
+    content = content.slice(0, locIdx) + proxyBlock + "\n  " + content.slice(locIdx);
+    fs.writeFileSync(file, content, "utf8");
+    changed = true;
+    console.error("🔧 Injected /health-check proxy into " + file);
+  }
+}
+if (changed) console.log("1");
+' 2>/dev/null || echo "0")
+
+if [ "$NGINX_NEED_RELOAD" = "1" ]; then
+  if nginx -t 2>/dev/null; then
+    systemctl reload nginx 2>/dev/null || nginx -s reload 2>/dev/null || true
+    echo "✅ Nginx reloaded successfully. dev.kunaltilak.com/health-check is now active!"
+  else
+    echo "⚠️  Nginx syntax check reported an issue; reverting vhost files from backup..."
+    for f in /etc/nginx/sites-enabled/dev.kunaltilak.com.conf /etc/nginx/sites-available/dev.kunaltilak.com.conf; do
+      [ -f "${f}.bak" ] && mv -f "${f}.bak" "$f" 2>/dev/null || true
+    done
+  fi
+fi
+
 # 4. Build Backend & Sync Database
 echo "📦 [4/5] Preparing Backend (Express + Prisma)..."
 cd backend
