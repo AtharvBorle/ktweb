@@ -264,10 +264,10 @@
     {
       "id": 1,
       "username": "admin",
-      "passwordHash": "$2a$10$HhBeywODATw1xYluGCjOHuuDPq3GVM3BwgEG9UoqP2nJidUuHU4fy",
+      "passwordHash": "$2a$10$KjNOV4IXf7rf5nIW0FTccOAdVJptfGw9VBiUPLGvRS3/ZVO2O6uiu",
       "name": "Kunal Tilak Admin",
       "role": "SUPER_ADMIN",
-      "passwordChangedAt": "2026-11-23T12:42:43.640Z"
+      "passwordChangedAt": "2026-11-23T12:54:40.861Z"
     }
   ],
   "reportCards": [
