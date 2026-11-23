@@ -70,7 +70,17 @@ class AdminController {
     }
     const { currentPassword, newPassword } = req.body;
     const result = await authService.changePassword(admin.id, currentPassword, newPassword);
-    return res.status(200).json(ApiResponse.success(result, 'Password updated successfully'));
+
+    // Terminate active session and clear cookie immediately upon password change
+    if (req.session) {
+      req.session.destroy(() => {
+        res.clearCookie('connect.sid');
+        return res.status(200).json(ApiResponse.success(result, 'Password updated successfully. Session terminated, please log in with your new password.'));
+      });
+    } else {
+      res.clearCookie('connect.sid');
+      return res.status(200).json(ApiResponse.success(result, 'Password updated successfully. Session terminated, please log in with your new password.'));
+    }
   });
 
   getSecurityStatus = asyncHandler(async (req, res) => {

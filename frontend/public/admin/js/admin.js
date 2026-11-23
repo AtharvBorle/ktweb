@@ -40,6 +40,17 @@ async function initializeAdminApp() {
   } else {
     if (window.adminService) window.adminService.removeToken();
     window.adminUI.showLoginScreen();
+
+    // Check for post-password-change notice
+    const noticeMsg = sessionStorage.getItem('kt_password_changed_msg');
+    if (noticeMsg) {
+      sessionStorage.removeItem('kt_password_changed_msg');
+      const noticeEl = document.getElementById('loginNoticeMsg');
+      if (noticeEl) {
+        noticeEl.innerText = noticeMsg;
+        noticeEl.style.display = 'block';
+      }
+    }
   }
 }
 
@@ -170,10 +181,13 @@ function setupAuthHandlers() {
 
       const res = await window.adminService.changePassword(currentPassword, newPassword);
       if (res.success) {
-        alert('Password changed successfully! Please keep your new password safe.');
+        alert('Password changed successfully! Your session has been terminated. Please log in with your new password.');
         closeModal();
         pwdForm.reset();
-        await refreshAdminData();
+        window.adminService.removeToken();
+        document.cookie = 'connect.sid=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        sessionStorage.setItem('kt_password_changed_msg', '🔒 Password changed successfully. Your previous session was terminated. Please log in with your new password.');
+        window.location.href = window.location.pathname;
       } else {
         alert(res.message || 'Error updating password.');
       }
@@ -830,8 +844,10 @@ function setupTableEventDelegation() {
         window.adminUI.setVal('highlightIssue', item.issue);
         window.adminUI.setVal('highlightDesc', item.description);
         window.adminUI.setVal('highlightDonateUrl', item.donateUrl);
-        const form = document.getElementById('keyHighlightForm');
+        const form = document.getElementById('highlightForm');
         if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const titleIn = document.getElementById('highlightTitle');
+        if (titleIn) titleIn.focus();
       }
     }
 
@@ -852,8 +868,10 @@ function setupTableEventDelegation() {
         window.adminUI.setVal('meetId', item.id);
         window.adminUI.setVal('meetTitle', item.title);
         window.adminUI.setVal('meetContent', item.content);
-        const form = document.getElementById('meetKunalForm');
+        const form = document.getElementById('meetForm');
         if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const titleIn = document.getElementById('meetTitle');
+        if (titleIn) titleIn.focus();
       }
     }
 

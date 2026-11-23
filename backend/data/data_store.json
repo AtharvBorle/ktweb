@@ -103,7 +103,7 @@
       "id": 1,
       "title": "Kunal Tilak is a dedicated grassroots leader advancing public welfare",
       "subtitle": "Grassroots Worker",
-      "content": "Kunal Tilak represents Kasba Peth with an emphasis on citizen engagement, youth leadership, and transparent public service.",
+      "content": "Dedicated to transparent leadership and constant constituent empowerment across Kasba Peth.",
       "image": "/_next/static/media/meet-kunal.81e03335.png",
       "orderIndex": 1
     },
@@ -126,7 +126,7 @@
   ],
   "initiatives": [
     {
-      "id": "",
+      "id": 4,
       "createdAt": "2026-09-02T12:43:09.136Z",
       "title": "yova",
       "category": "Education",
@@ -149,7 +149,7 @@
       "fullDesc": "Testing <img src=\"x\">  Clean Text"
     },
     {
-      "id": "",
+      "id": 5,
       "createdAt": "2026-09-03T09:16:22.620Z",
       "title": "Health",
       "shortDesc": "health is welth",
@@ -216,7 +216,7 @@
       "url": "/uploads/caracter_sample_1788245218599_758575.png"
     },
     {
-      "id": "",
+      "id": 2,
       "title": "education",
       "type": "image",
       "url": "/uploads/pic_sample_1788427047873_759458.png"
@@ -264,9 +264,10 @@
     {
       "id": 1,
       "username": "admin",
-      "passwordHash": "$2a$10$rb0abu8AAoq0MMF0Zwgx1eI3Cb7QdCBtm9MCnOHJNtg40VvUrZNnm",
+      "passwordHash": "$2a$10$9.yMNCC5ip8CjFuJcoJdNusfzPse5mMaXliD4/X98KaLK/WySqcnq",
       "name": "Kunal Tilak Admin",
-      "role": "SUPER_ADMIN"
+      "role": "SUPER_ADMIN",
+      "passwordChangedAt": "2026-11-23T13:06:18.417Z"
     }
   ],
   "reportCards": [

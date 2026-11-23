@@ -18,11 +18,18 @@
   padding: 0;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   font-family: 'IBM Plex Sans', sans-serif;
   background-color: var(--admin-body-bg);
   color: var(--admin-text-main);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
 }
 
@@ -83,22 +90,31 @@ body {
 .appContainer {
   display: flex;
   width: 100vw;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
-/* SIDEBAR */
+/* SIDEBAR - Fixed to Viewport */
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
   width: 270px;
+  height: 100vh;
+  max-height: 100vh;
   background: var(--admin-sidebar-bg);
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
+  z-index: 100;
+  overflow: hidden;
 }
 
 .sidebar .brand {
-  padding: 25px 20px;
+  padding: 22px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
 }
 
 .sidebar .brand h2 {
@@ -117,15 +133,34 @@ body {
 
 .navTabs {
   list-style: none;
-  padding: 20px 0;
+  padding: 15px 0 15px 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Subtle sleek scrollbar for sidebar nav */
+.navTabs::-webkit-scrollbar {
+  width: 5px;
+}
+.navTabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+.navTabs::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+.navTabs::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .navTabs li a.navTab {
-  padding: 12px 24px;
+  padding: 11px 24px;
   color: #cbd5e1;
   text-decoration: none;
   font-size: 14px;
@@ -147,13 +182,57 @@ body {
   font-weight: 600;
 }
 
-/* MAIN CONTENT */
+/* Dedicated Fixed Sidebar Footer for View Live Website */
+.sidebarFooter {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--admin-sidebar-bg);
+  flex-shrink: 0;
+}
+
+.btnViewLive {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+  background: rgba(244, 130, 30, 0.12);
+  border: 1px solid rgba(244, 130, 30, 0.35);
+  border-radius: 8px;
+  color: var(--admin-primary);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btnViewLive:hover {
+  background: var(--admin-primary);
+  color: #ffffff;
+  border-color: var(--admin-primary);
+  box-shadow: 0 4px 12px rgba(244, 130, 30, 0.3);
+}
+
+.btnViewLive .liveArrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btnViewLive:hover .liveArrow {
+  transform: translateX(4px);
+}
+
+/* MAIN CONTENT - Offset by 270px fixed sidebar */
 .mainContent {
+  margin-left: 270px;
+  width: calc(100vw - 270px);
   flex: 1;
   display: flex;
   flex-direction: column;
   background: var(--admin-body-bg);
   min-width: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .topBar {
@@ -163,6 +242,8 @@ body {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--admin-border-color);
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .topBar h2 {
@@ -205,6 +286,22 @@ body {
   padding: 35px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.contentBody::-webkit-scrollbar {
+  width: 8px;
+}
+.contentBody::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.contentBody::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.contentBody::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .tabSection {
@@ -319,48 +416,138 @@ body {
   resize: vertical;
 }
 
-.imagePreview {
-  max-width: 160px;
-  max-height: 120px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-top: 8px;
-  border: 1px solid #cbd5e1;
-  display: block;
+/* FORM ACTIONS & SUBMIT BUTTON */
+.formActions {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .btnSubmit {
-  background: var(--admin-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #F4821E 0%, #D86F12 100%);
   color: #ffffff;
   border: none;
-  padding: 12px 24px;
+  padding: 11px 24px;
   font-size: 14px;
-  font-weight: 700;
-  border-radius: 6px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  box-shadow: 0 4px 14px rgba(244, 130, 30, 0.3);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .btnSubmit:hover {
-  background: var(--admin-primary-dark);
+  background: linear-gradient(135deg, #ff8d27 0%, #e67618 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(244, 130, 30, 0.45);
+}
+
+.btnSubmit:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(244, 130, 30, 0.3);
+}
+
+.btnSubmit svg {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.btnSubmit:hover svg {
+  transform: translateY(-1px) scale(1.08);
+}
+
+/* Fallback margin for any .btnSubmit not inside .formActions */
+form > .btnSubmit,
+.formGrid + .btnSubmit,
+.formGroup + .btnSubmit {
+  margin-top: 22px;
+}
+
+/* IMAGE PREVIEW BOX & ACTIONS */
+.imagePreviewBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  width: fit-content;
+  max-width: 100%;
+  transition: all 0.25s ease;
+}
+
+.imagePreviewBox:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.imagePreview {
+  width: 90px;
+  height: 90px;
+  max-width: 140px;
+  max-height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: block;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.imagePreview:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
 }
 
 .btnRemoveImg {
-  background: #ef4444;
-  color: #ffffff;
-  border: none;
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  padding: 8px 14px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 4px;
+  font-family: inherit;
+  border-radius: 6px;
   cursor: pointer;
-  margin-top: 8px;
-  display: inline-block;
-  transition: background 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .btnRemoveImg:hover {
-  background: #dc2626;
+  background: #e11d48;
+  color: #ffffff;
+  border-color: #e11d48;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+.btnRemoveImg:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 1px 4px rgba(225, 29, 72, 0.2);
+}
+
+.btnRemoveImg svg {
+  flex-shrink: 0;
+}
+
+/* Fallback spacing if imagePreview and btnRemoveImg are stacked in legacy div */
+.imagePreview + .btnRemoveImg {
+  margin-top: 10px;
+  display: inline-flex;
 }
 
 /* TABLES */
@@ -391,31 +578,224 @@ body {
   background: #f8fafc;
 }
 
+/* TABLE ACTION BUTTONS (Edit & Delete) */
+.adminTable td button,
+.btn-sm,
 .actionBtn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 13px;
   font-size: 12px;
   font-weight: 600;
+  font-family: inherit;
+  border-radius: 6px;
+  cursor: pointer;
+  line-height: 1.2;
+  border: 1px solid transparent;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  user-select: none;
 }
 
-.btnEdit {
-  background: #3b82f6;
+.adminTable td button + button,
+.btn-sm + .btn-sm {
+  margin-left: 6px;
+}
+
+/* EDIT BUTTON - Square with Pencil Icon & Interactive Animation */
+.btn-outline,
+.btnEdit,
+.editPillarBtn,
+.editInitiativeBtn,
+.editHighlightBtn,
+.editMeetBtn,
+.editSectorBtn,
+.editParlBtn,
+.editProjBtn,
+.editCategoryBtn,
+.editBlogBtn,
+.editReportCardBtn {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.btn-outline::before,
+.btnEdit::before,
+.editPillarBtn::before,
+.editInitiativeBtn::before,
+.editHighlightBtn::before,
+.editMeetBtn::before,
+.editSectorBtn::before,
+.editParlBtn::before,
+.editProjBtn::before,
+.editCategoryBtn::before,
+.editBlogBtn::before,
+.editReportCardBtn::before {
+  content: '';
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'%3E%3C/path%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.btn-outline:hover,
+.btnEdit:hover,
+.editPillarBtn:hover,
+.editInitiativeBtn:hover,
+.editHighlightBtn:hover,
+.editMeetBtn:hover,
+.editSectorBtn:hover,
+.editParlBtn:hover,
+.editProjBtn:hover,
+.editCategoryBtn:hover,
+.editBlogBtn:hover,
+.editReportCardBtn:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: #ffffff;
+  border-color: #2563eb;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.32);
 }
 
-.btnEdit:hover {
-  background: #2563eb;
+.btn-outline:hover::before,
+.btnEdit:hover::before,
+.editPillarBtn:hover::before,
+.editInitiativeBtn:hover::before,
+.editHighlightBtn:hover::before,
+.editMeetBtn:hover::before,
+.editSectorBtn:hover::before,
+.editParlBtn:hover::before,
+.editProjBtn:hover::before,
+.editCategoryBtn:hover::before,
+.editBlogBtn:hover::before,
+.editReportCardBtn:hover::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'%3E%3C/path%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'%3E%3C/path%3E%3C/svg%3E");
+  transform: scale(1.15) rotate(-6deg);
 }
 
-.btnDelete {
-  background: #ef4444;
+.btn-outline:active,
+.btnEdit:active,
+.editPillarBtn:active,
+.editInitiativeBtn:active,
+.editHighlightBtn:active,
+.editMeetBtn:active,
+.editSectorBtn:active,
+.editParlBtn:active,
+.editProjBtn:active,
+.editCategoryBtn:active,
+.editBlogBtn:active,
+.editReportCardBtn:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);
+}
+
+/* DELETE BUTTON - Dustbin/Trash Icon & Interactive Animation */
+.btn-danger,
+.btnDelete,
+.deletePillarBtn,
+.deleteInitiativeBtn,
+.deleteHighlightBtn,
+.deleteMeetBtn,
+.deleteSectorBtn,
+.deleteParlBtn,
+.deleteProjBtn,
+.deleteCategoryBtn,
+.deleteBlogBtn,
+.deleteGalleryBtn,
+.deleteReportCardBtn,
+.deleteMsgBtn {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+}
+
+.btn-danger::before,
+.btnDelete::before,
+.deletePillarBtn::before,
+.deleteInitiativeBtn::before,
+.deleteHighlightBtn::before,
+.deleteMeetBtn::before,
+.deleteSectorBtn::before,
+.deleteParlBtn::before,
+.deleteProjBtn::before,
+.deleteCategoryBtn::before,
+.deleteBlogBtn::before,
+.deleteGalleryBtn::before,
+.deleteReportCardBtn::before,
+.deleteMsgBtn::before {
+  content: '';
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e11d48' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.btn-danger:hover,
+.btnDelete:hover,
+.deletePillarBtn:hover,
+.deleteInitiativeBtn:hover,
+.deleteHighlightBtn:hover,
+.deleteMeetBtn:hover,
+.deleteSectorBtn:hover,
+.deleteParlBtn:hover,
+.deleteProjBtn:hover,
+.deleteCategoryBtn:hover,
+.deleteBlogBtn:hover,
+.deleteGalleryBtn:hover,
+.deleteReportCardBtn:hover,
+.deleteMsgBtn:hover {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   color: #ffffff;
+  border-color: #dc2626;
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.32);
 }
 
-.btnDelete:hover {
-  background: #dc2626;
+.btn-danger:hover::before,
+.btnDelete:hover::before,
+.deletePillarBtn:hover::before,
+.deleteInitiativeBtn:hover::before,
+.deleteHighlightBtn:hover::before,
+.deleteMeetBtn:hover::before,
+.deleteSectorBtn:hover::before,
+.deleteParlBtn:hover::before,
+.deleteProjBtn:hover::before,
+.deleteCategoryBtn:hover::before,
+.deleteBlogBtn:hover::before,
+.deleteGalleryBtn:hover::before,
+.deleteReportCardBtn:hover::before,
+.deleteMsgBtn:hover::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='3 6 5 6 21 6'%3E%3C/polyline%3E%3Cpath d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2'%3E%3C/path%3E%3Cline x1='10' y1='11' x2='10' y2='17'%3E%3C/line%3E%3Cline x1='14' y1='11' x2='14' y2='17'%3E%3C/line%3E%3C/svg%3E");
+  transform: scale(1.15) rotate(6deg);
+}
+
+.btn-danger:active,
+.btnDelete:active,
+.deletePillarBtn:active,
+.deleteInitiativeBtn:active,
+.deleteHighlightBtn:active,
+.deleteMeetBtn:active,
+.deleteSectorBtn:active,
+.deleteParlBtn:active,
+.deleteProjBtn:active,
+.deleteCategoryBtn:active,
+.deleteBlogBtn:active,
+.deleteGalleryBtn:active,
+.deleteReportCardBtn:active,
+.deleteMsgBtn:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 1px 3px rgba(220, 38, 38, 0.2);
 }
 
 /* Toggle Switch Styling */

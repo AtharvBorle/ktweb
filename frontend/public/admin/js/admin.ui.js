@@ -45,12 +45,15 @@ class AdminUIManager {
   setPreview(id, url) {
     const el = document.getElementById(id);
     if (el) {
+      const box = el.closest('.imagePreviewBox');
       if (url && url.trim() !== '') {
         el.src = this.bustingUrl(url);
         el.style.display = 'block';
+        if (box) box.style.display = 'inline-flex';
       } else {
         el.src = '';
         el.style.display = 'none';
+        if (box) box.style.display = 'none';
       }
     }
   }
@@ -93,6 +96,9 @@ class AdminUIManager {
 
         const titleEl = document.getElementById('currentTabTitle');
         if (titleEl) titleEl.innerText = tab.innerText;
+
+        const contentBody = document.querySelector('.contentBody');
+        if (contentBody) contentBody.scrollTop = 0;
       });
     });
 
