@@ -94,8 +94,12 @@ body {
   overflow: hidden;
 }
 
-/* SIDEBAR */
+/* SIDEBAR - Fixed to Viewport */
 .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
   width: 270px;
   height: 100vh;
   max-height: 100vh;
@@ -103,7 +107,7 @@ body {
   color: #ffffff;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
+  z-index: 100;
   overflow: hidden;
 }
 
@@ -129,11 +133,12 @@ body {
 
 .navTabs {
   list-style: none;
-  padding: 15px 0 20px 0;
+  padding: 15px 0 15px 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior: contain;
@@ -177,33 +182,49 @@ body {
   font-weight: 600;
 }
 
-.navTabs li.navLiveWebsite {
-  margin-top: 14px;
-  padding-top: 14px;
+/* Dedicated Fixed Sidebar Footer for View Live Website */
+.sidebarFooter {
+  padding: 16px 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--admin-sidebar-bg);
+  flex-shrink: 0;
 }
 
-.navTabs li.navLiveWebsite a {
-  padding: 11px 24px;
-  color: var(--admin-primary);
-  font-weight: 700;
-  font-size: 14px;
-  text-decoration: none;
+.btnViewLive {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-left: 4px solid transparent;
+  padding: 11px 16px;
+  background: rgba(244, 130, 30, 0.12);
+  border: 1px solid rgba(244, 130, 30, 0.35);
+  border-radius: 8px;
+  color: var(--admin-primary);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 
-.navTabs li.navLiveWebsite a:hover {
-  color: #ff9838;
-  background: rgba(244, 130, 30, 0.1);
-  border-left-color: var(--admin-primary);
+.btnViewLive:hover {
+  background: var(--admin-primary);
+  color: #ffffff;
+  border-color: var(--admin-primary);
+  box-shadow: 0 4px 12px rgba(244, 130, 30, 0.3);
 }
 
-/* MAIN CONTENT */
+.btnViewLive .liveArrow {
+  font-size: 16px;
+  transition: transform 0.2s ease;
+}
+
+.btnViewLive:hover .liveArrow {
+  transform: translateX(4px);
+}
+
+/* MAIN CONTENT - Offset by 270px fixed sidebar */
 .mainContent {
+  margin-left: 270px;
+  width: calc(100vw - 270px);
   flex: 1;
   display: flex;
   flex-direction: column;
