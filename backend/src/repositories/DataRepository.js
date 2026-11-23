@@ -128,12 +128,54 @@ class DataRepository {
   }
 
   /**
-   * Thread-safe synchronous store read
+   * Helper to safely extract ID and clean item payload so ID is never clobbered
+   */
+  _extractIdAndClean(item) {
+    const clean = { ...item };
+    const rawId = clean.id;
+    delete clean.id;
+    const hasId = rawId !== undefined && rawId !== null && String(rawId).trim() !== '';
+    const numericId = hasId ? (Number(rawId) || rawId) : null;
+    return { clean, hasId, targetId: numericId };
+  }
+
+  /**
+   * Thread-safe synchronous store read with automatic ID normalization
    */
   readStore() {
     try {
       const data = fs.readFileSync(this.storePath, 'utf8');
-      return JSON.parse(data);
+      const store = JSON.parse(data);
+      let needsSave = false;
+      const arrayKeys = [
+        'keyHighlights', 'meetKunal', 'initiatives', 'initiativePillars',
+        'parliamentItems', 'sectorInitiatives', 'constituencyProjects',
+        'blogs', 'gallery', 'messages', 'reportCards', 'categories'
+      ];
+      for (const key of arrayKeys) {
+        if (Array.isArray(store[key])) {
+          let maxId = store[key].reduce((max, item) => {
+            const num = Number(item && item.id);
+            return (!isNaN(num) && num > max) ? num : max;
+          }, 0);
+          for (let i = 0; i < store[key].length; i++) {
+            const item = store[key][i];
+            if (!item) continue;
+            if (item.id === '' || item.id === null || item.id === undefined) {
+              maxId++;
+              item.id = maxId;
+              needsSave = true;
+            } else if (typeof item.id === 'string' && !isNaN(Number(item.id)) && item.id.trim() !== '') {
+              item.id = Number(item.id);
+              needsSave = true;
+            }
+          }
+        }
+      }
+      if (needsSave) {
+        this.writeStore(store);
+      }
+      return store;
     } catch (err) {
       logger.error(`Failed to read data store: ${err.message}`);
       return {};
@@ -228,16 +270,18 @@ class DataRepository {
   saveInitiative(item) {
     const store = this.readStore();
     store.initiatives = store.initiatives || [];
-    if (item.id) {
-      const idx = store.initiatives.findIndex(i => String(i.id) === String(item.id));
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
+
+    if (hasId) {
+      const idx = store.initiatives.findIndex(i => String(i.id) === String(targetId));
       if (idx !== -1) {
-        store.initiatives[idx] = { ...store.initiatives[idx], ...item, id: Number(item.id) || item.id };
+        store.initiatives[idx] = { ...store.initiatives[idx], ...clean, id: targetId };
       } else {
-        store.initiatives.push({ ...item, id: Number(item.id) || item.id });
+        store.initiatives.push({ ...clean, id: targetId });
       }
     } else {
       const newId = store.initiatives.length ? Math.max(...store.initiatives.map(i => Number(i.id) || 0)) + 1 : 1;
-      store.initiatives.push({ id: newId, createdAt: new Date().toISOString(), ...item });
+      store.initiatives.push({ createdAt: new Date().toISOString(), ...clean, id: newId });
     }
     this.writeStore(store);
     return store.initiatives;
@@ -260,19 +304,18 @@ class DataRepository {
   saveInitiativePillar(item) {
     const store = this.readStore();
     store.initiativePillars = store.initiativePillars || [];
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
 
-    if (item.id && String(item.id).trim() !== '') {
-      const idx = store.initiativePillars.findIndex(p => String(p.id) === String(item.id));
+    if (hasId) {
+      const idx = store.initiativePillars.findIndex(p => String(p.id) === String(targetId));
       if (idx !== -1) {
-        store.initiativePillars[idx] = { ...store.initiativePillars[idx], ...item, id: Number(item.id) || item.id };
+        store.initiativePillars[idx] = { ...store.initiativePillars[idx], ...clean, id: targetId };
       } else {
-        store.initiativePillars.push({ ...item, id: Number(item.id) || item.id });
+        store.initiativePillars.push({ ...clean, id: targetId });
       }
     } else {
       const newId = store.initiativePillars.length ? Math.max(...store.initiativePillars.map(p => Number(p.id) || 0)) + 1 : 1;
-      const cleanItem = { ...item };
-      delete cleanItem.id;
-      store.initiativePillars.push({ id: newId, ...cleanItem });
+      store.initiativePillars.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.initiativePillars;
@@ -295,12 +338,18 @@ class DataRepository {
   saveKeyHighlight(item) {
     const store = this.readStore();
     store.keyHighlights = store.keyHighlights || [];
-    if (item.id) {
-      const idx = store.keyHighlights.findIndex(k => k.id === Number(item.id));
-      if (idx !== -1) store.keyHighlights[idx] = { ...store.keyHighlights[idx], ...item };
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
+
+    if (hasId) {
+      const idx = store.keyHighlights.findIndex(k => String(k.id) === String(targetId));
+      if (idx !== -1) {
+        store.keyHighlights[idx] = { ...store.keyHighlights[idx], ...clean, id: targetId };
+      } else {
+        store.keyHighlights.push({ ...clean, id: targetId });
+      }
     } else {
-      const newId = store.keyHighlights.length ? Math.max(...store.keyHighlights.map(k => k.id)) + 1 : 1;
-      store.keyHighlights.push({ id: newId, ...item });
+      const newId = store.keyHighlights.length ? Math.max(...store.keyHighlights.map(k => Number(k.id) || 0)) + 1 : 1;
+      store.keyHighlights.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.keyHighlights;
@@ -308,7 +357,7 @@ class DataRepository {
 
   deleteKeyHighlight(id) {
     const store = this.readStore();
-    store.keyHighlights = (store.keyHighlights || []).filter(k => k.id !== Number(id));
+    store.keyHighlights = (store.keyHighlights || []).filter(k => String(k.id) !== String(id));
     this.writeStore(store);
     return true;
   }
@@ -323,12 +372,18 @@ class DataRepository {
   saveMeetKunalSlide(item) {
     const store = this.readStore();
     store.meetKunal = store.meetKunal || [];
-    if (item.id) {
-      const idx = store.meetKunal.findIndex(m => m.id === Number(item.id));
-      if (idx !== -1) store.meetKunal[idx] = { ...store.meetKunal[idx], ...item };
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
+
+    if (hasId) {
+      const idx = store.meetKunal.findIndex(m => String(m.id) === String(targetId));
+      if (idx !== -1) {
+        store.meetKunal[idx] = { ...store.meetKunal[idx], ...clean, id: targetId };
+      } else {
+        store.meetKunal.push({ ...clean, id: targetId });
+      }
     } else {
-      const newId = store.meetKunal.length ? Math.max(...store.meetKunal.map(m => m.id)) + 1 : 1;
-      store.meetKunal.push({ id: newId, ...item });
+      const newId = store.meetKunal.length ? Math.max(...store.meetKunal.map(m => Number(m.id) || 0)) + 1 : 1;
+      store.meetKunal.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.meetKunal;
@@ -336,7 +391,7 @@ class DataRepository {
 
   deleteMeetKunalSlide(id) {
     const store = this.readStore();
-    store.meetKunal = (store.meetKunal || []).filter(m => m.id !== Number(id));
+    store.meetKunal = (store.meetKunal || []).filter(m => String(m.id) !== String(id));
     this.writeStore(store);
     return true;
   }
@@ -351,12 +406,18 @@ class DataRepository {
   saveParliamentItem(item) {
     const store = this.readStore();
     store.parliamentItems = store.parliamentItems || [];
-    if (item.id) {
-      const idx = store.parliamentItems.findIndex(p => p.id === Number(item.id));
-      if (idx !== -1) store.parliamentItems[idx] = { ...store.parliamentItems[idx], ...item };
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
+
+    if (hasId) {
+      const idx = store.parliamentItems.findIndex(p => String(p.id) === String(targetId));
+      if (idx !== -1) {
+        store.parliamentItems[idx] = { ...store.parliamentItems[idx], ...clean, id: targetId };
+      } else {
+        store.parliamentItems.push({ ...clean, id: targetId });
+      }
     } else {
-      const newId = store.parliamentItems.length ? Math.max(...store.parliamentItems.map(p => p.id)) + 1 : 1;
-      store.parliamentItems.push({ id: newId, ...item });
+      const newId = store.parliamentItems.length ? Math.max(...store.parliamentItems.map(p => Number(p.id) || 0)) + 1 : 1;
+      store.parliamentItems.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.parliamentItems;
@@ -380,16 +441,18 @@ class DataRepository {
   saveSectorItem(item) {
     const store = this.readStore();
     store.sectorInitiatives = store.sectorInitiatives || [];
-    if (item.id) {
-      const idx = store.sectorInitiatives.findIndex(s => String(s.id) === String(item.id));
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
+
+    if (hasId) {
+      const idx = store.sectorInitiatives.findIndex(s => String(s.id) === String(targetId));
       if (idx !== -1) {
-        store.sectorInitiatives[idx] = { ...store.sectorInitiatives[idx], ...item, id: Number(item.id) || item.id };
+        store.sectorInitiatives[idx] = { ...store.sectorInitiatives[idx], ...clean, id: targetId };
       } else {
-        store.sectorInitiatives.push({ ...item, id: Number(item.id) || item.id });
+        store.sectorInitiatives.push({ ...clean, id: targetId });
       }
     } else {
       const newId = store.sectorInitiatives.length ? Math.max(...store.sectorInitiatives.map(s => Number(s.id) || 0)) + 1 : 1;
-      store.sectorInitiatives.push({ id: newId, ...item });
+      store.sectorInitiatives.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.sectorInitiatives;
@@ -412,16 +475,18 @@ class DataRepository {
   saveConstituencyProject(item) {
     const store = this.readStore();
     store.constituencyProjects = store.constituencyProjects || [];
-    if (item.id) {
-      const idx = store.constituencyProjects.findIndex(c => String(c.id) === String(item.id));
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
+
+    if (hasId) {
+      const idx = store.constituencyProjects.findIndex(c => String(c.id) === String(targetId));
       if (idx !== -1) {
-        store.constituencyProjects[idx] = { ...store.constituencyProjects[idx], ...item, id: Number(item.id) || item.id };
+        store.constituencyProjects[idx] = { ...store.constituencyProjects[idx], ...clean, id: targetId };
       } else {
-        store.constituencyProjects.push({ ...item, id: Number(item.id) || item.id });
+        store.constituencyProjects.push({ ...clean, id: targetId });
       }
     } else {
       const newId = store.constituencyProjects.length ? Math.max(...store.constituencyProjects.map(c => Number(c.id) || 0)) + 1 : 1;
-      store.constituencyProjects.push({ id: newId, ...item });
+      store.constituencyProjects.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.constituencyProjects;
@@ -444,22 +509,24 @@ class DataRepository {
   saveBlogPost(post) {
     const store = this.readStore();
     store.blogs = store.blogs || [];
-    if (post.id) {
-      const idx = store.blogs.findIndex(b => String(b.id) === String(post.id));
+    const { clean, hasId, targetId } = this._extractIdAndClean(post);
+
+    if (hasId) {
+      const idx = store.blogs.findIndex(b => String(b.id) === String(targetId));
       if (idx !== -1) {
-        store.blogs[idx] = { ...store.blogs[idx], ...post, id: Number(post.id) || post.id };
+        store.blogs[idx] = { ...store.blogs[idx], ...clean, id: targetId };
       } else {
-        store.blogs.push({ ...post, id: Number(post.id) || post.id });
+        store.blogs.push({ ...clean, id: targetId });
       }
     } else {
       const newId = store.blogs.length ? Math.max(...store.blogs.map(b => Number(b.id) || 0)) + 1 : 1;
-      const slug = post.slug || post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const slug = clean.slug || (clean.title ? clean.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'post');
       store.blogs.unshift({
-        id: newId,
         slug,
         isPublished: true,
         publishedAt: new Date().toISOString(),
-        ...post
+        ...clean,
+        id: newId
       });
     }
     this.writeStore(store);
@@ -483,16 +550,18 @@ class DataRepository {
   saveGalleryItem(item) {
     const store = this.readStore();
     store.gallery = store.gallery || [];
-    if (item.id) {
-      const idx = store.gallery.findIndex(g => String(g.id) === String(item.id));
+    const { clean, hasId, targetId } = this._extractIdAndClean(item);
+
+    if (hasId) {
+      const idx = store.gallery.findIndex(g => String(g.id) === String(targetId));
       if (idx !== -1) {
-        store.gallery[idx] = { ...store.gallery[idx], ...item, id: Number(item.id) || item.id };
+        store.gallery[idx] = { ...store.gallery[idx], ...clean, id: targetId };
       } else {
-        store.gallery.push({ ...item, id: Number(item.id) || item.id });
+        store.gallery.push({ ...clean, id: targetId });
       }
     } else {
       const newId = store.gallery.length ? Math.max(...store.gallery.map(g => Number(g.id) || 0)) + 1 : 1;
-      store.gallery.push({ id: newId, ...item });
+      store.gallery.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.gallery;
@@ -515,7 +584,7 @@ class DataRepository {
   saveContactMessage(message) {
     const store = this.readStore();
     store.messages = store.messages || [];
-    const newId = store.messages.length ? Math.max(...store.messages.map(m => m.id)) + 1 : 1;
+    const newId = store.messages.length ? Math.max(...store.messages.map(m => Number(m.id) || 0)) + 1 : 1;
     const newMsg = {
       id: newId,
       name: message.name,
@@ -532,7 +601,7 @@ class DataRepository {
 
   deleteContactMessage(id) {
     const store = this.readStore();
-    store.messages = (store.messages || []).filter(m => m.id !== Number(id));
+    store.messages = (store.messages || []).filter(m => String(m.id) !== String(id));
     this.writeStore(store);
     return true;
   }
@@ -547,12 +616,18 @@ class DataRepository {
   saveReportCard(card) {
     const store = this.readStore();
     store.reportCards = store.reportCards || [];
-    if (card.id) {
-      const idx = store.reportCards.findIndex(c => c.id === Number(card.id));
-      if (idx !== -1) store.reportCards[idx] = { ...store.reportCards[idx], ...card };
+    const { clean, hasId, targetId } = this._extractIdAndClean(card);
+
+    if (hasId) {
+      const idx = store.reportCards.findIndex(c => String(c.id) === String(targetId));
+      if (idx !== -1) {
+        store.reportCards[idx] = { ...store.reportCards[idx], ...clean, id: targetId };
+      } else {
+        store.reportCards.push({ ...clean, id: targetId });
+      }
     } else {
-      const newId = store.reportCards.length ? Math.max(...store.reportCards.map(c => c.id)) + 1 : 1;
-      store.reportCards.push({ id: newId, ...card });
+      const newId = store.reportCards.length ? Math.max(...store.reportCards.map(c => Number(c.id) || 0)) + 1 : 1;
+      store.reportCards.push({ ...clean, id: newId });
     }
     this.writeStore(store);
     return store.reportCards;
@@ -560,7 +635,7 @@ class DataRepository {
 
   deleteReportCard(id) {
     const store = this.readStore();
-    store.reportCards = (store.reportCards || []).filter(c => c.id !== Number(id));
+    store.reportCards = (store.reportCards || []).filter(c => String(c.id) !== String(id));
     this.writeStore(store);
     return true;
   }
@@ -590,12 +665,18 @@ class DataRepository {
   saveCategory(cat) {
     const store = this.readStore();
     store.categories = store.categories || [];
-    if (cat.id) {
-      const idx = store.categories.findIndex(c => c.id === Number(cat.id));
-      if (idx !== -1) store.categories[idx] = { ...store.categories[idx], name: cat.name };
+    const { clean, hasId, targetId } = this._extractIdAndClean(cat);
+
+    if (hasId) {
+      const idx = store.categories.findIndex(c => String(c.id) === String(targetId));
+      if (idx !== -1) {
+        store.categories[idx] = { ...store.categories[idx], name: clean.name, id: targetId };
+      } else {
+        store.categories.push({ name: clean.name, id: targetId });
+      }
     } else {
-      const newId = store.categories.length ? Math.max(...store.categories.map(c => c.id)) + 1 : 1;
-      store.categories.push({ id: newId, name: cat.name });
+      const newId = store.categories.length ? Math.max(...store.categories.map(c => Number(c.id) || 0)) + 1 : 1;
+      store.categories.push({ name: clean.name, id: newId });
     }
     this.writeStore(store);
     return store.categories;
@@ -603,7 +684,7 @@ class DataRepository {
 
   deleteCategory(id) {
     const store = this.readStore();
-    store.categories = (store.categories || []).filter(c => c.id !== Number(id));
+    store.categories = (store.categories || []).filter(c => String(c.id) !== String(id));
     this.writeStore(store);
     return true;
   }

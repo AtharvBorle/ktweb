@@ -830,8 +830,10 @@ function setupTableEventDelegation() {
         window.adminUI.setVal('highlightIssue', item.issue);
         window.adminUI.setVal('highlightDesc', item.description);
         window.adminUI.setVal('highlightDonateUrl', item.donateUrl);
-        const form = document.getElementById('keyHighlightForm');
+        const form = document.getElementById('highlightForm');
         if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const titleIn = document.getElementById('highlightTitle');
+        if (titleIn) titleIn.focus();
       }
     }
 
@@ -852,8 +854,10 @@ function setupTableEventDelegation() {
         window.adminUI.setVal('meetId', item.id);
         window.adminUI.setVal('meetTitle', item.title);
         window.adminUI.setVal('meetContent', item.content);
-        const form = document.getElementById('meetKunalForm');
+        const form = document.getElementById('meetForm');
         if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const titleIn = document.getElementById('meetTitle');
+        if (titleIn) titleIn.focus();
       }
     }
 
