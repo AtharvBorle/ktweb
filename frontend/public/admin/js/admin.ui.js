@@ -93,6 +93,9 @@ class AdminUIManager {
 
         const titleEl = document.getElementById('currentTabTitle');
         if (titleEl) titleEl.innerText = tab.innerText;
+
+        const contentBody = document.querySelector('.contentBody');
+        if (contentBody) contentBody.scrollTop = 0;
       });
     });
 

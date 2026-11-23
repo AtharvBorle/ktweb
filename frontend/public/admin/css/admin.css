@@ -18,11 +18,18 @@
   padding: 0;
 }
 
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   font-family: 'IBM Plex Sans', sans-serif;
   background-color: var(--admin-body-bg);
   color: var(--admin-text-main);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
 }
 
@@ -83,22 +90,27 @@ body {
 .appContainer {
   display: flex;
   width: 100vw;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* SIDEBAR */
 .sidebar {
   width: 270px;
+  height: 100vh;
+  max-height: 100vh;
   background: var(--admin-sidebar-bg);
   color: #ffffff;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow: hidden;
 }
 
 .sidebar .brand {
-  padding: 25px 20px;
+  padding: 22px 20px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
 }
 
 .sidebar .brand h2 {
@@ -117,15 +129,33 @@ body {
 
 .navTabs {
   list-style: none;
-  padding: 20px 0;
+  padding: 15px 0 20px 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
   flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+
+/* Subtle sleek scrollbar for sidebar nav */
+.navTabs::-webkit-scrollbar {
+  width: 5px;
+}
+.navTabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+.navTabs::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+.navTabs::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .navTabs li a.navTab {
-  padding: 12px 24px;
+  padding: 11px 24px;
   color: #cbd5e1;
   text-decoration: none;
   font-size: 14px;
@@ -147,6 +177,31 @@ body {
   font-weight: 600;
 }
 
+.navTabs li.navLiveWebsite {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.navTabs li.navLiveWebsite a {
+  padding: 11px 24px;
+  color: var(--admin-primary);
+  font-weight: 700;
+  font-size: 14px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.navTabs li.navLiveWebsite a:hover {
+  color: #ff9838;
+  background: rgba(244, 130, 30, 0.1);
+  border-left-color: var(--admin-primary);
+}
+
 /* MAIN CONTENT */
 .mainContent {
   flex: 1;
@@ -154,6 +209,9 @@ body {
   flex-direction: column;
   background: var(--admin-body-bg);
   min-width: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .topBar {
@@ -163,6 +221,8 @@ body {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--admin-border-color);
+  flex-shrink: 0;
+  z-index: 10;
 }
 
 .topBar h2 {
@@ -205,6 +265,22 @@ body {
   padding: 35px;
   overflow-y: auto;
   flex: 1;
+  min-height: 0;
+  overscroll-behavior: contain;
+}
+
+.contentBody::-webkit-scrollbar {
+  width: 8px;
+}
+.contentBody::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+.contentBody::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.contentBody::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .tabSection {
