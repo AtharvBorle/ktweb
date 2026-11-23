@@ -732,6 +732,7 @@ class DataRepository {
     }
 
     admin.passwordHash = bcrypt.hashSync(newPassword, 10);
+    admin.passwordChangedAt = new Date().toISOString();
     this.writeStore(store);
     return true;
   }

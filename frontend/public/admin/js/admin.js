@@ -170,10 +170,16 @@ function setupAuthHandlers() {
 
       const res = await window.adminService.changePassword(currentPassword, newPassword);
       if (res.success) {
-        alert('Password changed successfully! Please keep your new password safe.');
+        alert('Password changed successfully! For security, your session has been terminated. Please log in again using your new password.');
         closeModal();
         pwdForm.reset();
-        await refreshAdminData();
+        window.adminService.removeToken();
+        window.adminUI.showLoginScreen();
+
+        const pwdInput = document.getElementById('loginPassword');
+        if (pwdInput) pwdInput.value = '';
+        const userInput = document.getElementById('loginUsername');
+        if (userInput) userInput.focus();
       } else {
         alert(res.message || 'Error updating password.');
       }
