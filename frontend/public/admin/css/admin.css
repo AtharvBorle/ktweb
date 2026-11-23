@@ -416,48 +416,138 @@ body {
   resize: vertical;
 }
 
-.imagePreview {
-  max-width: 160px;
-  max-height: 120px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-top: 8px;
-  border: 1px solid #cbd5e1;
-  display: block;
+/* FORM ACTIONS & SUBMIT BUTTON */
+.formActions {
+  margin-top: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .btnSubmit {
-  background: var(--admin-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #F4821E 0%, #D86F12 100%);
   color: #ffffff;
   border: none;
-  padding: 12px 24px;
+  padding: 11px 24px;
   font-size: 14px;
-  font-weight: 700;
-  border-radius: 6px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  box-shadow: 0 4px 14px rgba(244, 130, 30, 0.3);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .btnSubmit:hover {
-  background: var(--admin-primary-dark);
+  background: linear-gradient(135deg, #ff8d27 0%, #e67618 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(244, 130, 30, 0.45);
+}
+
+.btnSubmit:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 2px 6px rgba(244, 130, 30, 0.3);
+}
+
+.btnSubmit svg {
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.btnSubmit:hover svg {
+  transform: translateY(-1px) scale(1.08);
+}
+
+/* Fallback margin for any .btnSubmit not inside .formActions */
+form > .btnSubmit,
+.formGrid + .btnSubmit,
+.formGroup + .btnSubmit {
+  margin-top: 22px;
+}
+
+/* IMAGE PREVIEW BOX & ACTIONS */
+.imagePreviewBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 10px;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 10px;
+  width: fit-content;
+  max-width: 100%;
+  transition: all 0.25s ease;
+}
+
+.imagePreviewBox:hover {
+  border-color: #94a3b8;
+  background: #f1f5f9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.imagePreview {
+  width: 90px;
+  height: 90px;
+  max-width: 140px;
+  max-height: 110px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: block;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.imagePreview:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
 }
 
 .btnRemoveImg {
-  background: #ef4444;
-  color: #ffffff;
-  border: none;
-  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #fecdd3;
+  padding: 8px 14px;
   font-size: 12px;
   font-weight: 600;
-  border-radius: 4px;
+  font-family: inherit;
+  border-radius: 6px;
   cursor: pointer;
-  margin-top: 8px;
-  display: inline-block;
-  transition: background 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .btnRemoveImg:hover {
-  background: #dc2626;
+  background: #e11d48;
+  color: #ffffff;
+  border-color: #e11d48;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+
+.btnRemoveImg:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 1px 4px rgba(225, 29, 72, 0.2);
+}
+
+.btnRemoveImg svg {
+  flex-shrink: 0;
+}
+
+/* Fallback spacing if imagePreview and btnRemoveImg are stacked in legacy div */
+.imagePreview + .btnRemoveImg {
+  margin-top: 10px;
+  display: inline-flex;
 }
 
 /* TABLES */

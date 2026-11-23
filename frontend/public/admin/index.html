@@ -10,23 +10,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    .btnRemoveImg {
-      background: #dc3545;
-      color: #ffffff;
-      border: none;
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 8px;
-      display: inline-block;
-    }
-    .btnRemoveImg:hover {
-      background: #bd2130;
-    }
-  </style>
 </head>
 <body>
 
@@ -419,7 +402,7 @@
         <section class="tabSection" id="tab-highlights">
           <div class="cardBox">
             <h3>Key Highlights Section Controls</h3>
-            <form id="highlightSectionForm" style="margin-bottom: 25px; padding-bottom: 20px; border-bottom: 1px solid #eee;">
+            <form id="highlightSectionForm" style="margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid #eee;">
               <div class="formGroup">
                 <label>Section Main Headline</label>
                 <input type="text" id="hlSectionHeadingInput" required />
@@ -428,12 +411,20 @@
                 <label>Upload Left Section Graphic Image</label>
                 <input type="file" id="hlSectionImgFile" accept="image/*" />
                 <input type="hidden" id="hlSectionImgPath" />
-                <div>
-                  <img id="hlSectionImgPreview" class="imagePreview" src="" />
-                  <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('hlSectionImgPath', 'hlSectionImgPreview', 'hlSectionImgFile')">Remove Image</button>
+                <div class="imagePreviewBox" id="hlSectionImgBox" style="display: none;">
+                  <img id="hlSectionImgPreview" class="imagePreview" src="" alt="Section Graphic Preview" />
+                  <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('hlSectionImgPath', 'hlSectionImgPreview', 'hlSectionImgFile')">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Remove Image</span>
+                  </button>
                 </div>
               </div>
-              <button type="submit" class="btnSubmit">Save Section Headline & Image</button>
+              <div class="formActions">
+                <button type="submit" class="btnSubmit">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                  <span>Save Section Headline & Image</span>
+                </button>
+              </div>
             </form>
 
             <h3>Add / Edit Key Highlight Card</h3>
@@ -457,7 +448,12 @@
                   <input type="url" id="highlightDonateUrl" />
                 </div>
               </div>
-              <button type="submit" class="btnSubmit">Save Highlight Card</button>
+              <div class="formActions">
+                <button type="submit" class="btnSubmit">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                  <span>Save Highlight Card</span>
+                </button>
+              </div>
             </form>
           </div>
 
