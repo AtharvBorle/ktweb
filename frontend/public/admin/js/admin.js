@@ -726,6 +726,22 @@ function setupFormSubmissions() {
 
   // Sector Initiative Form
   const sectorForm = document.getElementById('sectorInitiativeForm');
+  const btnSaveSector = document.getElementById('btnSaveSectorItem');
+  const btnCancelSector = document.getElementById('btnCancelSectorItem');
+
+  function resetSectorForm() {
+    if (sectorForm) sectorForm.reset();
+    window.adminUI.setVal('sectorItemId', '');
+    if (btnSaveSector) btnSaveSector.innerText = 'Save Sector Initiative Item';
+    if (btnCancelSector) btnCancelSector.style.display = 'none';
+  }
+
+  if (btnCancelSector) {
+    btnCancelSector.addEventListener('click', () => {
+      resetSectorForm();
+    });
+  }
+
   if (sectorForm) {
     sectorForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -740,8 +756,7 @@ function setupFormSubmissions() {
       const res = await window.adminService.saveSectorItem(payload);
       if (res.success) {
         alert('Sector initiative saved!');
-        sectorForm.reset();
-        window.adminUI.setVal('sectorItemId', '');
+        resetSectorForm();
         await refreshAdminData();
       } else {
         alert(res.message || 'Error saving sector initiative');
@@ -925,29 +940,54 @@ function setupTableEventDelegation() {
     }
 
     // Delete Sector Item
-    if (target.classList.contains('deleteSectorBtn')) {
-      const id = target.getAttribute('data-id');
+    const deleteSectorBtn = e.target.closest('.deleteSectorBtn');
+    if (deleteSectorBtn) {
+      e.preventDefault();
+      const id = deleteSectorBtn.getAttribute('data-id');
+      if (!id) return;
       if (confirm(`Delete sector initiative #${id}?`)) {
-        await window.adminService.deleteSectorItem(id);
-        await refreshAdminData();
+        const res = await window.adminService.deleteSectorItem(id);
+        if (res && res.success) {
+          await refreshAdminData();
+        } else {
+          alert(res?.message || 'Error deleting sector initiative');
+        }
       }
+      return;
     }
 
     // Edit Sector Item
-    if (target.classList.contains('editSectorBtn')) {
-      const id = target.getAttribute('data-id');
-      const item = (window.adminUI.currentData.sectorInitiatives || []).find(s => String(s.id) === String(id));
+    const editSectorBtn = e.target.closest('.editSectorBtn');
+    if (editSectorBtn) {
+      e.preventDefault();
+      const id = editSectorBtn.getAttribute('data-id');
+      if (!id) return;
+      let item = (window.adminUI.currentData?.sectorInitiatives || []).find(s => String(s.id) === String(id));
+      if (!item) {
+        const contentRes = await window.adminService.getContent();
+        if (contentRes && contentRes.success && contentRes.data) {
+          window.adminUI.currentData = contentRes.data;
+          item = (contentRes.data.sectorInitiatives || []).find(s => String(s.id) === String(id));
+        }
+      }
       if (item) {
         window.adminUI.setVal('sectorItemId', item.id);
         window.adminUI.setVal('sectorPageSelect', item.sector);
         window.adminUI.setVal('sectorItemTitle', item.title);
         window.adminUI.setVal('sectorItemIssue', item.issue || '');
         window.adminUI.setVal('sectorItemDesc', item.description || '');
+
+        const btnSave = document.getElementById('btnSaveSectorItem');
+        if (btnSave) btnSave.innerText = 'Update Sector Initiative Item';
+        const btnCancel = document.getElementById('btnCancelSectorItem');
+        if (btnCancel) btnCancel.style.display = 'inline-block';
+
         const form = document.getElementById('sectorInitiativeForm');
         if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
         const titleIn = document.getElementById('sectorItemTitle');
         if (titleIn) titleIn.focus();
       }
+      return;
     }
 
     // Delete Parliament Item
