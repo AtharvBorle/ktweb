@@ -8,6 +8,7 @@ class UIRenderers {
     this.state = {
       data: null
     };
+    this.setupReportCardHandlers();
   }
 
   bustingUrl(url) {
@@ -911,6 +912,139 @@ class UIRenderers {
         }
       });
     }
+
+    this.setupReportCardHandlers();
+  }
+
+  /**
+   * 8.5. Report Card Download & Intercept Handlers
+   */
+  setupReportCardHandlers() {
+    if (this._reportCardHandlerAttached) return;
+    this._reportCardHandlerAttached = true;
+
+    document.addEventListener('click', async (e) => {
+      const reportBtn = e.target.closest('a.reportButton, .reportButton, a[href*="report-card"], a.reportCardBtn');
+      if (!reportBtn) return;
+
+      e.preventDefault();
+      const rawHref = reportBtn.getAttribute('href') || '';
+      const href = rawHref.trim();
+
+      // Check if placeholder, empty, or dummy file
+      const isPlaceholder = !href ||
+        href === '#' ||
+        href.startsWith('javascript:') ||
+        href.includes('5years-report-card') ||
+        href.includes('kunal-surya-5years-report-card');
+
+      if (isPlaceholder) {
+        this.showRightCornerToast('Report is not available right now');
+        return;
+      }
+
+      // Check if actual file exists on server
+      try {
+        const res = await fetch(href, { method: 'HEAD' });
+        if (res.ok) {
+          const tempLink = document.createElement('a');
+          tempLink.href = href;
+          if (reportBtn.hasAttribute('download')) {
+            tempLink.setAttribute('download', reportBtn.getAttribute('download') || '');
+          }
+          tempLink.setAttribute('target', '_blank');
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          document.body.removeChild(tempLink);
+          return;
+        }
+      } catch (err) {
+        // Fall through to toast if network or server error
+      }
+
+      this.showRightCornerToast('Report is not available right now');
+    });
+  }
+
+  /**
+   * Right-Corner Animated Toast Notification
+   * Slides in from right corner, waits 3 seconds, then slides back out to the right.
+   */
+  showRightCornerToast(message = 'Report is not available right now') {
+    let existing = document.getElementById('reportCardToastNotification');
+    if (existing) {
+      if (this._reportToastTimeout) clearTimeout(this._reportToastTimeout);
+      existing.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.id = 'reportCardToastNotification';
+    toast.style.cssText = `
+      position: fixed;
+      top: 28px;
+      right: 28px;
+      z-index: 9999999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #1e293b;
+      color: #ffffff;
+      padding: 14px 22px;
+      border-radius: 10px;
+      border-left: 5px solid #F4821E;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.1);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 14.5px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      line-height: 1.4;
+      transform: translateX(calc(100% + 40px));
+      opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+      pointer-events: auto;
+      max-width: calc(100vw - 40px);
+    `;
+
+    toast.innerHTML = `
+      <div style="width: 28px; height: 28px; border-radius: 50%; background: rgba(244, 130, 30, 0.18); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg style="width: 16px; height: 16px; color: #F4821E;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <span style="flex: 1; color: #f8fafc;">${message}</span>
+      <span style="cursor: pointer; color: #94a3b8; font-size: 18px; margin-left: 8px; line-height: 1;" title="Dismiss">&times;</span>
+    `;
+
+    const closeBtn = toast.querySelector('span:last-child');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', () => {
+        if (this._reportToastTimeout) clearTimeout(this._reportToastTimeout);
+        toast.style.transform = 'translateX(calc(100% + 40px))';
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 400);
+      });
+    }
+
+    document.body.appendChild(toast);
+
+    // Slide in from right corner
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        toast.style.transform = 'translateX(0)';
+        toast.style.opacity = '1';
+      });
+    });
+
+    // Stay for 3 seconds, then slide back out to the right
+    this._reportToastTimeout = setTimeout(() => {
+      toast.style.transform = 'translateX(calc(100% + 40px))';
+      toast.style.opacity = '0';
+      setTimeout(() => {
+        if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 450);
+    }, 3000);
   }
 
   /**
