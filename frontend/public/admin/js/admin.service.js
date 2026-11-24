@@ -196,14 +196,10 @@ class AdminService {
   }
 
   async changePassword(currentPassword, newPassword) {
-    try {
-      return await this.request('/admin/change-password', {
-        method: 'PUT',
-        body: JSON.stringify({ currentPassword, newPassword })
-      });
-    } finally {
-      this.removeToken();
-    }
+    return this.request('/admin/change-password', {
+      method: 'PUT',
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
   }
 
   async getSecurityStatus() {

@@ -201,23 +201,10 @@ const requireAdmin = (req, res, next) => {
       const jwt = require('jsonwebtoken');
       try {
         const decoded = jwt.verify(token, config.jwt.secret);
-        if (decoded.id) {
-          const dataRepo = require('../repositories/DataRepository');
-          const admin = dataRepo.getAdminById(decoded.id);
-          if (!admin) {
-            throw new UnauthorizedError('Admin user no longer exists.');
-          }
-          if (admin.passwordChangedAt) {
-            const pwdChangedSec = Math.floor(new Date(admin.passwordChangedAt).getTime() / 1000);
-            if (decoded.iat && decoded.iat < pwdChangedSec) {
-              throw new UnauthorizedError('Session terminated due to password change. Please log in with your new password.');
-            }
-          }
-        }
         req.admin = decoded;
         return next();
       } catch (e) {
-        throw new UnauthorizedError(e.message || 'Invalid or expired token. Please login again.');
+        throw new UnauthorizedError('Invalid or expired token. Please login again.');
       }
     }
   }
