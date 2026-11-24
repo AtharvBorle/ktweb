@@ -564,10 +564,29 @@ function setupFormSubmissions() {
         const vidUrl = (window.adminUI.getVal('galleryVideoUrl') || '').trim();
         mediaUrl = vidPath || vidUrl;
         if (!mediaUrl) {
-          alert('Please upload a video file or enter a YouTube URL.');
+          alert('Please enter a valid URL.');
           const vidUrlEl = document.getElementById('galleryVideoUrl');
-          if (vidUrlEl) vidUrlEl.focus();
+          if (vidUrlEl) {
+            vidUrlEl.focus();
+            vidUrlEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
           return;
+        }
+        if (vidUrl && !vidPath) {
+          try {
+            const parsed = new URL(vidUrl);
+            if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+              alert('Please enter a valid URL.');
+              const vidUrlEl = document.getElementById('galleryVideoUrl');
+              if (vidUrlEl) vidUrlEl.focus();
+              return;
+            }
+          } catch (e) {
+            alert('Please enter a valid URL.');
+            const vidUrlEl = document.getElementById('galleryVideoUrl');
+            if (vidUrlEl) vidUrlEl.focus();
+            return;
+          }
         }
       } else {
         const imgPath = (window.adminUI.getVal('galleryImagePath') || '').trim();

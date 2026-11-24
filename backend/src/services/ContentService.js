@@ -229,7 +229,7 @@ class ContentService {
     if (!galleryData.url || !galleryData.url.trim()) {
       throw new BadRequestError(
         type === 'video'
-          ? 'Please upload a video file or enter a YouTube URL.'
+          ? 'Please enter a valid URL.'
           : 'Please upload an image.'
       );
     }
