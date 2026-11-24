@@ -370,6 +370,14 @@ class AdminService {
     return this.request(`/admin/messages/${id}`, { method: 'DELETE' });
   }
 
+  // --- Email Notifications ---
+  async sendTestEmail(targetEmail) {
+    return this.request('/admin/email/test', {
+      method: 'POST',
+      body: JSON.stringify({ targetEmail })
+    });
+  }
+
   // --- Categories CRUD ---
   async getCategories() {
     return this.request('/admin/categories');

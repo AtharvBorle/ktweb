@@ -58,6 +58,7 @@
         <li><a href="#" class="navTab" data-tab="gallery">Gallery Photos & Videos</a></li>
         <li><a href="#" class="navTab" data-tab="report-cards">Report Cards (PDFs)</a></li>
         <li><a href="#" class="navTab" data-tab="messages">Messages Inbox</a></li>
+        <li><a href="#" class="navTab" data-tab="email">Contact Form Email</a></li>
       </ul>
       <div class="sidebarFooter">
         <a href="/" target="_blank" class="btnViewLive">
@@ -121,6 +122,7 @@
               <button class="btnSubmit navTabTrigger" data-tab="initiatives">Add / Edit Initiative</button>
               <button class="btnSubmit navTabTrigger" data-tab="gallery">Manage Gallery</button>
               <button class="btnSubmit navTabTrigger" data-tab="blog">New Blog Post</button>
+              <button class="btnSubmit navTabTrigger" data-tab="email" style="background: #1e293b;">Contact Form Email</button>
             </div>
           </div>
 
@@ -1037,6 +1039,15 @@
 
         <!-- TAB 10: Messages Inbox -->
         <section class="tabSection" id="tab-messages">
+          <div class="cardBox" style="background: #f8fafc; border-left: 4px solid #F4821E; padding: 14px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <strong style="color: #1e293b; font-size: 14px;">📧 Notification Forwarding:</strong>
+              <span style="color: #475569; font-size: 13px;"> New submissions are forwarded to </span>
+              <strong id="inboxNotificationEmailBadge" style="color: #F4821E; font-size: 14px; font-family: monospace;">johnwick380900@gmail.com</strong>
+            </div>
+            <button type="button" class="navTabTrigger" data-tab="email" style="background: #1e293b; color: #ffffff; border: none; padding: 7px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">⚙️ Change Receiving Email</button>
+          </div>
+
           <div class="cardBox">
             <h3>Constituent Contact Submissions</h3>
             <table class="adminTable">
@@ -1052,6 +1063,67 @@
               </thead>
               <tbody id="messagesTableBody"></tbody>
             </table>
+          </div>
+        </section>
+
+        <!-- TAB 11: Contact Form Email Settings -->
+        <section class="tabSection" id="tab-email">
+          <div class="cardBox" style="border-top: 4px solid #F4821E;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+              <div>
+                <h3 style="margin-bottom: 6px;">Contact Form Notification Email</h3>
+                <p style="color: #64748b; font-size: 14px; margin: 0;">Configure the email address where inquiries submitted through the website's "Contact Us / Connect With Kunal" form will be delivered.</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 6px 14px; border-radius: 20px;">
+                <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                <span style="font-size: 12px; font-weight: 600; color: #065f46;">Email Forwarding Active</span>
+              </div>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <div>
+                <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #64748b; display: block; margin-bottom: 2px;">Current Notification Email</span>
+                <strong id="currentNotificationEmailBadge" style="font-size: 16px; color: #1e293b; font-family: monospace;">johnwick380900@gmail.com</strong>
+              </div>
+              <button type="button" class="navTabTrigger" data-tab="messages" style="background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; padding: 7px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;">📬 View Messages Inbox</button>
+            </div>
+
+            <form id="notificationEmailForm">
+              <div class="formGrid">
+                <div class="formGroup fullWidth">
+                  <label for="settingNotificationEmail" style="font-weight: 600; font-size: 14px; color: #1e293b;">Recipient Email Address</label>
+                  <input type="email" id="settingNotificationEmail" required placeholder="e.g. johnwick380900@gmail.com" style="font-size: 15px; padding: 12px;" />
+                  <small style="color: #64748b; font-size: 13px; margin-top: 4px; display: block;">
+                    Whenever a constituent fills out the "Contact Me" form on the website, an email with their Name, Phone, Email, Subject, and Full Message will be dispatched immediately to this address.
+                  </small>
+                </div>
+              </div>
+              <div style="display: flex; gap: 12px; align-items: center; margin-top: 20px; flex-wrap: wrap;">
+                <button type="submit" class="btnSubmit" id="btnSaveNotificationEmail" style="background: #F4821E; padding: 10px 24px; font-size: 14px;">Save Email Address</button>
+                <button type="button" class="btnSubmit" id="btnSendTestEmail" style="background: #0ea5e9; padding: 10px 20px; font-size: 14px;">Send Test Email</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="cardBox">
+            <h3>SMTP & Notification Information</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+              <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">SMTP Service</div>
+                <div style="font-size: 14px; font-weight: 600; color: #1e293b; margin-top: 4px;">Gmail SMTP (smtp.gmail.com)</div>
+              </div>
+              <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Port & Security</div>
+                <div style="font-size: 14px; font-weight: 600; color: #1e293b; margin-top: 4px;">Port 465 (SSL/TLS Secure)</div>
+              </div>
+              <div style="background: #f8fafc; padding: 14px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <div style="font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase;">Database Storage</div>
+                <div style="font-size: 14px; font-weight: 600; color: #10b981; margin-top: 4px;">Archived in Messages Inbox</div>
+              </div>
+            </div>
+            <div style="margin-top: 18px; padding: 14px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 4px; font-size: 13px; color: #92400e; line-height: 1.5;">
+              <strong>Note:</strong> Messages are always securely saved to the database and can be reviewed at any time in the <strong>Messages Inbox</strong>. Updating this email changes where incoming notifications are automatically forwarded.
+            </div>
           </div>
         </section>
 

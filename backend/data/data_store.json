@@ -11,6 +11,7 @@
     "votesDescription": "Elected with immense support and trust from the citizens of Kasba Peth",
     "shortBio": "Kunal Tilak serves as a dedicated leader and voice for youth, committing to social transformation, urban development, and constituent empowerment.",
     "contactEmail": "office@kunaltilak.in",
+    "adminNotificationEmail": "johnwick380900@gmail.com",
     "contactPhone": "+91 98765 43210",
     "officeAddress": "Office of Kunal Tilak, Kasba Peth, Pune, Maharashtra",
     "whatsappChannel": "https://whatsapp.com/channel/0029Va5tflV002TDPDgwyi3D",
@@ -229,6 +230,105 @@
     }
   ],
   "messages": [
+    {
+      "id": 15,
+      "name": "Yash Test",
+      "email": "yash@example.com",
+      "phone": "9876543210",
+      "subject": "Testing Rate Limit Reset",
+      "message": "Checking single submit functionality.",
+      "createdAt": "2026-11-24T13:05:05.528Z"
+    },
+    {
+      "id": 14,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8745128956",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: pune",
+      "createdAt": "2026-11-24T12:54:45.575Z"
+    },
+    {
+      "id": 13,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8745128956",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: pune",
+      "createdAt": "2026-11-24T12:54:45.524Z"
+    },
+    {
+      "id": 12,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8745128956",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: pune",
+      "createdAt": "2026-11-24T12:54:45.515Z"
+    },
+    {
+      "id": 11,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8745128956",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: pune",
+      "createdAt": "2026-11-24T12:54:45.483Z"
+    },
+    {
+      "id": 10,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8432724578",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: Hinjawadi",
+      "createdAt": "2026-11-24T12:52:54.212Z"
+    },
+    {
+      "id": 9,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8432724578",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: Hinjawadi",
+      "createdAt": "2026-11-24T12:52:54.201Z"
+    },
+    {
+      "id": 8,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8432724578",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: Hinjawadi",
+      "createdAt": "2026-11-24T12:52:54.193Z"
+    },
+    {
+      "id": 7,
+      "name": "Yash Bandgar",
+      "email": "yashbandgar6565@gmail.com",
+      "phone": "8432724578",
+      "subject": "Website Inquiry",
+      "message": "Your City: Kolhapur, Your Address: Hinjawadi",
+      "createdAt": "2026-11-24T12:52:54.145Z"
+    },
+    {
+      "id": 6,
+      "name": "Test Constituent",
+      "email": "constituent@example.com",
+      "phone": "9876543210",
+      "subject": "Email Notification Test",
+      "message": "Testing email notification delivery to updated recipient.",
+      "createdAt": "2026-11-24T12:48:04.639Z"
+    },
+    {
+      "id": 5,
+      "name": "Test Constituent",
+      "email": "constituent@example.com",
+      "phone": "9876543210",
+      "subject": "Email Notification Test",
+      "message": "Testing email notification delivery to updated recipient.",
+      "createdAt": "2026-11-24T12:47:47.132Z"
+    },
     {
       "id": 4,
       "name": "Verification User",

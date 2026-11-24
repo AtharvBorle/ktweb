@@ -1,6 +1,7 @@
 const QRCode = require('qrcode');
 const dataRepo = require('../repositories/DataRepository');
-const { BadRequestError, sanitizer } = require('../utils/helpers');
+const emailService = require('./EmailService');
+const { BadRequestError, sanitizer, logger } = require('../utils/helpers');
 
 /**
  * Enterprise Content Service
@@ -248,7 +249,14 @@ class ContentService {
       throw new BadRequestError('Please provide your name, a contact method (email or phone), and a message.');
     }
     const sanitized = sanitizer.sanitizeObject({ name, email, phone, subject, message });
-    return dataRepo.saveContactMessage(sanitized);
+    const saved = dataRepo.saveContactMessage(sanitized);
+
+    // Asynchronously send email notification via SMTP
+    emailService.sendContactNotification(sanitized).catch(err => {
+      logger.warn(`Failed to send contact notification email: ${err.message}`);
+    });
+
+    return saved;
   }
 
   async getContactMessages() {

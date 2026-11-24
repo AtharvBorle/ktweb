@@ -9,6 +9,7 @@ class UIRenderers {
       data: null
     };
     this.setupReportCardHandlers();
+    this.setupContactModal();
   }
 
   bustingUrl(url) {
@@ -1460,41 +1461,71 @@ class UIRenderers {
    * 13. Interactive Contact Modal & Form Handler
    */
   setupContactModal() {
-    // Helper: Scroll smoothly to the Contact section
+    // Helper: Scroll smoothly to the Contact section with running animation
     const scrollToContact = (e) => {
-      if (e) e.preventDefault();
-      const target = document.getElementById('contact-me') || document.querySelector('section.contactSection, .sc-fwdjSP, .sc-iUeHef');
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const target = document.getElementById('contact-me') || document.querySelector('section.contactSection, .sc-fwdjSP, .sc-iUeHef, #contact');
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const headerOffset = 70;
+        const targetPos = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
 
-        // Highlight form smoothly
+        window.scrollTo({
+          top: targetPos,
+          behavior: 'smooth'
+        });
+
+        // Running animation on the contact form container
         const formBox = target.querySelector('.getInTouch, form');
         if (formBox) {
-          formBox.style.transition = 'box-shadow 0.4s ease, border-color 0.4s ease';
-          formBox.style.boxShadow = '0 0 0 4px rgba(244, 130, 30, 0.45)';
+          formBox.classList.remove('running-contact-glow');
+          void formBox.offsetWidth; // Trigger reflow to restart CSS animation
+          formBox.classList.add('running-contact-glow');
+
           setTimeout(() => {
-            formBox.style.boxShadow = '';
-          }, 1800);
+            formBox.classList.remove('running-contact-glow');
+          }, 3200);
         }
 
-        // Focus first input field
+        // Focus first input field once scrolled into view
         setTimeout(() => {
           const firstInput = target.querySelector('input');
-          if (firstInput) firstInput.focus();
-        }, 500);
+          if (firstInput) {
+            firstInput.focus();
+            firstInput.classList.add('running-input-glow');
+            setTimeout(() => firstInput.classList.remove('running-input-glow'), 1800);
+          }
+        }, 600);
       } else {
         // Fallback for subpages without a local contact section
         window.location.href = '/index.html#contact-me';
       }
     };
 
-    // A. Bind all Header & Banner "Contact Me" buttons
+    // Global document capture-phase delegation ensures "Contact Me" button always works reliably
+    if (!this._contactDelegationAttached) {
+      this._contactDelegationAttached = true;
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btnWrap button, .mobileMenuWrap button, button.contact-btn, .sc-bcPKhP.primary button, a[href*="#contact-me"], button[data-action="contact"], .contactBtn, .btnWrap .btn-text, .sc-bcPKhP.primary');
+        if (btn) {
+          const text = (btn.innerText || btn.textContent || '').trim().toLowerCase();
+          if (text.includes('contact') || text.includes('connect') || btn.closest('a[href*="#contact-me"]')) {
+            scrollToContact(e);
+          }
+        }
+      }, true);
+    }
+
+    // A. Bind all Header & Banner "Contact Me" buttons directly as fallback
     const headerButtons = document.querySelectorAll('.btnWrap button, .mobileMenuWrap button, button.contact-btn, .sc-bcPKhP.primary button');
     headerButtons.forEach(btn => {
       const text = (btn.innerText || '').trim().toLowerCase();
       if (text.includes('contact') || text.includes('connect')) {
         btn.style.cursor = 'pointer';
         btn.setAttribute('type', 'button');
+        btn.removeEventListener('click', scrollToContact);
         btn.addEventListener('click', scrollToContact);
       }
     });
@@ -1502,6 +1533,7 @@ class UIRenderers {
     // Also bind any anchor links targeting #contact-me
     const contactLinks = document.querySelectorAll('a[href*="#contact-me"]');
     contactLinks.forEach(link => {
+      link.removeEventListener('click', scrollToContact);
       link.addEventListener('click', (e) => {
         if (document.getElementById('contact-me')) {
           scrollToContact(e);
@@ -1512,18 +1544,28 @@ class UIRenderers {
     // B. Bind Contact Form Submissions & Click Events
     const forms = document.querySelectorAll('form#contactForm, form.contactForm, section#contact-me form, .getInTouch form');
     forms.forEach(form => {
+      // Guard against multiple registrations on the same form element
+      if (form._contactFormBound) return;
+      form._contactFormBound = true;
+
       const submitBtn = form.querySelector('button');
       if (submitBtn) {
         submitBtn.style.cursor = 'pointer';
-        // Handle direct click on the button
-        submitBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          form.dispatchEvent(new Event('submit', { cancelable: true }));
-        });
+        // Cache the pristine original button HTML once so it is never permanently overwritten with "Sending..."
+        if (!submitBtn._originalHtml || submitBtn._originalHtml.includes('Sending...')) {
+          submitBtn._originalHtml = submitBtn.innerHTML || '<div class="textWrapper"><span class="btn-text">Contact us</span></div>';
+        }
       }
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      const doSubmit = async (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        // Prevent concurrent double clicks
+        if (form._isSubmitting) return;
+        form._isSubmitting = true;
 
         const inputs = form.querySelectorAll('input, textarea');
         const formData = {
@@ -1556,6 +1598,7 @@ class UIRenderers {
 
         // Form Validations
         if (!formData.name) {
+          form._isSubmitting = false;
           this.showToast('Please enter your name.', 'error');
           const nameInput = form.querySelector('input[placeholder*="Name"], input[type="text"]');
           if (nameInput) nameInput.focus();
@@ -1563,6 +1606,7 @@ class UIRenderers {
         }
 
         if (!formData.phone && !formData.email) {
+          form._isSubmitting = false;
           this.showToast('Please provide your mobile number or email address.', 'error');
           const contactInput = form.querySelector('input[placeholder*="Mobile"], input[type="number"], input[type="email"]');
           if (contactInput) contactInput.focus();
@@ -1570,6 +1614,7 @@ class UIRenderers {
         }
 
         if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          form._isSubmitting = false;
           this.showToast('Please enter a valid email address.', 'error');
           const emailInput = form.querySelector('input[type="email"]');
           if (emailInput) emailInput.focus();
@@ -1577,6 +1622,7 @@ class UIRenderers {
         }
 
         if (formData.phone && formData.phone.replace(/\D/g, '').length < 7) {
+          form._isSubmitting = false;
           this.showToast('Please enter a valid mobile number.', 'error');
           const phoneInput = form.querySelector('input[placeholder*="Mobile"], input[type="number"]');
           if (phoneInput) phoneInput.focus();
@@ -1587,10 +1633,15 @@ class UIRenderers {
           formData.message = `Inquiry submitted by ${formData.name}`;
         }
 
-        // Visual loading state
-        const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+        // Visual loading state: get pristine original HTML to restore afterwards
+        const originalBtnHtml = (submitBtn && submitBtn._originalHtml && !submitBtn._originalHtml.includes('Sending...'))
+          ? submitBtn._originalHtml
+          : '<div class="textWrapper"><span class="btn-text">Contact us</span></div>';
+
         if (submitBtn) {
           submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.7';
+          submitBtn.style.cursor = 'not-allowed';
           submitBtn.innerHTML = '<div class="textWrapper"><span class="btn-text">Sending...</span></div>';
         }
 
@@ -1605,12 +1656,20 @@ class UIRenderers {
         } catch (err) {
           this.showToast('Network error while sending message. Please try again.', 'error');
         } finally {
+          form._isSubmitting = false;
           if (submitBtn) {
             submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
             submitBtn.innerHTML = originalBtnHtml;
           }
         }
-      });
+      };
+
+      if (submitBtn) {
+        submitBtn.addEventListener('click', doSubmit);
+      }
+      form.addEventListener('submit', doSubmit);
     });
   }
 

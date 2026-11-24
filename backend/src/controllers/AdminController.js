@@ -1,5 +1,6 @@
 const authService = require('../services/AuthService');
 const contentService = require('../services/ContentService');
+const emailService = require('../services/EmailService');
 const { ApiResponse, BadRequestError, UnauthorizedError, asyncHandler } = require('../utils/helpers');
 const { trackFailedLogin, clearFailedLogin } = require('../middlewares/middleware');
 
@@ -265,6 +266,20 @@ class AdminController {
   deleteCategory = asyncHandler(async (req, res) => {
     await contentService.deleteCategory(req.params.id);
     return res.status(200).json(ApiResponse.success(null, 'Category deleted successfully'));
+  });
+
+  // --- Email Notifications ---
+
+  sendTestEmail = asyncHandler(async (req, res) => {
+    const { targetEmail } = req.body;
+    const result = await emailService.sendTestNotification(targetEmail);
+    if (!result.success && result.reason === 'SMTP_NOT_CONFIGURED') {
+      return res.status(200).json(ApiResponse.success(result, result.message));
+    }
+    if (!result.success) {
+      return res.status(400).json(ApiResponse.error(result.message, 400));
+    }
+    return res.status(200).json(ApiResponse.success(result, 'Test email sent successfully!'));
   });
 }
 

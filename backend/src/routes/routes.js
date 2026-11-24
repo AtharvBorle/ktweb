@@ -104,9 +104,10 @@ router.delete('/admin/gallery/:id', requireAdmin, verifyAdminOrigin, adminContro
 router.post('/admin/report-cards', requireAdmin, verifyAdminOrigin, adminController.saveReportCard);
 router.delete('/admin/report-cards/:id', requireAdmin, verifyAdminOrigin, adminController.deleteReportCard);
 
-// Contact Messages Inbox
+// Contact Messages Inbox & Email Settings
 router.get('/admin/messages', requireAdmin, adminController.getMessages);
 router.delete('/admin/messages/:id', requireAdmin, verifyAdminOrigin, adminController.deleteMessage);
+router.post('/admin/email/test', requireAdmin, verifyAdminOrigin, adminController.sendTestEmail);
 
 // Categories Management
 router.get('/admin/categories', adminController.getCategories);

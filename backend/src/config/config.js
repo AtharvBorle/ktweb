@@ -26,6 +26,17 @@ const config = {
     expiresIn: '24h'
   },
 
+  smtp: {
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT, 10) || 465,
+    secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465' || process.env.SMTP_PORT === 465,
+    user: process.env.SMTP_USER || 'johnwick380900@gmail.com',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.SMTP_FROM || '"Kunal Tilak" <johnwick380900@gmail.com>'
+  },
+
+  adminNotificationEmail: process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER || 'johnwick380900@gmail.com',
+
   database: {
     url: process.env.DATABASE_URL || '',
     provider: process.env.DB_PROVIDER || 'postgresql',
@@ -103,8 +114,8 @@ const config = {
       message: 'Too many login attempts, please try again after 15 minutes.'
     },
     contact: {
-      windowMs: 60 * 60 * 1000, // 1 hour
-      max: 10, // 10 contact messages per hour
+      windowMs: 15 * 60 * 1000, // 15 minutes window
+      max: process.env.NODE_ENV === 'production' ? 60 : 500, // generous allowance in dev to prevent rate lockout
       message: 'You have submitted too many contact messages. Please try again later.'
     }
   },
