@@ -1024,18 +1024,28 @@ function setupTableEventDelegation() {
     }
 
     // Delete Gallery
-    if (target.classList.contains('deleteGalleryBtn')) {
-      const id = target.getAttribute('data-id');
+    const deleteGalleryBtn = e.target.closest('.deleteGalleryBtn');
+    if (deleteGalleryBtn) {
+      e.preventDefault();
+      const id = deleteGalleryBtn.getAttribute('data-id');
+      if (!id) return;
       if (confirm(`Delete gallery item #${id}?`)) {
-        await window.adminService.deleteGallery(id);
-        await refreshAdminData();
+        const res = await window.adminService.deleteGallery(id);
+        if (res && res.success) {
+          await refreshAdminData();
+        } else {
+          alert(res?.message || 'Error deleting gallery item');
+        }
       }
+      return;
     }
 
     // Edit Gallery
-    if (target.classList.contains('editGalleryBtn')) {
-      const id = target.getAttribute('data-id');
-      const item = (window.adminUI.currentData.gallery || []).find(g => String(g.id) === String(id));
+    const editGalleryBtn = e.target.closest('.editGalleryBtn');
+    if (editGalleryBtn) {
+      e.preventDefault();
+      const id = editGalleryBtn.getAttribute('data-id');
+      const item = (window.adminUI.currentData?.gallery || []).find(g => String(g.id) === String(id));
       if (item) {
         window.adminUI.setVal('galleryId', item.id);
         window.adminUI.setVal('galleryTitle', item.title || '');
@@ -1064,12 +1074,19 @@ function setupTableEventDelegation() {
         } else {
           window.adminUI.setVal('galleryImagePath', item.url || '');
           window.adminUI.setPreview('galleryImagePreview', item.url || '');
+          const fileInput = document.getElementById('galleryImageFile');
+          if (fileInput) fileInput.value = '';
+          const previewBox = document.querySelector('#galleryImageUploadGroup .imagePreviewBox');
+          if (previewBox) {
+            previewBox.style.display = item.url ? 'block' : 'none';
+          }
         }
         const form = document.getElementById('galleryForm');
         if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
         const titleIn = document.getElementById('galleryTitle');
         if (titleIn) titleIn.focus();
       }
+      return;
     }
 
     // Delete Message
