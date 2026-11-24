@@ -220,6 +220,12 @@
       "title": "education",
       "type": "image",
       "url": "/uploads/pic_sample_1788427047873_759458.png"
+    },
+    {
+      "title": "Title",
+      "type": "video",
+      "url": "/uploads/the-forgotten-sportbike-hyosung-gt250r-v0-9i1p28f1_1795510808012_349610.webp",
+      "id": 3
     }
   ],
   "messages": [

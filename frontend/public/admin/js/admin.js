@@ -549,41 +549,83 @@ function setupFormSubmissions() {
   if (galleryForm) {
     galleryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const title = (window.adminUI.getVal('galleryTitle') || '').trim();
+      if (!title) {
+        alert('Please enter a title or caption.');
+        const titleEl = document.getElementById('galleryTitle');
+        if (titleEl) titleEl.focus();
+        return;
+      }
+
       const type = window.adminUI.getVal('galleryType') || 'image';
       let mediaUrl = '';
       if (type === 'video') {
-        mediaUrl = window.adminUI.getVal('galleryVideoPath') || window.adminUI.getVal('galleryVideoUrl');
+        const vidPath = (window.adminUI.getVal('galleryVideoPath') || '').trim();
+        const vidUrl = (window.adminUI.getVal('galleryVideoUrl') || '').trim();
+        mediaUrl = vidPath || vidUrl;
+        if (!mediaUrl) {
+          alert('Please enter a valid URL.');
+          const vidUrlEl = document.getElementById('galleryVideoUrl');
+          if (vidUrlEl) {
+            vidUrlEl.focus();
+            vidUrlEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
+        if (vidUrl && !vidPath) {
+          try {
+            const parsed = new URL(vidUrl);
+            if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+              alert('Please enter a valid URL.');
+              const vidUrlEl = document.getElementById('galleryVideoUrl');
+              if (vidUrlEl) vidUrlEl.focus();
+              return;
+            }
+          } catch (e) {
+            alert('Please enter a valid URL.');
+            const vidUrlEl = document.getElementById('galleryVideoUrl');
+            if (vidUrlEl) vidUrlEl.focus();
+            return;
+          }
+        }
       } else {
-        mediaUrl = window.adminUI.getVal('galleryImagePath');
-      }
-
-      if (!mediaUrl || mediaUrl.trim() === '') {
-        alert(type === 'video' ? 'Please upload a video file or enter a YouTube URL.' : 'Please upload an image.');
-        return;
+        const imgPath = (window.adminUI.getVal('galleryImagePath') || '').trim();
+        mediaUrl = imgPath;
+        if (!mediaUrl) {
+          alert('Please upload an image.');
+          const fileInput = document.getElementById('galleryImageFile');
+          if (fileInput) {
+            fileInput.focus();
+            fileInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
       }
 
       const payload = {
         id: window.adminUI.getVal('galleryId'),
-        title: window.adminUI.getVal('galleryTitle'),
+        title: title,
         type: type,
-        url: mediaUrl.trim()
+        url: mediaUrl
       };
 
       const res = await window.adminService.saveGallery(payload);
       if (res.success) {
         alert('Gallery item saved!');
-        galleryForm.reset();
+        const keptType = type;
+
+        // Reset field contents only, while preserving the chosen media type
         window.adminUI.setVal('galleryId', '');
+        window.adminUI.setVal('galleryTitle', '');
         window.removeUploadedImage('galleryImagePath', 'galleryImagePreview', 'galleryImageFile');
         if (typeof window.removeUploadedVideo === 'function') {
           window.removeUploadedVideo();
         }
         window.adminUI.setVal('galleryVideoUrl', '');
-        const typeSelect = document.getElementById('galleryType');
-        if (typeSelect) {
-          typeSelect.value = 'image';
-          typeSelect.dispatchEvent(new Event('change'));
-        }
+
+        // Maintain the current media type and its corresponding section
+        window.adminUI.syncGalleryTypeUI(keptType);
+
         await refreshAdminData();
       } else {
         alert(res.message || 'Error saving gallery item');
@@ -997,11 +1039,7 @@ function setupTableEventDelegation() {
       if (item) {
         window.adminUI.setVal('galleryId', item.id);
         window.adminUI.setVal('galleryTitle', item.title || '');
-        const typeSelect = document.getElementById('galleryType');
-        if (typeSelect) {
-          typeSelect.value = item.type || 'image';
-          typeSelect.dispatchEvent(new Event('change'));
-        }
+        window.adminUI.syncGalleryTypeUI(item.type || 'image');
         if (item.type === 'video') {
           if (item.url && (item.url.startsWith('/uploads') || item.url.startsWith('uploads/'))) {
             window.adminUI.setVal('galleryVideoPath', item.url);

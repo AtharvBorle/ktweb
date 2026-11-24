@@ -99,6 +99,11 @@ class AdminUIManager {
 
         const contentBody = document.querySelector('.contentBody');
         if (contentBody) contentBody.scrollTop = 0;
+
+        // When switching to gallery tab, ensure gallery upload type and sections are strictly synced
+        if (target === 'gallery') {
+          this.syncGalleryTypeUI();
+        }
       });
     });
 
@@ -112,12 +117,11 @@ class AdminUIManager {
 
     const galleryType = document.getElementById('galleryType');
     if (galleryType) {
+      // Synchronize initial state on load from persistence or current dropdown value
+      this.syncGalleryTypeUI();
+
       galleryType.addEventListener('change', () => {
-        const isVideo = galleryType.value === 'video';
-        const imgGroup = document.getElementById('galleryImageUploadGroup');
-        const vidGroup = document.getElementById('galleryVideoUrlGroup');
-        if (imgGroup) imgGroup.style.display = isVideo ? 'none' : 'block';
-        if (vidGroup) vidGroup.style.display = isVideo ? 'block' : 'none';
+        this.syncGalleryTypeUI(galleryType.value);
       });
     }
 
@@ -135,6 +139,32 @@ class AdminUIManager {
         }
       });
     }
+  }
+
+  syncGalleryTypeUI(preferredType) {
+    const galleryType = document.getElementById('galleryType');
+    const imgGroup = document.getElementById('galleryImageUploadGroup');
+    const vidGroup = document.getElementById('galleryVideoUrlGroup');
+    if (!galleryType || !imgGroup || !vidGroup) return;
+
+    let type = preferredType;
+    if (!type) {
+      try {
+        type = localStorage.getItem('admin_gallery_media_type');
+      } catch (e) {}
+    }
+    if (!type) {
+      type = galleryType.value || 'image';
+    }
+
+    galleryType.value = type;
+    try {
+      localStorage.setItem('admin_gallery_media_type', type);
+    } catch (e) {}
+
+    const isVideo = type === 'video';
+    imgGroup.style.display = isVideo ? 'none' : 'block';
+    vidGroup.style.display = isVideo ? 'block' : 'none';
   }
 
   populateForms(data) {
