@@ -549,24 +549,45 @@ function setupFormSubmissions() {
   if (galleryForm) {
     galleryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const title = (window.adminUI.getVal('galleryTitle') || '').trim();
+      if (!title) {
+        alert('Please enter a title or caption.');
+        const titleEl = document.getElementById('galleryTitle');
+        if (titleEl) titleEl.focus();
+        return;
+      }
+
       const type = window.adminUI.getVal('galleryType') || 'image';
       let mediaUrl = '';
       if (type === 'video') {
-        mediaUrl = window.adminUI.getVal('galleryVideoPath') || window.adminUI.getVal('galleryVideoUrl');
+        const vidPath = (window.adminUI.getVal('galleryVideoPath') || '').trim();
+        const vidUrl = (window.adminUI.getVal('galleryVideoUrl') || '').trim();
+        mediaUrl = vidPath || vidUrl;
+        if (!mediaUrl) {
+          alert('Please upload a video file or enter a YouTube URL.');
+          const vidUrlEl = document.getElementById('galleryVideoUrl');
+          if (vidUrlEl) vidUrlEl.focus();
+          return;
+        }
       } else {
-        mediaUrl = window.adminUI.getVal('galleryImagePath');
-      }
-
-      if (!mediaUrl || mediaUrl.trim() === '') {
-        alert(type === 'video' ? 'Please upload a video file or enter a YouTube URL.' : 'Please upload an image.');
-        return;
+        const imgPath = (window.adminUI.getVal('galleryImagePath') || '').trim();
+        mediaUrl = imgPath;
+        if (!mediaUrl) {
+          alert('Please upload an image.');
+          const fileInput = document.getElementById('galleryImageFile');
+          if (fileInput) {
+            fileInput.focus();
+            fileInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
       }
 
       const payload = {
         id: window.adminUI.getVal('galleryId'),
-        title: window.adminUI.getVal('galleryTitle'),
+        title: title,
         type: type,
-        url: mediaUrl.trim()
+        url: mediaUrl
       };
 
       const res = await window.adminService.saveGallery(payload);

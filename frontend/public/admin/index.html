@@ -768,10 +768,10 @@
                   </select>
                 </div>
                 <div class="formGroup fullWidth" id="galleryImageUploadGroup">
-                  <label>Upload Image</label>
+                  <label>Upload Image <span style="color: #ef4444;">*</span></label>
                   <input type="file" id="galleryImageFile" accept="image/*" />
                   <input type="hidden" id="galleryImagePath" />
-                  <div>
+                  <div class="imagePreviewBox" style="display: none; margin-top: 10px;">
                     <img id="galleryImagePreview" class="imagePreview" src="" />
                     <button type="button" class="btnRemoveImg" onclick="removeUploadedImage('galleryImagePath', 'galleryImagePreview', 'galleryImageFile')">Remove Image</button>
                   </div>

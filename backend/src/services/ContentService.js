@@ -222,8 +222,16 @@ class ContentService {
   }
 
   async saveGalleryItem(galleryData) {
-    if (!galleryData.title) {
+    if (!galleryData.title || !galleryData.title.trim()) {
       throw new BadRequestError('Gallery item title is required.');
+    }
+    const type = galleryData.type || 'image';
+    if (!galleryData.url || !galleryData.url.trim()) {
+      throw new BadRequestError(
+        type === 'video'
+          ? 'Please upload a video file or enter a YouTube URL.'
+          : 'Please upload an image.'
+      );
     }
     const sanitized = sanitizer.sanitizeObject(galleryData);
     return dataRepo.saveGalleryItem(sanitized);
