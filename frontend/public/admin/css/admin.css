@@ -633,6 +633,7 @@ form > .btnSubmit,
 .editProjBtn::before,
 .editCategoryBtn::before,
 .editBlogBtn::before,
+.editGalleryBtn::before,
 .editReportCardBtn::before {
   content: '';
   display: inline-block;
@@ -642,6 +643,7 @@ form > .btnSubmit,
   background-size: contain;
   background-repeat: no-repeat;
   flex-shrink: 0;
+  pointer-events: none;
   transition: transform 0.2s ease;
 }
 
@@ -738,6 +740,7 @@ form > .btnSubmit,
   background-size: contain;
   background-repeat: no-repeat;
   flex-shrink: 0;
+  pointer-events: none;
   transition: transform 0.2s ease;
 }
 
