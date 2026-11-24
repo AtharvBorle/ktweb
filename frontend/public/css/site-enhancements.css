@@ -288,7 +288,13 @@
   transform: translateY(-4px) scale(1.02) !important;
 }
 
-.sliderWrapper .sliders .slideItem img {
+.sliderWrapper .sliders .slideItem:hover .galleryVideoBadge {
+  transform: translate(-50%, -50%) scale(1.15) !important;
+  background: #ea580c !important;
+}
+
+.sliderWrapper .sliders .slideItem img,
+.sliderWrapper .sliders .slideItem video {
   width: 290px !important;
   height: 190px !important;
   object-fit: cover !important;
@@ -306,7 +312,8 @@
     animation-duration: 22s !important;
     gap: 12px !important;
   }
-  .sliderWrapper .sliders .slideItem img {
+  .sliderWrapper .sliders .slideItem img,
+  .sliderWrapper .sliders .slideItem video {
     width: 220px !important;
     height: 150px !important;
   }

@@ -236,7 +236,7 @@ const fileFilter = (req, file, cb) => {
   ) {
     cb(null, true);
   } else {
-    cb(new BadRequestError(`Invalid file format: ${ext}. Only images and PDFs are permitted.`));
+    cb(new BadRequestError(`Invalid file format: ${ext}. Only images, PDFs, and videos are permitted.`));
   }
 };
 
@@ -271,6 +271,20 @@ function verifyMagicBytes(buffer, ext) {
   if (e === '.svg') {
     const text = buffer.toString('utf8', 0, Math.min(buffer.length, 1000)).trim().toLowerCase();
     return text.includes('<svg') || text.includes('<?xml');
+  }
+  if (e === '.mp4' || e === '.mov') {
+    return buffer.length >= 8 && (
+      buffer.toString('ascii', 4, 8) === 'ftyp' ||
+      buffer.toString('ascii', 4, 8) === 'moov' ||
+      buffer.toString('ascii', 4, 8) === 'wide' ||
+      buffer.toString('ascii', 4, 8) === 'mdat'
+    );
+  }
+  if (e === '.webm') {
+    return buffer.length >= 4 && buffer[0] === 0x1A && buffer[1] === 0x45 && buffer[2] === 0xDF && buffer[3] === 0xA3;
+  }
+  if (e === '.ogg') {
+    return buffer.length >= 4 && buffer.toString('ascii', 0, 4) === 'OggS';
   }
   return false;
 }

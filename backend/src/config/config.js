@@ -112,16 +112,20 @@ const config = {
   upload: {
     destDir: path.join(__dirname, '..', '..', 'uploads'),
     frontendUploadDir: path.join(__dirname, '..', '..', '..', 'frontend', 'public', 'uploads'),
-    maxFileSize: 10 * 1024 * 1024, // 10 MB limit
+    maxFileSize: 50 * 1024 * 1024, // 50 MB limit
     allowedMimeTypes: [
       'image/jpeg',
       'image/png',
       'image/webp',
       'image/gif',
       'image/svg+xml',
-      'application/pdf'
+      'application/pdf',
+      'video/mp4',
+      'video/webm',
+      'video/ogg',
+      'video/quicktime'
     ],
-    allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.pdf']
+    allowedExtensions: ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg', '.pdf', '.mp4', '.webm', '.ogg', '.mov']
   },
 
   paths: {

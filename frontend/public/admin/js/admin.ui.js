@@ -120,6 +120,21 @@ class AdminUIManager {
         if (vidGroup) vidGroup.style.display = isVideo ? 'block' : 'none';
       });
     }
+
+    const galleryVideoUrl = document.getElementById('galleryVideoUrl');
+    if (galleryVideoUrl) {
+      galleryVideoUrl.addEventListener('input', () => {
+        if (galleryVideoUrl.value.trim() !== '') {
+          this.setVal('galleryVideoPath', '');
+          const vidPrev = document.getElementById('galleryVideoPreview');
+          if (vidPrev) { vidPrev.src = ''; vidPrev.style.display = 'none'; }
+          const btn = document.getElementById('btnRemoveVideo');
+          if (btn) btn.style.display = 'none';
+          const fileInput = document.getElementById('galleryVideoFile');
+          if (fileInput) fileInput.value = '';
+        }
+      });
+    }
   }
 
   populateForms(data) {
@@ -404,24 +419,62 @@ class AdminUIManager {
     `).join('');
   }
 
+  extractYouTubeId(url) {
+    if (!url || typeof url !== 'string') return null;
+    const match = url.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([a-zA-Z0-9_-]{11})/i);
+    return match ? match[1] : null;
+  }
+
   renderGalleryTable(items) {
     const tbody = document.getElementById('galleryTableBody');
     if (!tbody) return;
-    tbody.innerHTML = items.map(item => `
-      <tr>
-        <td><strong>${this.escapeHtml(item.title)}</strong></td>
-        <td>${item.type === 'video' ? '🎬 Video' : '🖼️ Image'}</td>
-        <td>
-          ${item.type === 'video' 
-            ? `<span style="font-size:12px; color:#64748b;">${this.escapeHtml(item.url)}</span>` 
-            : `<img src="${this.bustingUrl(item.url)}" style="width: 70px; height: 50px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onerror="this.style.display='none'"/>`
-          }
-        </td>
-        <td>
-          <button class="btn btn-sm btn-danger deleteGalleryBtn" data-id="${item.id}" type="button">Delete Photo</button>
-        </td>
-      </tr>
-    `).join('');
+    tbody.innerHTML = items.map(item => {
+      const isVideo = item.type === 'video';
+      const ytId = isVideo ? this.extractYouTubeId(item.url) : null;
+      let previewHtml = '';
+
+      if (isVideo) {
+        if (ytId) {
+          previewHtml = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="position: relative; width: 80px; height: 50px; border-radius: 6px; overflow: hidden; background: #000; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
+                <img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'" />
+                <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 22px; height: 22px; background: rgba(244, 130, 30, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px;">▶</span>
+              </div>
+              <a href="${this.escapeHtml(item.url)}" target="_blank" style="font-size: 12px; color: #F4821E; font-weight: 600; text-decoration: underline; word-break: break-all;">Watch YouTube ↗</a>
+            </div>
+          `;
+        } else {
+          previewHtml = `
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <div style="position: relative; width: 80px; height: 50px; border-radius: 6px; overflow: hidden; background: #000; flex-shrink: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.15);">
+                <video src="${this.bustingUrl(item.url)}#t=0.5" preload="metadata" muted style="width: 100%; height: 100%; object-fit: cover; display: block;"></video>
+                <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 22px; height: 22px; background: rgba(244, 130, 30, 0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px;">▶</span>
+              </div>
+              <a href="${this.bustingUrl(item.url)}" target="_blank" style="font-size: 12px; color: #F4821E; font-weight: 600; text-decoration: underline; word-break: break-all;">Play Video ↗</a>
+            </div>
+          `;
+        }
+      } else {
+        previewHtml = `
+          <a href="${this.bustingUrl(item.url)}" target="_blank">
+            <img src="${this.bustingUrl(item.url)}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: block;" onerror="this.style.display='none'"/>
+          </a>
+        `;
+      }
+
+      return `
+        <tr>
+          <td><strong>${this.escapeHtml(item.title)}</strong></td>
+          <td><span class="badge" style="background: ${isVideo ? '#fff7ed' : '#f0fdf4'}; color: ${isVideo ? '#c2410c' : '#15803d'}; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${isVideo ? '🎬 Video' : '🖼️ Image'}</span></td>
+          <td>${previewHtml}</td>
+          <td>
+            <button class="btn btn-sm btn-outline editGalleryBtn" data-id="${item.id}" type="button">Edit</button>
+            <button class="btn btn-sm btn-danger deleteGalleryBtn" data-id="${item.id}" type="button">Delete</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
   }
 
   renderReportCardsTable(cards) {
@@ -473,7 +526,8 @@ class AdminUIManager {
       { file: 'initiativeImageFile', path: 'initiativeImagePath', preview: 'initiativeImagePreview' },
       { file: 'orgMainImgFile', path: 'orgMainImgPath', preview: 'orgMainImgPreview' },
       { file: 'blogImageFile', path: 'blogImagePath', preview: 'blogImagePreview' },
-      { file: 'galleryImageFile', path: 'galleryImagePath', preview: 'galleryImagePreview' }
+      { file: 'galleryImageFile', path: 'galleryImagePath', preview: 'galleryImagePreview' },
+      { file: 'galleryVideoFile', path: 'galleryVideoPath', preview: null, isVideo: true }
     ];
 
     uploadMappings.forEach(mapping => {
@@ -488,6 +542,16 @@ class AdminUIManager {
             const url = result.data.url;
             this.setVal(mapping.path, url);
             if (mapping.preview) this.setPreview(mapping.preview, url);
+            if (mapping.isVideo) {
+              this.setVal('galleryVideoUrl', '');
+              const vidPrev = document.getElementById('galleryVideoPreview');
+              if (vidPrev) {
+                vidPrev.src = this.bustingUrl(url);
+                vidPrev.style.display = 'block';
+              }
+              const btn = document.getElementById('btnRemoveVideo');
+              if (btn) btn.style.display = 'inline-block';
+            }
             if (mapping.statusEl) {
               const sEl = document.getElementById(mapping.statusEl);
               if (sEl) sEl.style.display = 'block';
@@ -512,5 +576,18 @@ window.removeUploadedImage = function(pathId, previewId, fileId) {
   window.adminUI.setVal(pathId, '');
   window.adminUI.setPreview(previewId, '');
   const fileInput = document.getElementById(fileId);
+  if (fileInput) fileInput.value = '';
+};
+
+window.removeUploadedVideo = function() {
+  window.adminUI.setVal('galleryVideoPath', '');
+  const vidPrev = document.getElementById('galleryVideoPreview');
+  if (vidPrev) {
+    vidPrev.src = '';
+    vidPrev.style.display = 'none';
+  }
+  const btn = document.getElementById('btnRemoveVideo');
+  if (btn) btn.style.display = 'none';
+  const fileInput = document.getElementById('galleryVideoFile');
   if (fileInput) fileInput.value = '';
 };

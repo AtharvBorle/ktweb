@@ -764,7 +764,7 @@
                   <label>Media Type</label>
                   <select id="galleryType">
                     <option value="image">Image</option>
-                    <option value="video">Video (YouTube Embed URL)</option>
+                    <option value="video">Video (File Upload or YouTube Link)</option>
                   </select>
                 </div>
                 <div class="formGroup fullWidth" id="galleryImageUploadGroup">
@@ -777,8 +777,19 @@
                   </div>
                 </div>
                 <div class="formGroup fullWidth" id="galleryVideoUrlGroup" style="display: none;">
-                  <label>YouTube Embed Link</label>
-                  <input type="url" id="galleryVideoUrl" placeholder="https://www.youtube.com/embed/VIDEO_ID" />
+                  <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 12px;">
+                    <label style="font-weight: 600; color: #334155; margin-bottom: 6px; display: block;">Option 1: Upload Video File (.mp4, .webm, .mov)</label>
+                    <input type="file" id="galleryVideoFile" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/*" />
+                    <input type="hidden" id="galleryVideoPath" />
+                    <div style="margin-top: 10px;">
+                      <video id="galleryVideoPreview" class="imagePreview" controls style="max-height: 140px; display: none; border-radius: 6px; margin-bottom: 6px;"></video>
+                      <button type="button" class="btnRemoveImg" id="btnRemoveVideo" style="display: none;" onclick="removeUploadedVideo()">Remove Video</button>
+                    </div>
+                  </div>
+                  <div>
+                    <label style="font-weight: 600; color: #334155; margin-bottom: 6px; display: block;">Option 2: Or Paste YouTube Video Link</label>
+                    <input type="url" id="galleryVideoUrl" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..." />
+                  </div>
                 </div>
               </div>
               <button type="submit" class="btnSubmit">Save Gallery Item</button>

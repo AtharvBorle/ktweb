@@ -550,11 +550,23 @@ function setupFormSubmissions() {
     galleryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const type = window.adminUI.getVal('galleryType') || 'image';
+      let mediaUrl = '';
+      if (type === 'video') {
+        mediaUrl = window.adminUI.getVal('galleryVideoPath') || window.adminUI.getVal('galleryVideoUrl');
+      } else {
+        mediaUrl = window.adminUI.getVal('galleryImagePath');
+      }
+
+      if (!mediaUrl || mediaUrl.trim() === '') {
+        alert(type === 'video' ? 'Please upload a video file or enter a YouTube URL.' : 'Please upload an image.');
+        return;
+      }
+
       const payload = {
         id: window.adminUI.getVal('galleryId'),
         title: window.adminUI.getVal('galleryTitle'),
         type: type,
-        url: type === 'video' ? window.adminUI.getVal('galleryVideoUrl') : window.adminUI.getVal('galleryImagePath')
+        url: mediaUrl.trim()
       };
 
       const res = await window.adminService.saveGallery(payload);
@@ -563,6 +575,15 @@ function setupFormSubmissions() {
         galleryForm.reset();
         window.adminUI.setVal('galleryId', '');
         window.removeUploadedImage('galleryImagePath', 'galleryImagePreview', 'galleryImageFile');
+        if (typeof window.removeUploadedVideo === 'function') {
+          window.removeUploadedVideo();
+        }
+        window.adminUI.setVal('galleryVideoUrl', '');
+        const typeSelect = document.getElementById('galleryType');
+        if (typeSelect) {
+          typeSelect.value = 'image';
+          typeSelect.dispatchEvent(new Event('change'));
+        }
         await refreshAdminData();
       } else {
         alert(res.message || 'Error saving gallery item');
@@ -966,6 +987,50 @@ function setupTableEventDelegation() {
       if (confirm(`Delete gallery item #${id}?`)) {
         await window.adminService.deleteGallery(id);
         await refreshAdminData();
+      }
+    }
+
+    // Edit Gallery
+    if (target.classList.contains('editGalleryBtn')) {
+      const id = target.getAttribute('data-id');
+      const item = (window.adminUI.currentData.gallery || []).find(g => String(g.id) === String(id));
+      if (item) {
+        window.adminUI.setVal('galleryId', item.id);
+        window.adminUI.setVal('galleryTitle', item.title || '');
+        const typeSelect = document.getElementById('galleryType');
+        if (typeSelect) {
+          typeSelect.value = item.type || 'image';
+          typeSelect.dispatchEvent(new Event('change'));
+        }
+        if (item.type === 'video') {
+          if (item.url && (item.url.startsWith('/uploads') || item.url.startsWith('uploads/'))) {
+            window.adminUI.setVal('galleryVideoPath', item.url);
+            window.adminUI.setVal('galleryVideoUrl', '');
+            const vidPrev = document.getElementById('galleryVideoPreview');
+            if (vidPrev) {
+              vidPrev.src = window.adminService.getEffectiveMediaUrl(item.url);
+              vidPrev.style.display = 'block';
+            }
+            const btn = document.getElementById('btnRemoveVideo');
+            if (btn) btn.style.display = 'inline-block';
+          } else {
+            window.adminUI.setVal('galleryVideoUrl', item.url || '');
+            window.adminUI.setVal('galleryVideoPath', '');
+            if (typeof window.removeUploadedVideo === 'function') {
+              const vidPrev = document.getElementById('galleryVideoPreview');
+              if (vidPrev) { vidPrev.src = ''; vidPrev.style.display = 'none'; }
+              const btn = document.getElementById('btnRemoveVideo');
+              if (btn) btn.style.display = 'none';
+            }
+          }
+        } else {
+          window.adminUI.setVal('galleryImagePath', item.url || '');
+          window.adminUI.setPreview('galleryImagePreview', item.url || '');
+        }
+        const form = document.getElementById('galleryForm');
+        if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const titleIn = document.getElementById('galleryTitle');
+        if (titleIn) titleIn.focus();
       }
     }
 
