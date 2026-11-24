@@ -828,6 +828,66 @@ function setupFormSubmissions() {
       });
     }
   }
+
+  // Contact Form Notification Email Form
+  const notificationEmailForm = document.getElementById('notificationEmailForm');
+  if (notificationEmailForm) {
+    notificationEmailForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const emailInput = document.getElementById('settingNotificationEmail');
+      const emailVal = emailInput ? emailInput.value.trim() : '';
+
+      if (!emailVal || !emailVal.includes('@') || !emailVal.includes('.')) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      const res = await window.adminService.updateSettings({
+        adminNotificationEmail: emailVal
+      });
+
+      if (res.success) {
+        alert('Notification email updated successfully! Future Contact Us submissions will be sent to ' + emailVal);
+        const notifBadge = document.getElementById('currentNotificationEmailBadge');
+        if (notifBadge) notifBadge.innerText = emailVal;
+        const inboxNotifBadge = document.getElementById('inboxNotificationEmailBadge');
+        if (inboxNotifBadge) inboxNotifBadge.innerText = emailVal;
+        await refreshAdminData();
+      } else {
+        alert(res.message || 'Failed to update notification email.');
+      }
+    });
+  }
+
+  // Send Test Email button
+  const btnSendTestEmail = document.getElementById('btnSendTestEmail');
+  if (btnSendTestEmail) {
+    btnSendTestEmail.addEventListener('click', async () => {
+      const emailInput = document.getElementById('settingNotificationEmail');
+      const emailVal = emailInput ? emailInput.value.trim() : '';
+      if (!emailVal || !emailVal.includes('@')) {
+        alert('Please enter a valid email address first.');
+        return;
+      }
+
+      btnSendTestEmail.disabled = true;
+      btnSendTestEmail.innerText = 'Sending...';
+
+      try {
+        const res = await window.adminService.sendTestEmail(emailVal);
+        if (res.success) {
+          alert(res.message || `Test email sent successfully to ${emailVal}!`);
+        } else {
+          alert(res.message || 'Failed to send test email.');
+        }
+      } catch (err) {
+        alert('Error sending test email: ' + err.message);
+      } finally {
+        btnSendTestEmail.disabled = false;
+        btnSendTestEmail.innerText = 'Send Test Email';
+      }
+    });
+  }
 }
 
 // 3. Table Event Delegation (Edit & Delete)

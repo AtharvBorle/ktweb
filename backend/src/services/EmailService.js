@@ -26,11 +26,27 @@ class EmailService {
   }
 
   /**
+   * Dynamically fetch recipient notification email from data store settings or fallback to config
+   */
+  getNotificationRecipient() {
+    try {
+      const dataRepo = require('../repositories/DataRepository');
+      const settings = (dataRepo && typeof dataRepo.getSettings === 'function') ? dataRepo.getSettings() : {};
+      if (settings.adminNotificationEmail && typeof settings.adminNotificationEmail === 'string' && settings.adminNotificationEmail.trim() !== '') {
+        return settings.adminNotificationEmail.trim();
+      }
+    } catch (e) {
+      // Fallback if dataRepo not ready
+    }
+    return config.adminNotificationEmail || 'johnwick380900@gmail.com';
+  }
+
+  /**
    * Send notification email when a new contact inquiry is received
    */
   async sendContactNotification(contactData) {
     const { name, email, phone, subject, message } = contactData;
-    const recipient = config.adminNotificationEmail;
+    const recipient = this.getNotificationRecipient();
 
     // Refresh transporter if credentials updated in environment
     if (!this.transporter && config.smtp.user && config.smtp.pass && config.smtp.pass.trim() !== '') {
@@ -113,6 +129,52 @@ class EmailService {
     } catch (err) {
       logger.warn(`[SMTP] Error sending contact notification email: ${err.message}`);
       return { success: false, error: err.message };
+    }
+  }
+
+  /**
+   * Send a test notification email to verify SMTP delivery
+   */
+  async sendTestNotification(targetEmail) {
+    const recipient = targetEmail || this.getNotificationRecipient();
+
+    if (!this.transporter && config.smtp.user && config.smtp.pass && config.smtp.pass.trim() !== '') {
+      this._initTransporter();
+    }
+
+    if (!this.transporter) {
+      logger.info(`[SMTP] Test email skipped: SMTP_PASS is empty in .env.`);
+      return {
+        success: false,
+        reason: 'SMTP_NOT_CONFIGURED',
+        message: `SMTP password (SMTP_PASS) is currently empty in .env. Once set, notifications will automatically be delivered to ${recipient}.`
+      };
+    }
+
+    const testMailOptions = {
+      from: config.smtp.from,
+      to: recipient,
+      subject: `[Test] Kunal Tilak Website Notification Email Test`,
+      text: `Hello! This is a test email from the Kunal Tilak website CMS.\n\nYour contact form recipient email is configured to: ${recipient}\n\nSubmitted inquiries from the website will be forwarded here.`,
+      html: `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; background: #f8fafc; border-radius: 8px; border-top: 4px solid #F4821E; max-width: 500px; margin: 0 auto;">
+          <h2 style="color: #1e293b; margin-top: 0;">Kunal Tilak CMS - Test Notification</h2>
+          <p style="color: #475569; font-size: 14px;">Your contact form notification recipient is configured correctly:</p>
+          <div style="background: #ffffff; padding: 12px 16px; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 15px; font-weight: bold; color: #1e293b; margin-bottom: 16px;">
+            ${recipient}
+          </div>
+          <p style="color: #64748b; font-size: 13px; margin: 0;">Whenever a visitor submits the "Contact Us" form on the live website, an email with their details will be delivered to this address.</p>
+        </div>
+      `
+    };
+
+    try {
+      const info = await this.transporter.sendMail(testMailOptions);
+      logger.info(`[SMTP] Test email sent successfully to ${recipient} (Message ID: ${info.messageId})`);
+      return { success: true, message: `Test email sent successfully to ${recipient}!`, messageId: info.messageId };
+    } catch (err) {
+      logger.warn(`[SMTP] Error sending test email: ${err.message}`);
+      return { success: false, message: `Failed to send test email: ${err.message}` };
     }
   }
 }

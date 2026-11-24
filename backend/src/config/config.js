@@ -114,8 +114,8 @@ const config = {
       message: 'Too many login attempts, please try again after 15 minutes.'
     },
     contact: {
-      windowMs: 60 * 60 * 1000, // 1 hour
-      max: 10, // 10 contact messages per hour
+      windowMs: 15 * 60 * 1000, // 15 minutes window
+      max: process.env.NODE_ENV === 'production' ? 60 : 500, // generous allowance in dev to prevent rate lockout
       message: 'You have submitted too many contact messages. Please try again later.'
     }
   },

@@ -1544,18 +1544,28 @@ class UIRenderers {
     // B. Bind Contact Form Submissions & Click Events
     const forms = document.querySelectorAll('form#contactForm, form.contactForm, section#contact-me form, .getInTouch form');
     forms.forEach(form => {
+      // Guard against multiple registrations on the same form element
+      if (form._contactFormBound) return;
+      form._contactFormBound = true;
+
       const submitBtn = form.querySelector('button');
       if (submitBtn) {
         submitBtn.style.cursor = 'pointer';
-        // Handle direct click on the button
-        submitBtn.addEventListener('click', (e) => {
-          e.preventDefault();
-          form.dispatchEvent(new Event('submit', { cancelable: true }));
-        });
+        // Cache the pristine original button HTML once so it is never permanently overwritten with "Sending..."
+        if (!submitBtn._originalHtml || submitBtn._originalHtml.includes('Sending...')) {
+          submitBtn._originalHtml = submitBtn.innerHTML || '<div class="textWrapper"><span class="btn-text">Contact us</span></div>';
+        }
       }
 
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
+      const doSubmit = async (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+
+        // Prevent concurrent double clicks
+        if (form._isSubmitting) return;
+        form._isSubmitting = true;
 
         const inputs = form.querySelectorAll('input, textarea');
         const formData = {
@@ -1588,6 +1598,7 @@ class UIRenderers {
 
         // Form Validations
         if (!formData.name) {
+          form._isSubmitting = false;
           this.showToast('Please enter your name.', 'error');
           const nameInput = form.querySelector('input[placeholder*="Name"], input[type="text"]');
           if (nameInput) nameInput.focus();
@@ -1595,6 +1606,7 @@ class UIRenderers {
         }
 
         if (!formData.phone && !formData.email) {
+          form._isSubmitting = false;
           this.showToast('Please provide your mobile number or email address.', 'error');
           const contactInput = form.querySelector('input[placeholder*="Mobile"], input[type="number"], input[type="email"]');
           if (contactInput) contactInput.focus();
@@ -1602,6 +1614,7 @@ class UIRenderers {
         }
 
         if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          form._isSubmitting = false;
           this.showToast('Please enter a valid email address.', 'error');
           const emailInput = form.querySelector('input[type="email"]');
           if (emailInput) emailInput.focus();
@@ -1609,6 +1622,7 @@ class UIRenderers {
         }
 
         if (formData.phone && formData.phone.replace(/\D/g, '').length < 7) {
+          form._isSubmitting = false;
           this.showToast('Please enter a valid mobile number.', 'error');
           const phoneInput = form.querySelector('input[placeholder*="Mobile"], input[type="number"]');
           if (phoneInput) phoneInput.focus();
@@ -1619,10 +1633,15 @@ class UIRenderers {
           formData.message = `Inquiry submitted by ${formData.name}`;
         }
 
-        // Visual loading state
-        const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+        // Visual loading state: get pristine original HTML to restore afterwards
+        const originalBtnHtml = (submitBtn && submitBtn._originalHtml && !submitBtn._originalHtml.includes('Sending...'))
+          ? submitBtn._originalHtml
+          : '<div class="textWrapper"><span class="btn-text">Contact us</span></div>';
+
         if (submitBtn) {
           submitBtn.disabled = true;
+          submitBtn.style.opacity = '0.7';
+          submitBtn.style.cursor = 'not-allowed';
           submitBtn.innerHTML = '<div class="textWrapper"><span class="btn-text">Sending...</span></div>';
         }
 
@@ -1637,12 +1656,20 @@ class UIRenderers {
         } catch (err) {
           this.showToast('Network error while sending message. Please try again.', 'error');
         } finally {
+          form._isSubmitting = false;
           if (submitBtn) {
             submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
             submitBtn.innerHTML = originalBtnHtml;
           }
         }
-      });
+      };
+
+      if (submitBtn) {
+        submitBtn.addEventListener('click', doSubmit);
+      }
+      form.addEventListener('submit', doSubmit);
     });
   }
 

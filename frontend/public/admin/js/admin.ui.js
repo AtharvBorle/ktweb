@@ -185,6 +185,14 @@ class AdminUIManager {
       this.setVal('settingOfficeAddress', s.officeAddress);
       this.setVal('settingWhatsappChannel', s.whatsappChannel);
 
+      // Contact Form Notification Email
+      const notifEmail = s.adminNotificationEmail || 'johnwick380900@gmail.com';
+      this.setVal('settingNotificationEmail', notifEmail);
+      const notifBadge = document.getElementById('currentNotificationEmailBadge');
+      if (notifBadge) notifBadge.innerText = notifEmail;
+      const inboxNotifBadge = document.getElementById('inboxNotificationEmailBadge');
+      if (inboxNotifBadge) inboxNotifBadge.innerText = notifEmail;
+
       this.setVal('settingBjpLogoPath', s.bjpLogo || '');
       this.setPreview('settingBjpLogoPreview', s.bjpLogo || '');
 
