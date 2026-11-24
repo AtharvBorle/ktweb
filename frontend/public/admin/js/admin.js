@@ -572,18 +572,20 @@ function setupFormSubmissions() {
       const res = await window.adminService.saveGallery(payload);
       if (res.success) {
         alert('Gallery item saved!');
-        galleryForm.reset();
+        const keptType = type;
+
+        // Reset field contents only, while preserving the chosen media type
         window.adminUI.setVal('galleryId', '');
+        window.adminUI.setVal('galleryTitle', '');
         window.removeUploadedImage('galleryImagePath', 'galleryImagePreview', 'galleryImageFile');
         if (typeof window.removeUploadedVideo === 'function') {
           window.removeUploadedVideo();
         }
         window.adminUI.setVal('galleryVideoUrl', '');
-        const typeSelect = document.getElementById('galleryType');
-        if (typeSelect) {
-          typeSelect.value = 'image';
-          typeSelect.dispatchEvent(new Event('change'));
-        }
+
+        // Maintain the current media type and its corresponding section
+        window.adminUI.syncGalleryTypeUI(keptType);
+
         await refreshAdminData();
       } else {
         alert(res.message || 'Error saving gallery item');
@@ -997,11 +999,7 @@ function setupTableEventDelegation() {
       if (item) {
         window.adminUI.setVal('galleryId', item.id);
         window.adminUI.setVal('galleryTitle', item.title || '');
-        const typeSelect = document.getElementById('galleryType');
-        if (typeSelect) {
-          typeSelect.value = item.type || 'image';
-          typeSelect.dispatchEvent(new Event('change'));
-        }
+        window.adminUI.syncGalleryTypeUI(item.type || 'image');
         if (item.type === 'video') {
           if (item.url && (item.url.startsWith('/uploads') || item.url.startsWith('uploads/'))) {
             window.adminUI.setVal('galleryVideoPath', item.url);
