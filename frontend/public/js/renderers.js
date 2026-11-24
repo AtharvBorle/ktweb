@@ -26,10 +26,16 @@ class UIRenderers {
       .replace(/'/g, '&#039;');
   }
 
+  extractYouTubeId(url) {
+    if (!url || typeof url !== 'string') return null;
+    const match = url.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([a-zA-Z0-9_-]{11})/i);
+    return match ? match[1] : null;
+  }
+
   /**
-   * Universal Interactive Detail Modal for "Read More"
+   * Universal Interactive Detail Modal for "Read More" & Video Playback
    */
-  showDetailModal(title, image, content, link) {
+  showDetailModal(title, image, content, link, mediaType) {
     let modal = document.getElementById('universalDetailModal');
     if (!modal) {
       modal = document.createElement('div');
@@ -47,25 +53,60 @@ class UIRenderers {
         backdrop-filter: blur(4px);
       `;
       modal.innerHTML = `
-        <div style="background: #ffffff; max-width: 650px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 14px; padding: 28px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3); box-sizing: border-box;">
-          <button type="button" id="closeDetailModal" style="position: absolute; top: 18px; right: 18px; background: #f0f0f0; border: none; font-size: 22px; font-weight: bold; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #333;">&times;</button>
+        <div style="background: #ffffff; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 14px; padding: 28px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3); box-sizing: border-box;">
+          <button type="button" id="closeDetailModal" style="position: absolute; top: 18px; right: 18px; background: #f0f0f0; border: none; font-size: 22px; font-weight: bold; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #333; z-index: 10;">&times;</button>
           <div id="detailModalBody"></div>
         </div>
       `;
       document.body.appendChild(modal);
 
+      const closeModal = () => {
+        modal.style.display = 'none';
+        const b = modal.querySelector('#detailModalBody');
+        if (b) b.innerHTML = '';
+      };
+
       modal.addEventListener('click', (e) => {
         if (e.target.id === 'universalDetailModal' || e.target.id === 'closeDetailModal') {
-          modal.style.display = 'none';
+          closeModal();
+        }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display !== 'none') {
+          closeModal();
         }
       });
     }
 
+    const isVideo = mediaType === 'video' || (image && (image.includes('youtube.com') || image.includes('youtu.be') || /\.(mp4|webm|ogg|mov)$/i.test(image)));
+    const ytId = isVideo && image ? this.extractYouTubeId(image) : null;
+
+    let mediaHtml = '';
+    if (image && image.trim() !== '') {
+      if (isVideo) {
+        if (ytId) {
+          mediaHtml = `
+            <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; border-radius:10px; overflow:hidden; margin-bottom:20px; background:#000; box-shadow:0 4px 14px rgba(0,0,0,0.2);">
+              <iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"></iframe>
+            </div>
+          `;
+        } else {
+          mediaHtml = `
+            <div style="width:100%; max-height:400px; border-radius:10px; overflow:hidden; margin-bottom:20px; background:#000; box-shadow:0 4px 14px rgba(0,0,0,0.2);">
+              <video src="${this.bustingUrl(image)}" controls autoplay playsinline style="width:100%; max-height:400px; display:block; outline:none;"></video>
+            </div>
+          `;
+        }
+      } else {
+        mediaHtml = `<img src="${this.bustingUrl(image)}" alt="${this.escapeHtml(title)}" style="width:100%; max-height:340px; object-fit:cover; border-radius:10px; margin-bottom:20px; display:block;" />`;
+      }
+    }
+
     const body = modal.querySelector('#detailModalBody');
     body.innerHTML = `
-      ${image && image.trim() !== '' ? `<img src="${this.bustingUrl(image)}" alt="${this.escapeHtml(title)}" style="width:100%; max-height:320px; object-fit:cover; border-radius:10px; margin-bottom:20px; display:block;" />` : ''}
+      ${mediaHtml}
       <h2 style="font-family:'Alegreya', serif; font-size:26px; font-weight:bold; color:#212121; margin-bottom:14px; line-height:1.3;">${this.escapeHtml(title)}</h2>
-      <div style="font-family:'IBM Plex Sans', sans-serif; font-size:15px; line-height:1.7; color:#444444; margin-bottom:24px; white-space:pre-line;">${this.escapeHtml(content || 'No additional details available.')}</div>
+      ${content ? `<div style="font-family:'IBM Plex Sans', sans-serif; font-size:15px; line-height:1.7; color:#444444; margin-bottom:24px; white-space:pre-line;">${this.escapeHtml(content)}</div>` : ''}
       ${link && link.trim() !== '' ? `<a href="${this.bustingUrl(link)}" target="_blank" style="display:inline-block; padding:10px 22px; background:#F4821E; color:#ffffff; font-weight:bold; border-radius:24px; text-decoration:none; box-shadow: 0 4px 12px rgba(244,130,30,0.3);">Explore More &rarr;</a>` : ''}
     `;
 
@@ -764,7 +805,7 @@ class UIRenderers {
       const row2Track = section.querySelector('.sliderTwoWrapper .slick-track');
 
       if (gallery && gallery.length > 0) {
-        const validItems = gallery.filter(item => item && item.url && item.url.trim() !== '' && item.type !== 'video');
+        const validItems = gallery.filter(item => item && item.url && item.url.trim() !== '');
         if (validItems.length > 0) {
           // Row 1 items: repeat to at least 8 items, then duplicate for seamless 50% loop
           let r1 = [...validItems];
@@ -780,19 +821,40 @@ class UIRenderers {
           }
           const fullRow2 = r2.concat(r2);
 
-          const renderItems = (items) => items.map((item, i) => `
-            <div class="slick-slide" tabindex="-1" style="width: auto !important; float: none !important;">
-              <div class="slideItem" style="cursor: pointer;" data-idx="${i}" title="${this.escapeHtml(item.title || 'View Photo')}">
-                <img src="${this.bustingUrl(item.url)}" alt="${this.escapeHtml(item.title || 'Gallery Item')}" loading="lazy" />
+          const renderItems = (items) => items.map((item, i) => {
+            const isVideo = item.type === 'video';
+            const ytId = isVideo ? this.extractYouTubeId(item.url) : null;
+            let mediaMarkup = '';
+
+            if (isVideo) {
+              if (ytId) {
+                mediaMarkup = `<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt="${this.escapeHtml(item.title || 'Video')}" loading="lazy" style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block;" onerror="this.src='/uploads/video_placeholder.png'" />`;
+              } else {
+                mediaMarkup = `<video src="${this.bustingUrl(item.url)}#t=0.5" preload="metadata" muted playsinline style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block; pointer-events: none;"></video>`;
+              }
+            } else {
+              mediaMarkup = `<img src="${this.bustingUrl(item.url)}" alt="${this.escapeHtml(item.title || 'Gallery Item')}" loading="lazy" style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block;" />`;
+            }
+
+            return `
+              <div class="slick-slide" tabindex="-1" style="width: auto !important; float: none !important;">
+                <div class="slideItem" style="cursor: pointer; position: relative; display: block;" data-idx="${i}" title="${this.escapeHtml(item.title || (isVideo ? 'Watch Video' : 'View Photo'))}">
+                  ${mediaMarkup}
+                  ${isVideo ? `
+                    <div class="galleryVideoBadge" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 48px; height: 48px; background: rgba(244, 130, 30, 0.92); border: 2px solid #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.35); pointer-events: none; transition: transform 0.2s ease;">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffffff" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </div>
+                  ` : ''}
+                </div>
               </div>
-            </div>
-          `).join('');
+            `;
+          }).join('');
 
           if (row1Track) {
             row1Track.innerHTML = renderItems(fullRow1);
             row1Track.querySelectorAll('.slideItem').forEach((el, idx) => {
               const itm = fullRow1[idx];
-              el.onclick = () => this.showDetailModal(itm.title || 'Gallery Photo', itm.url, '');
+              el.onclick = () => this.showDetailModal(itm.title || (itm.type === 'video' ? 'Gallery Video' : 'Gallery Photo'), itm.url, '', '', itm.type);
             });
           }
 
@@ -800,7 +862,7 @@ class UIRenderers {
             row2Track.innerHTML = renderItems(fullRow2);
             row2Track.querySelectorAll('.slideItem').forEach((el, idx) => {
               const itm = fullRow2[idx];
-              el.onclick = () => this.showDetailModal(itm.title || 'Gallery Photo', itm.url, '');
+              el.onclick = () => this.showDetailModal(itm.title || (itm.type === 'video' ? 'Gallery Video' : 'Gallery Photo'), itm.url, '', '', itm.type);
             });
           }
           return;
