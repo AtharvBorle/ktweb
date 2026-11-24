@@ -734,3 +734,45 @@ section.sc-jTIKuF:not(.has-initiatives) .left h2 {
   transition: all 0.3s ease !important;
 }
 
+/* 16. Ensure Contact Me Button Stays in Front of Hero Photo & Banner */
+.sc-hlDEJj .menuWrap,
+.menuWrap {
+  position: relative !important;
+}
+
+.menuWrap > .sc-eKQWOK,
+.menuWrap > .cttLvF,
+.menuWrap header,
+.sc-eKQWOK.cttLvF,
+header.sc-eKQWOK,
+header.cttLvF {
+  position: relative !important;
+  z-index: 50 !important;
+}
+
+.cttLvF .btnWrap,
+.sc-eKQWOK .btnWrap,
+.btnWrap,
+.mobileMenuWrap {
+  position: relative !important;
+  z-index: 55 !important;
+  pointer-events: auto !important;
+}
+
+.btnWrap button,
+.btnWrap .sc-bcPKhP,
+.btnWrap .sc-bcPKhP button,
+.btnWrap .btn-text,
+.mobileMenuWrap button {
+  position: relative !important;
+  z-index: 60 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.sc-kIuKII.dIzsqs {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+
