@@ -15,12 +15,22 @@ echo "========================================================"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
-# 1. Pull Latest Changes from Git
-echo "📥 [1/5] Fetching latest changes from Git..."
+# 1. Pull Latest Changes from Git (dev branch)
+TARGET_BRANCH="${DEPLOY_BRANCH:-dev}"
+echo "📥 [1/5] Fetching latest changes from Git ($TARGET_BRANCH branch)..."
 if [ -d ".git" ]; then
-  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "dev")
-  echo "Current branch: $CURRENT_BRANCH"
-  git pull origin "$CURRENT_BRANCH" 2>/dev/null || git pull origin dev 2>/dev/null || git pull origin main 2>/dev/null || echo "Git pull completed or already up to date."
+  # Fetch latest remote changes
+  git fetch origin "$TARGET_BRANCH" 2>/dev/null || git fetch origin 2>/dev/null || true
+
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
+  if [ -n "$CURRENT_BRANCH" ] && [ "$CURRENT_BRANCH" != "$TARGET_BRANCH" ]; then
+    echo "Current branch is '$CURRENT_BRANCH'. Switching to '$TARGET_BRANCH'..."
+    git checkout "$TARGET_BRANCH" 2>/dev/null || git checkout -b "$TARGET_BRANCH" "origin/$TARGET_BRANCH" 2>/dev/null || git checkout -B "$TARGET_BRANCH" "origin/$TARGET_BRANCH" 2>/dev/null || true
+  fi
+
+  ACTIVE_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "$TARGET_BRANCH")
+  echo "Current branch: $ACTIVE_BRANCH"
+  git pull origin "$TARGET_BRANCH" || echo "Git pull completed."
 else
   echo "ℹ️  No .git directory found at root; skipping git pull."
 fi
