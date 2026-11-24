@@ -26,6 +26,17 @@ const config = {
     expiresIn: '24h'
   },
 
+  smtp: {
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: parseInt(process.env.SMTP_PORT, 10) || 465,
+    secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465' || process.env.SMTP_PORT === 465,
+    user: process.env.SMTP_USER || 'johnwick380900@gmail.com',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.SMTP_FROM || '"Kunal Tilak" <johnwick380900@gmail.com>'
+  },
+
+  adminNotificationEmail: process.env.ADMIN_NOTIFICATION_EMAIL || process.env.SMTP_USER || 'johnwick380900@gmail.com',
+
   database: {
     url: process.env.DATABASE_URL || '',
     provider: process.env.DB_PROVIDER || 'postgresql',

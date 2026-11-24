@@ -9,6 +9,7 @@ class UIRenderers {
       data: null
     };
     this.setupReportCardHandlers();
+    this.setupContactModal();
   }
 
   bustingUrl(url) {
@@ -1460,41 +1461,71 @@ class UIRenderers {
    * 13. Interactive Contact Modal & Form Handler
    */
   setupContactModal() {
-    // Helper: Scroll smoothly to the Contact section
+    // Helper: Scroll smoothly to the Contact section with running animation
     const scrollToContact = (e) => {
-      if (e) e.preventDefault();
-      const target = document.getElementById('contact-me') || document.querySelector('section.contactSection, .sc-fwdjSP, .sc-iUeHef');
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      const target = document.getElementById('contact-me') || document.querySelector('section.contactSection, .sc-fwdjSP, .sc-iUeHef, #contact');
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const headerOffset = 70;
+        const targetPos = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
 
-        // Highlight form smoothly
+        window.scrollTo({
+          top: targetPos,
+          behavior: 'smooth'
+        });
+
+        // Running animation on the contact form container
         const formBox = target.querySelector('.getInTouch, form');
         if (formBox) {
-          formBox.style.transition = 'box-shadow 0.4s ease, border-color 0.4s ease';
-          formBox.style.boxShadow = '0 0 0 4px rgba(244, 130, 30, 0.45)';
+          formBox.classList.remove('running-contact-glow');
+          void formBox.offsetWidth; // Trigger reflow to restart CSS animation
+          formBox.classList.add('running-contact-glow');
+
           setTimeout(() => {
-            formBox.style.boxShadow = '';
-          }, 1800);
+            formBox.classList.remove('running-contact-glow');
+          }, 3200);
         }
 
-        // Focus first input field
+        // Focus first input field once scrolled into view
         setTimeout(() => {
           const firstInput = target.querySelector('input');
-          if (firstInput) firstInput.focus();
-        }, 500);
+          if (firstInput) {
+            firstInput.focus();
+            firstInput.classList.add('running-input-glow');
+            setTimeout(() => firstInput.classList.remove('running-input-glow'), 1800);
+          }
+        }, 600);
       } else {
         // Fallback for subpages without a local contact section
         window.location.href = '/index.html#contact-me';
       }
     };
 
-    // A. Bind all Header & Banner "Contact Me" buttons
+    // Global document capture-phase delegation ensures "Contact Me" button always works reliably
+    if (!this._contactDelegationAttached) {
+      this._contactDelegationAttached = true;
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btnWrap button, .mobileMenuWrap button, button.contact-btn, .sc-bcPKhP.primary button, a[href*="#contact-me"], button[data-action="contact"], .contactBtn, .btnWrap .btn-text, .sc-bcPKhP.primary');
+        if (btn) {
+          const text = (btn.innerText || btn.textContent || '').trim().toLowerCase();
+          if (text.includes('contact') || text.includes('connect') || btn.closest('a[href*="#contact-me"]')) {
+            scrollToContact(e);
+          }
+        }
+      }, true);
+    }
+
+    // A. Bind all Header & Banner "Contact Me" buttons directly as fallback
     const headerButtons = document.querySelectorAll('.btnWrap button, .mobileMenuWrap button, button.contact-btn, .sc-bcPKhP.primary button');
     headerButtons.forEach(btn => {
       const text = (btn.innerText || '').trim().toLowerCase();
       if (text.includes('contact') || text.includes('connect')) {
         btn.style.cursor = 'pointer';
         btn.setAttribute('type', 'button');
+        btn.removeEventListener('click', scrollToContact);
         btn.addEventListener('click', scrollToContact);
       }
     });
@@ -1502,6 +1533,7 @@ class UIRenderers {
     // Also bind any anchor links targeting #contact-me
     const contactLinks = document.querySelectorAll('a[href*="#contact-me"]');
     contactLinks.forEach(link => {
+      link.removeEventListener('click', scrollToContact);
       link.addEventListener('click', (e) => {
         if (document.getElementById('contact-me')) {
           scrollToContact(e);
