@@ -755,7 +755,7 @@
         <section class="tabSection" id="tab-gallery">
           <div class="cardBox">
             <h3>Add / Edit Gallery Item</h3>
-            <form id="galleryForm">
+            <form id="galleryForm" novalidate>
               <input type="hidden" id="galleryId" />
               <div class="formGrid">
                 <div class="formGroup">
@@ -779,9 +779,9 @@
                   </div>
                 </div>
                 <div class="formGroup fullWidth" id="galleryVideoUrlGroup" style="display: none;">
-                  <div style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 12px;">
-                    <label style="font-weight: 600; color: #334155; margin-bottom: 6px; display: block;">Option 1: Upload Video File (.mp4, .webm, .mov)</label>
-                    <input type="file" id="galleryVideoFile" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/*" />
+                  <div id="galleryVideoUploadBox" style="background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 14px; margin-bottom: 12px;">
+                    <label style="font-weight: 600; color: #334155; margin-bottom: 6px; display: block;">Option 1: Upload Video File (.mp4, .webm, .mov, .ogg)</label>
+                    <input type="file" id="galleryVideoFile" accept=".mp4,.webm,.mov,.ogg,video/mp4,video/webm,video/quicktime,video/ogg" />
                     <input type="hidden" id="galleryVideoPath" />
                     <div style="margin-top: 10px;">
                       <video id="galleryVideoPreview" class="imagePreview" controls style="max-height: 140px; display: none; border-radius: 6px; margin-bottom: 6px;"></video>
@@ -792,8 +792,10 @@
                     <label style="font-weight: 600; color: #334155; margin-bottom: 6px; display: block;">Option 2: Or Paste YouTube Video Link</label>
                     <input type="url" id="galleryVideoUrl" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..." />
                   </div>
+                  <div id="galleryVideoValidationError" style="display: none; margin-top: 10px; padding: 10px 12px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: 13px; font-weight: 500;"></div>
                 </div>
               </div>
+              <div id="galleryFormValidationError" style="display: none; margin-bottom: 12px; padding: 10px 12px; border-radius: 6px; background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; font-size: 13px; font-weight: 500;"></div>
               <button type="submit" class="btnSubmit">Save Gallery Item</button>
             </form>
           </div>
@@ -1159,8 +1161,8 @@
     </div>
   </div>
 
-  <script src="js/admin.service.js?v=20261123v2"></script>
-  <script src="js/admin.ui.js?v=20261123v2"></script>
-  <script src="js/admin.js?v=20261123v2"></script>
+  <script src="js/admin.service.js?v=20261125v3"></script>
+  <script src="js/admin.ui.js?v=20261125v3"></script>
+  <script src="js/admin.js?v=20261125v3"></script>
 </body>
 </html>

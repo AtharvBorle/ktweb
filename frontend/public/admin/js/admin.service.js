@@ -217,10 +217,11 @@ class AdminService {
   }
 
   // --- File Upload ---
-  async uploadFile(file) {
+  async uploadFile(file, mediaType = '') {
     const formData = new FormData();
     formData.append('file', file);
-    return this.request('/admin/upload', {
+    const qs = mediaType ? `?mediaType=${encodeURIComponent(mediaType)}` : '';
+    return this.request(`/admin/upload${qs}`, {
       method: 'POST',
       body: formData
     });
