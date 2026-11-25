@@ -83,15 +83,21 @@ class ContentService {
       } else if (t === 'health' || t.startsWith('health') || t.includes('medic') || t.includes('hospital')) {
         pillarData.link = '/initiatives/health';
         pillarData.key = 'health';
-      } else if (t.includes('infra') || t.includes('transport') || t.includes('mobility') || t.includes('road') || t.includes('metro')) {
-        pillarData.link = '/initiatives/infrastructure-transport-mobility';
-        pillarData.key = 'infrastructure';
       } else if (t === 'sports' || t.startsWith('sport') || t.includes('game') || t.includes('fit')) {
         pillarData.link = '/initiatives/sports';
         pillarData.key = 'sports';
-      } else if (t.includes('parliament') || t.includes('policy') || t.includes('amrit')) {
-        pillarData.link = '/initiatives/policy-and-parliamentary-work';
-        pillarData.key = 'policy';
+      } else if (t === 'leadership' || t.includes('leader') || t.includes('youth')) {
+        pillarData.link = '/initiatives/leadership';
+        pillarData.key = 'leadership';
+      } else if (t === 'politics' || t.includes('politic') || t.includes('parliament') || t.includes('policy')) {
+        pillarData.link = '/initiatives/politics';
+        pillarData.key = 'politics';
+      } else if (t === 'initiative' || t === 'initiatives') {
+        pillarData.link = '/initiatives/initiative';
+        pillarData.key = 'initiatives';
+      } else if (t.includes('infra') || t.includes('transport') || t.includes('mobility') || t.includes('road') || t.includes('metro')) {
+        pillarData.link = '/initiatives/infrastructure-transport-mobility';
+        pillarData.key = 'infrastructure';
       } else if (t.includes('constituency') || t.includes('project') || t.includes('swamih')) {
         pillarData.link = '/initiatives/constituency-projects';
         pillarData.key = 'projects';
@@ -172,10 +178,62 @@ class ContentService {
   }
 
   async saveSectorItem(sectorData) {
-    if (!sectorData.title || !sectorData.sector) {
-      throw new BadRequestError('Sector name and title are required.');
+    if (!sectorData || !sectorData.title || !String(sectorData.title).trim() || !sectorData.sector || !String(sectorData.sector).trim()) {
+      throw new BadRequestError('Category and topic title are required.');
     }
-    const sanitized = sanitizer.sanitizeObject(sectorData);
+
+    let normalizedSector = String(sectorData.sector).trim().toLowerCase();
+    if (normalizedSector === 'initiative') {
+      normalizedSector = 'initiatives';
+    }
+    const allowedSectors = ['education', 'health', 'sports', 'leadership', 'politics', 'initiatives'];
+    if (!allowedSectors.includes(normalizedSector)) {
+      throw new BadRequestError('Invalid category selected. Please choose Education, Health, Sports, Leadership, Politics, or Initiatives.');
+    }
+
+    const rawDesc = typeof sectorData.description === 'string' ? sectorData.description.trim() : '';
+    let paragraphs = Array.isArray(sectorData.paragraphs)
+      ? sectorData.paragraphs.map(p => String(p || '').trim()).filter(Boolean)
+      : [];
+    if (!paragraphs.length && rawDesc) {
+      paragraphs = rawDesc.split(/\r?\n\s*\r?\n|\r?\n/).map(p => p.trim()).filter(Boolean);
+    }
+    if (!paragraphs.length) {
+      throw new BadRequestError('Topic content / description is required.');
+    }
+
+    const normalizedPhotos = [];
+    if (Array.isArray(sectorData.photos)) {
+      for (const entry of sectorData.photos) {
+        if (!entry || typeof entry !== 'object') continue;
+        const src = String(entry.src || '').trim();
+        if (!src) continue;
+        normalizedPhotos.push({
+          src,
+          caption: String(entry.caption || '').trim()
+        });
+      }
+    }
+
+    const categoryBadge = String(sectorData.category || sectorData.issue || '').trim() || 'Initiative';
+    const parsedPublishedAt = sectorData.publishedAt ? Number(sectorData.publishedAt) : NaN;
+    const publishedAt = !isNaN(parsedPublishedAt) && parsedPublishedAt > 0 ? parsedPublishedAt : Date.now();
+    const relativeLabel = String(sectorData.relativeLabel || '').trim() || 'Recently';
+
+    const cleanPayload = {
+      ...(sectorData.id !== undefined && sectorData.id !== '' ? { id: sectorData.id } : {}),
+      sector: normalizedSector,
+      category: categoryBadge,
+      issue: categoryBadge,
+      title: String(sectorData.title).trim(),
+      relativeLabel,
+      publishedAt,
+      description: rawDesc || paragraphs.join('\n\n'),
+      paragraphs,
+      photos: normalizedPhotos
+    };
+
+    const sanitized = sanitizer.sanitizeObject(cleanPayload);
     return dataRepo.saveSectorItem(sanitized);
   }
 
