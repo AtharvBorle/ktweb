@@ -510,6 +510,17 @@ a.reportButton {
 
 /* 14. Smooth Scrolling & Contact Button Interactivity */
 html {
+  height: auto !important;
+  min-height: 100% !important;
+  scroll-behavior: smooth !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: visible !important;
+  overflow-x: hidden !important;
   scroll-behavior: smooth !important;
 }
 
@@ -517,7 +528,7 @@ html {
 section.contactSection,
 .sc-fwdjSP,
 .sc-iUeHef {
-  scroll-margin-top: 50px !important;
+  scroll-margin-top: 70px !important;
 }
 
 .sc-bcPKhP button,
