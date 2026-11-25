@@ -436,7 +436,27 @@ a.reportButton {
   left: 50% !important;
   transform: translateX(-50%) !important;
   z-index: 10 !important;
-  max-width: 220px !important;
+  width: max-content !important;
+  max-width: 260px !important;
+  padding: 10px 22px 10px 14px !important;
+}
+
+.dIzsqs .reportButton .textWrapper,
+a.reportButton .textWrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+}
+
+.dIzsqs .reportButton .textWrapper .btnImgWrap,
+a.reportButton .textWrapper .btnImgWrap {
+  flex-shrink: 0 !important;
+}
+
+.dIzsqs .reportButton .textWrapper .btn-text,
+a.reportButton .textWrapper .btn-text {
+  white-space: nowrap !important;
 }
 
 /* 11. Key Highlights & Section Slider Arrow Interactivity */
