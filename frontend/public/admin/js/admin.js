@@ -798,42 +798,311 @@ function setupFormSubmissions() {
     });
   }
 
-  // Sector Initiative Form
+  // Category Pages & Topics Manager (#tab-sectors)
   const sectorForm = document.getElementById('sectorInitiativeForm');
   const btnSaveSector = document.getElementById('btnSaveSectorItem');
   const btnCancelSector = document.getElementById('btnCancelSectorItem');
+  const btnResetSectorNew = document.getElementById('btnResetSectorToNew');
+  const sectorFormHeading = document.getElementById('sectorFormHeading');
+  const sectorFilterBar = document.getElementById('sectorCategoryFilterBar');
+  const sectorPhotosList = document.getElementById('sectorPhotosList');
+  const sectorPhotoUploadInput = document.getElementById('sectorPhotoUploadInput');
+  const sectorPhotoUrlInput = document.getElementById('sectorPhotoUrlInput');
+  const btnAddSectorPhotoUrl = document.getElementById('btnAddSectorPhotoUrl');
+  const sectorPhotoUploadStatus = document.getElementById('sectorPhotoUploadStatus');
+  const sectorFormErrEl = document.getElementById('sectorFormValidationError');
+  const sectorFormOkEl = document.getElementById('sectorFormSuccessMsg');
+  const btnSaveSectorHeroIntro = document.getElementById('btnSaveSectorHeroIntro');
 
-  function resetSectorForm() {
+  function setSectorFeedback(errMsg, okMsg) {
+    if (sectorFormErrEl) {
+      sectorFormErrEl.style.display = errMsg ? 'block' : 'none';
+      sectorFormErrEl.innerText = errMsg || '';
+    }
+    if (sectorFormOkEl) {
+      sectorFormOkEl.style.display = okMsg ? 'block' : 'none';
+      sectorFormOkEl.innerText = okMsg || '';
+    }
+  }
+
+  function toDateInputValue(ts) {
+    try {
+      const d = ts ? new Date(Number(ts)) : new Date();
+      if (isNaN(d.getTime())) return new Date().toISOString().slice(0, 10);
+      return d.toISOString().slice(0, 10);
+    } catch (e) {
+      return new Date().toISOString().slice(0, 10);
+    }
+  }
+
+  function computeRelativeLabel(ts) {
+    const diffDays = Math.floor((Date.now() - Number(ts || Date.now())) / (24 * 3600 * 1000));
+    if (isNaN(diffDays) || diffDays <= 0) return 'Recently';
+    if (diffDays === 1) return 'One day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 14) return 'One week ago';
+    if (diffDays < 32) return 'This month';
+    return 'This year';
+  }
+
+  function resetSectorForm(keepFilterCategory = true) {
     if (sectorForm) sectorForm.reset();
     window.adminUI.setVal('sectorItemId', '');
-    if (btnSaveSector) btnSaveSector.innerText = 'Save Sector Initiative Item';
+    if (keepFilterCategory && window.adminUI.activeSectorFilter && window.adminUI.activeSectorFilter !== 'all') {
+      window.adminUI.setVal('sectorPageSelect', window.adminUI.activeSectorFilter);
+    }
+    window.adminUI.setVal('sectorItemDate', toDateInputValue(Date.now()));
+    window.adminUI.sectorDraftPhotos = [];
+    window.adminUI.renderSectorPhotosList();
+    if (sectorPhotoUploadInput) sectorPhotoUploadInput.value = '';
+    if (sectorPhotoUrlInput) sectorPhotoUrlInput.value = '';
+    if (sectorFormHeading) sectorFormHeading.innerText = 'Add New Category Topic';
+    if (btnSaveSector) btnSaveSector.innerText = 'Save Topic';
     if (btnCancelSector) btnCancelSector.style.display = 'none';
+    setSectorFeedback('', '');
   }
+
+  // Render initial empty photo strip & today's date
+  window.adminUI.setVal('sectorItemDate', toDateInputValue(Date.now()));
+  window.adminUI.renderSectorPhotosList();
 
   if (btnCancelSector) {
     btnCancelSector.addEventListener('click', () => {
-      resetSectorForm();
+      resetSectorForm(true);
+    });
+  }
+
+  if (btnResetSectorNew) {
+    btnResetSectorNew.addEventListener('click', () => {
+      resetSectorForm(true);
+      const titleIn = document.getElementById('sectorItemTitle');
+      if (titleIn) titleIn.focus();
+    });
+  }
+
+  function applySectorFilterUI(filterVal) {
+    const targetFilter = filterVal || 'all';
+    window.adminUI.activeSectorFilter = targetFilter;
+    if (sectorFilterBar) {
+      sectorFilterBar.querySelectorAll('.sectorFilterPill').forEach(p => {
+        p.classList.toggle('active', p.getAttribute('data-filter') === targetFilter);
+      });
+    }
+    const items = (window.adminUI.currentData && window.adminUI.currentData.sectorInitiatives) || [];
+    window.adminUI.renderSectorsTable(items);
+  }
+
+  const sectorPageSelectEl = document.getElementById('sectorPageSelect');
+  if (sectorPageSelectEl) {
+    sectorPageSelectEl.addEventListener('change', () => {
+      const selectedSector = window.adminUI.normalizeSectorKey(sectorPageSelectEl.value);
+      if (selectedSector) {
+        applySectorFilterUI(selectedSector);
+      }
+    });
+  }
+
+  if (sectorFilterBar) {
+    sectorFilterBar.addEventListener('click', (e) => {
+      const pill = e.target.closest('.sectorFilterPill');
+      if (!pill) return;
+      const filterVal = pill.getAttribute('data-filter') || 'all';
+
+      // If creating a new topic (not editing an existing one), pre-select the filtered category
+      if (!window.adminUI.getVal('sectorItemId') && filterVal !== 'all') {
+        window.adminUI.setVal('sectorPageSelect', filterVal);
+      }
+
+      applySectorFilterUI(filterVal);
+    });
+  }
+
+  if (btnSaveSectorHeroIntro) {
+    btnSaveSectorHeroIntro.addEventListener('click', async () => {
+      const activeKey = window.adminUI.activeSectorFilter;
+      if (!activeKey || activeKey === 'all') return;
+      const introText = window.adminUI.getVal('sectorHeroIntroInput');
+      if (!introText) {
+        setSectorFeedback('Please enter a Category Hero Banner Intro before saving.', '');
+        return;
+      }
+
+      const meta = window.adminUI.getSectorMeta(activeKey);
+      const pillars = (window.adminUI.currentData && window.adminUI.currentData.initiativePillars) || [];
+      const existing = pillars.find(p => {
+        const pk = window.adminUI.normalizeSectorKey(p.key || '');
+        const pt = window.adminUI.normalizeSectorKey(p.title || '');
+        return pk === activeKey || pt === activeKey;
+      });
+
+      const res = await window.adminService.saveInitiativePillar({
+        id: existing ? existing.id : '',
+        key: activeKey,
+        title: meta.label,
+        link: meta.href,
+        intro: introText
+      });
+
+      if (res && res.success) {
+        setSectorFeedback('', `${meta.label} Hero Banner Intro saved!`);
+        await refreshAdminData();
+      } else {
+        setSectorFeedback((res && res.message) || 'Error saving category hero intro.', '');
+      }
+    });
+  }
+
+  if (sectorPhotoUploadInput) {
+    sectorPhotoUploadInput.addEventListener('change', async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      setSectorFeedback('', '');
+
+      const validImageRe = /\.(jpe?g|png|webp|gif)$/i;
+      const uploadedCount = [];
+      if (sectorPhotoUploadStatus) {
+        sectorPhotoUploadStatus.style.display = 'block';
+        sectorPhotoUploadStatus.innerText = `Uploading ${files.length} photo(s)...`;
+      }
+
+      for (const file of files) {
+        if (!validImageRe.test(file.name) && (!file.type || !file.type.startsWith('image/'))) {
+          setSectorFeedback(`Skipped "${file.name}": only image files (.jpg, .png, .webp, .gif) are allowed.`, '');
+          continue;
+        }
+        const uploadRes = await window.adminService.uploadFile(file, 'image');
+        if (uploadRes && uploadRes.success && uploadRes.data && uploadRes.data.url) {
+          window.adminUI.sectorDraftPhotos.push({
+            src: uploadRes.data.url,
+            caption: ''
+          });
+          uploadedCount.push(file.name);
+        } else {
+          setSectorFeedback((uploadRes && uploadRes.message) || `Upload failed for "${file.name}".`, '');
+        }
+      }
+
+      if (sectorPhotoUploadStatus) {
+        sectorPhotoUploadStatus.style.display = 'none';
+      }
+      sectorPhotoUploadInput.value = '';
+      window.adminUI.renderSectorPhotosList();
+      if (uploadedCount.length) {
+        setSectorFeedback('', `Uploaded ${uploadedCount.length} photo(s). Click "Save Topic" to publish changes.`);
+      }
+    });
+  }
+
+  if (btnAddSectorPhotoUrl) {
+    btnAddSectorPhotoUrl.addEventListener('click', () => {
+      const rawUrl = sectorPhotoUrlInput ? sectorPhotoUrlInput.value.trim() : '';
+      if (!rawUrl) {
+        setSectorFeedback('Please paste an image path or URL to add.', '');
+        return;
+      }
+      setSectorFeedback('', '');
+      window.adminUI.sectorDraftPhotos.push({ src: rawUrl, caption: '' });
+      if (sectorPhotoUrlInput) sectorPhotoUrlInput.value = '';
+      window.adminUI.renderSectorPhotosList();
+    });
+  }
+
+  if (sectorPhotosList) {
+    sectorPhotosList.addEventListener('input', (e) => {
+      const capInput = e.target.closest('.sectorPhotoCaptionInput');
+      if (!capInput) return;
+      const idx = Number(capInput.getAttribute('data-photo-caption-idx'));
+      if (!isNaN(idx) && window.adminUI.sectorDraftPhotos[idx]) {
+        window.adminUI.sectorDraftPhotos[idx].caption = capInput.value;
+      }
+    });
+
+    sectorPhotosList.addEventListener('click', (e) => {
+      const removeBtn = e.target.closest('[data-photo-remove-idx]');
+      if (removeBtn) {
+        const idx = Number(removeBtn.getAttribute('data-photo-remove-idx'));
+        if (!isNaN(idx)) {
+          window.adminUI.sectorDraftPhotos.splice(idx, 1);
+          window.adminUI.renderSectorPhotosList();
+        }
+        return;
+      }
+
+      const moveBtn = e.target.closest('.sectorPhotoMoveBtn');
+      if (moveBtn) {
+        const idx = Number(moveBtn.getAttribute('data-photo-idx'));
+        const dir = Number(moveBtn.getAttribute('data-dir')) || 1;
+        const targetIdx = idx + dir;
+        const arr = window.adminUI.sectorDraftPhotos;
+        if (!isNaN(idx) && targetIdx >= 0 && targetIdx < arr.length) {
+          const temp = arr[idx];
+          arr[idx] = arr[targetIdx];
+          arr[targetIdx] = temp;
+          window.adminUI.renderSectorPhotosList();
+        }
+      }
     });
   }
 
   if (sectorForm) {
     sectorForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      setSectorFeedback('', '');
+
+      const id = window.adminUI.getVal('sectorItemId');
+      const sector = window.adminUI.getVal('sectorPageSelect');
+      const category = window.adminUI.getVal('sectorItemCategory');
+      const title = window.adminUI.getVal('sectorItemTitle');
+      const dateStr = window.adminUI.getVal('sectorItemDate');
+      const rawDesc = document.getElementById('sectorItemDesc') ? document.getElementById('sectorItemDesc').value.trim() : '';
+
+      if (!sector || !title || !category || !rawDesc) {
+        setSectorFeedback('Please fill in Category Page, Sub-Category Tag, Topic Title, and Associated Content.', '');
+        return;
+      }
+
+      const paragraphs = rawDesc.split(/\r?\n\s*\r?\n|\r?\n/).map(p => p.trim()).filter(Boolean);
+      const parsedDateMs = dateStr ? new Date(`${dateStr}T12:00:00`).getTime() : Date.now();
+      const publishedAt = !isNaN(parsedDateMs) ? parsedDateMs : Date.now();
+      const relativeLabel = computeRelativeLabel(publishedAt);
+
+      const photos = (window.adminUI.sectorDraftPhotos || [])
+        .map(p => ({ src: String(p.src || '').trim(), caption: String(p.caption || '').trim() }))
+        .filter(p => p.src !== '');
+
       const payload = {
-        id: window.adminUI.getVal('sectorItemId'),
-        sector: window.adminUI.getVal('sectorPageSelect'),
-        title: window.adminUI.getVal('sectorItemTitle'),
-        issue: window.adminUI.getVal('sectorItemIssue'),
-        description: window.adminUI.getVal('sectorItemDesc')
+        id,
+        sector,
+        category,
+        issue: category,
+        title,
+        relativeLabel,
+        publishedAt,
+        description: rawDesc,
+        paragraphs,
+        photos
       };
 
+      if (btnSaveSector) btnSaveSector.disabled = true;
       const res = await window.adminService.saveSectorItem(payload);
-      if (res.success) {
-        alert('Sector initiative saved!');
-        resetSectorForm();
+      if (btnSaveSector) btnSaveSector.disabled = false;
+
+      if (res && res.success) {
+        const savedLabel = window.adminUI.getSectorMeta(sector).label;
+        resetSectorForm(false);
+        if (window.adminUI.activeSectorFilter !== 'all') {
+          window.adminUI.activeSectorFilter = sector;
+          if (sectorFilterBar) {
+            sectorFilterBar.querySelectorAll('.sectorFilterPill').forEach(p => {
+              p.classList.toggle('active', p.getAttribute('data-filter') === sector);
+            });
+          }
+        }
+        window.adminUI.setVal('sectorPageSelect', sector);
         await refreshAdminData();
+        setSectorFeedback('', `${id ? 'Updated' : 'Added'} topic in ${savedLabel} cleanly!`);
       } else {
-        alert(res.message || 'Error saving sector initiative');
+        setSectorFeedback((res && res.message) || 'Error saving category topic.', '');
       }
     });
   }
@@ -1079,12 +1348,25 @@ function setupTableEventDelegation() {
       e.preventDefault();
       const id = deleteSectorBtn.getAttribute('data-id');
       if (!id) return;
-      if (confirm(`Delete sector initiative #${id}?`)) {
+      if (confirm(`Delete category topic #${id}?`)) {
         const res = await window.adminService.deleteSectorItem(id);
         if (res && res.success) {
+          if (window.adminUI.getVal('sectorItemId') === String(id)) {
+            window.adminUI.setVal('sectorItemId', '');
+            const sectorFormEl = document.getElementById('sectorInitiativeForm');
+            if (sectorFormEl) sectorFormEl.reset();
+            window.adminUI.sectorDraftPhotos = [];
+            window.adminUI.renderSectorPhotosList();
+            const headingEl = document.getElementById('sectorFormHeading');
+            if (headingEl) headingEl.innerText = 'Add New Category Topic';
+            const btnSave = document.getElementById('btnSaveSectorItem');
+            if (btnSave) btnSave.innerText = 'Save Topic';
+            const btnCancel = document.getElementById('btnCancelSectorItem');
+            if (btnCancel) btnCancel.style.display = 'none';
+          }
           await refreshAdminData();
         } else {
-          alert(res?.message || 'Error deleting sector initiative');
+          alert((res && res.message) || 'Error deleting category topic');
         }
       }
       return;
@@ -1096,7 +1378,7 @@ function setupTableEventDelegation() {
       e.preventDefault();
       const id = editSectorBtn.getAttribute('data-id');
       if (!id) return;
-      let item = (window.adminUI.currentData?.sectorInitiatives || []).find(s => String(s.id) === String(id));
+      let item = (window.adminUI.currentData && window.adminUI.currentData.sectorInitiatives || []).find(s => String(s.id) === String(id));
       if (!item) {
         const contentRes = await window.adminService.getContent();
         if (contentRes && contentRes.success && contentRes.data) {
@@ -1105,19 +1387,46 @@ function setupTableEventDelegation() {
         }
       }
       if (item) {
+        const normSector = window.adminUI.normalizeSectorKey(item.sector);
         window.adminUI.setVal('sectorItemId', item.id);
-        window.adminUI.setVal('sectorPageSelect', item.sector);
-        window.adminUI.setVal('sectorItemTitle', item.title);
-        window.adminUI.setVal('sectorItemIssue', item.issue || '');
-        window.adminUI.setVal('sectorItemDesc', item.description || '');
+        window.adminUI.setVal('sectorPageSelect', normSector);
+        window.adminUI.setVal('sectorItemCategory', item.category || item.issue || '');
+        window.adminUI.setVal('sectorItemTitle', item.title || '');
 
+        const dateInputVal = (() => {
+          try {
+            const d = item.publishedAt ? new Date(Number(item.publishedAt)) : new Date();
+            return isNaN(d.getTime()) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
+          } catch (err) {
+            return new Date().toISOString().slice(0, 10);
+          }
+        })();
+        window.adminUI.setVal('sectorItemDate', dateInputVal);
+
+        const fullBody = (Array.isArray(item.paragraphs) && item.paragraphs.length)
+          ? item.paragraphs.join('\n\n')
+          : (item.description || '');
+        window.adminUI.setVal('sectorItemDesc', fullBody);
+
+        window.adminUI.sectorDraftPhotos = Array.isArray(item.photos)
+          ? item.photos.map(p => ({ src: p.src || '', caption: p.caption || '' })).filter(p => p.src)
+          : [];
+        window.adminUI.renderSectorPhotosList();
+
+        const errBox = document.getElementById('sectorFormValidationError');
+        if (errBox) errBox.style.display = 'none';
+        const okBox = document.getElementById('sectorFormSuccessMsg');
+        if (okBox) okBox.style.display = 'none';
+
+        const headingEl = document.getElementById('sectorFormHeading');
+        if (headingEl) headingEl.innerText = `Editing Topic #${item.id}`;
         const btnSave = document.getElementById('btnSaveSectorItem');
-        if (btnSave) btnSave.innerText = 'Update Sector Initiative Item';
+        if (btnSave) btnSave.innerText = 'Update Topic';
         const btnCancel = document.getElementById('btnCancelSectorItem');
         if (btnCancel) btnCancel.style.display = 'inline-block';
 
         const form = document.getElementById('sectorInitiativeForm');
-        if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
         const titleIn = document.getElementById('sectorItemTitle');
         if (titleIn) titleIn.focus();
       }

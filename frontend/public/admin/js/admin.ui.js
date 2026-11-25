@@ -6,6 +6,8 @@
 class AdminUIManager {
   constructor() {
     this.currentData = null;
+    this.activeSectorFilter = 'all';
+    this.sectorDraftPhotos = [];
   }
 
   bustingUrl(url) {
@@ -475,20 +477,173 @@ class AdminUIManager {
     `).join('');
   }
 
+  normalizeSectorKey(sector) {
+    const s = String(sector || '').trim().toLowerCase();
+    return s === 'initiative' ? 'initiatives' : s;
+  }
+
+  getSectorMeta(sectorKey) {
+    const key = this.normalizeSectorKey(sectorKey);
+    const map = {
+      education: { label: 'Education', href: '/initiatives/education' },
+      health: { label: 'Health', href: '/initiatives/health' },
+      sports: { label: 'Sports', href: '/initiatives/sports' },
+      leadership: { label: 'Leadership', href: '/initiatives/leadership' },
+      politics: { label: 'Politics', href: '/initiatives/politics' },
+      initiatives: { label: 'Initiatives', href: '/initiatives/initiative' }
+    };
+    return map[key] || { label: sectorKey || 'Category', href: '/initiatives/education' };
+  }
+
+  renderSectorPhotosList() {
+    const container = document.getElementById('sectorPhotosList');
+    if (!container) return;
+
+    if (!this.sectorDraftPhotos.length) {
+      container.innerHTML = '<div style="grid-column: 1 / -1; color: #64748b; font-size: 13px; font-style: italic;">No photos added yet. Upload images or paste a URL above.</div>';
+      return;
+    }
+
+    container.innerHTML = this.sectorDraftPhotos.map((photo, idx) => `
+      <div class="sectorPhotoCard" data-photo-idx="${idx}">
+        <div class="sectorPhotoCardTop">
+          <img src="${this.escapeHtml(this.bustingUrl(photo.src))}" alt="Photo ${idx + 1}" />
+          <span class="sectorPhotoOrderBadge">#${idx + 1}</span>
+        </div>
+        <input
+          type="text"
+          class="sectorPhotoCaptionInput"
+          data-photo-caption-idx="${idx}"
+          value="${this.escapeHtml(photo.caption || '')}"
+          placeholder="Optional photo caption..."
+        />
+        <div class="sectorPhotoCardActions">
+          <div class="sectorPhotoMoveGroup">
+            <button type="button" class="sectorPhotoMiniBtn sectorPhotoMoveBtn" data-photo-idx="${idx}" data-dir="-1" ${idx === 0 ? 'disabled' : ''} title="Move earlier">&larr;</button>
+            <button type="button" class="sectorPhotoMiniBtn sectorPhotoMoveBtn" data-photo-idx="${idx}" data-dir="1" ${idx === this.sectorDraftPhotos.length - 1 ? 'disabled' : ''} title="Move later">&rarr;</button>
+          </div>
+          <button type="button" class="sectorPhotoRemoveBtn" data-photo-remove-idx="${idx}">Remove</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  updateSectorFilterCounts(allItems) {
+    const counts = {
+      all: allItems.length,
+      education: 0,
+      health: 0,
+      sports: 0,
+      leadership: 0,
+      politics: 0,
+      initiatives: 0
+    };
+    allItems.forEach(item => {
+      const k = this.normalizeSectorKey(item.sector);
+      if (counts[k] !== undefined) counts[k] += 1;
+    });
+    Object.keys(counts).forEach(k => {
+      const el = document.getElementById(`sectorCount-${k}`);
+      if (el) el.innerText = counts[k];
+    });
+  }
+
+  syncSectorCategoryIntroBox() {
+    const box = document.getElementById('sectorHeroIntroBox');
+    const labelEl = document.getElementById('sectorHeroIntroLabel');
+    const inputEl = document.getElementById('sectorHeroIntroInput');
+    const liveBtn = document.getElementById('btnViewLiveSectorPage');
+    const filter = this.activeSectorFilter;
+
+    const meta = this.getSectorMeta(filter === 'all' ? 'education' : filter);
+    if (liveBtn) {
+      liveBtn.href = meta.href;
+      liveBtn.innerHTML = `View Live ${this.escapeHtml(meta.label)} Page &rarr;`;
+    }
+
+    if (!box) return;
+    if (filter === 'all') {
+      box.style.display = 'none';
+      return;
+    }
+
+    box.style.display = 'block';
+    if (labelEl) labelEl.innerText = `${meta.label} — Category Hero Banner Intro`;
+
+    const pillars = (this.currentData && Array.isArray(this.currentData.initiativePillars))
+      ? this.currentData.initiativePillars
+      : [];
+    const pillar = pillars.find(p => {
+      const pk = this.normalizeSectorKey(p.key || '');
+      const pt = this.normalizeSectorKey(p.title || '');
+      return pk === filter || pt === filter;
+    });
+    if (inputEl) {
+      inputEl.value = pillar ? (pillar.intro || '') : '';
+    }
+  }
+
   renderSectorsTable(items) {
     const tbody = document.getElementById('sectorItemsTableBody');
+    const allItems = Array.isArray(items) ? items : [];
+    this.updateSectorFilterCounts(allItems);
+    this.syncSectorCategoryIntroBox();
+
+    const activeFilter = this.activeSectorFilter || 'all';
+    const filtered = activeFilter === 'all'
+      ? allItems
+      : allItems.filter(item => this.normalizeSectorKey(item.sector) === activeFilter);
+
+    const titleEl = document.getElementById('sectorTableTitle');
+    const badgeEl = document.getElementById('sectorTableCountBadge');
+    if (titleEl) {
+      titleEl.innerText = activeFilter === 'all'
+        ? 'Existing Topics (All Categories)'
+        : `${this.getSectorMeta(activeFilter).label} Topics`;
+    }
+    if (badgeEl) {
+      badgeEl.innerText = `${filtered.length} topic${filtered.length === 1 ? '' : 's'}`;
+    }
+
     if (!tbody) return;
-    tbody.innerHTML = items.map(item => `
-      <tr>
-        <td><span class="badge" style="background:#fff0e6; color:#ff6b00; padding:3px 8px; border-radius:4px; font-weight:700; text-transform:uppercase;">${this.escapeHtml(item.sector)}</span></td>
-        <td><strong>${this.escapeHtml(item.title)}</strong></td>
-        <td>${this.escapeHtml(item.issue || '')}</td>
-        <td>
-          <button class="btn btn-sm btn-outline editSectorBtn" data-id="${item.id}" type="button">Edit</button>
-          <button class="btn btn-sm btn-danger deleteSectorBtn" data-id="${item.id}" type="button">Delete</button>
-        </td>
-      </tr>
-    `).join('');
+    if (!filtered.length) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #64748b; padding: 26px;">No topics found for this category yet. Use the form above to add one!</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(item => {
+      const meta = this.getSectorMeta(item.sector);
+      const photos = Array.isArray(item.photos) ? item.photos : [];
+      const firstPhoto = photos.length && photos[0].src ? photos[0].src : '';
+      const subTag = item.category || item.issue || '';
+      const previewText = (Array.isArray(item.paragraphs) && item.paragraphs.length)
+        ? item.paragraphs[0]
+        : (item.description || '');
+      const dateStr = item.publishedAt ? new Date(Number(item.publishedAt)).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+
+      return `
+        <tr>
+          <td><span class="badge" style="background:#fff0e6; color:#ff6b00; padding:3px 8px; border-radius:4px; font-weight:700; text-transform:uppercase;">${this.escapeHtml(meta.label)}</span></td>
+          <td>
+            <div class="sectorTablePhotoCell">
+              ${firstPhoto ? `<img class="sectorTableThumb" src="${this.escapeHtml(this.bustingUrl(firstPhoto))}" alt="" onerror="this.style.display='none'" />` : ''}
+              <span class="sectorPhotoCountBadge">${photos.length} photo${photos.length === 1 ? '' : 's'}</span>
+            </div>
+          </td>
+          <td>
+            <div style="margin-bottom: 3px;"><strong>${this.escapeHtml(item.title)}</strong></div>
+            <div style="font-size: 12px; color: #fd5330; font-weight: 600; margin-bottom: 3px;">
+              ${this.escapeHtml(subTag)}${dateStr ? ` &bull; <span style="color:#64748b; font-weight:400;">${this.escapeHtml(dateStr)}</span>` : ''}
+            </div>
+            <div style="font-size: 12.5px; color: #475569; line-height: 1.4;">${this.escapeHtml(previewText).substring(0, 110)}${previewText.length > 110 ? '...' : ''}</div>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline editSectorBtn" data-id="${item.id}" type="button">Edit</button>
+            <button class="btn btn-sm btn-danger deleteSectorBtn" data-id="${item.id}" type="button">Delete</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
   }
 
   renderParliamentTable(items) {

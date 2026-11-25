@@ -6,7 +6,7 @@
   <title>Kunal Tilak Admin CMS Dashboard</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="stylesheet" href="css/admin.css?v=20261125v4" />
+  <link rel="stylesheet" href="css/admin.css?v=20261125v6" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@
         <li><a href="#" class="navTab" data-tab="initiatives">Constituency Initiatives</a></li>
         <li><a href="#" class="navTab" data-tab="parliament">In Parliament Page</a></li>
         <li><a href="#" class="navTab" data-tab="projects">Constituency Projects Page</a></li>
-        <li><a href="#" class="navTab" data-tab="sectors">Sector Sub-Pages (6 Pages)</a></li>
+        <li><a href="#" class="navTab" data-tab="sectors">Category Pages (6 Categories)</a></li>
 
         <li><a href="#" class="navTab" data-tab="org">BJYM & Organization</a></li>
         <li><a href="#" class="navTab" data-tab="blog">Blog & Press Coverage</a></li>
@@ -939,54 +939,115 @@
         </section>
 
         
-        <!-- TAB 13: Sector Sub-Pages Manager (6 Pages) -->
+        <!-- TAB 13: Category Pages Manager (6 Categories) -->
         <section class="tabSection" id="tab-sectors">
           <div class="cardBox" style="border-top: 4px solid #F4821E;">
-            <h3>Sector Sub-Pages Manager (Education, Health, Transport, Labour, Security, Sports)</h3>
-            <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Manage initiatives displayed on dedicated sub-pages (/education, /health, /infrastructure-transport-mobility, /labour, /security, /sports).</p>
-            <form id="sectorInitiativeForm">
+            <div class="sectorManagerHeader">
+              <div>
+                <h3 style="margin-bottom: 4px;">Category Pages &amp; Content Manager</h3>
+                <p style="color: #64748b; font-size: 14px; margin: 0;">
+                  Manage topics, multi-photo carousels, and detailed articles for all 6 category pages (Education, Health, Sports, Leadership, Politics, and Initiatives).
+                </p>
+              </div>
+              <a href="/initiatives/education" target="_blank" id="btnViewLiveSectorPage" class="sectorViewLiveBtn">View Live Page &rarr;</a>
+            </div>
+
+            <div class="sectorFilterBar" id="sectorCategoryFilterBar">
+              <button type="button" class="sectorFilterPill active" data-filter="all">All Categories <span class="sectorPillCount" id="sectorCount-all">0</span></button>
+              <button type="button" class="sectorFilterPill" data-filter="education">Education <span class="sectorPillCount" id="sectorCount-education">0</span></button>
+              <button type="button" class="sectorFilterPill" data-filter="health">Health <span class="sectorPillCount" id="sectorCount-health">0</span></button>
+              <button type="button" class="sectorFilterPill" data-filter="sports">Sports <span class="sectorPillCount" id="sectorCount-sports">0</span></button>
+              <button type="button" class="sectorFilterPill" data-filter="leadership">Leadership <span class="sectorPillCount" id="sectorCount-leadership">0</span></button>
+              <button type="button" class="sectorFilterPill" data-filter="politics">Politics <span class="sectorPillCount" id="sectorCount-politics">0</span></button>
+              <button type="button" class="sectorFilterPill" data-filter="initiatives">Initiatives <span class="sectorPillCount" id="sectorCount-initiatives">0</span></button>
+            </div>
+
+            <div id="sectorHeroIntroBox" class="sectorHeroIntroBox" style="display: none;">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                <strong id="sectorHeroIntroLabel" style="font-size: 14px; color: #1e293b;">Category Hero Banner Intro</strong>
+                <button type="button" id="btnSaveSectorHeroIntro" class="btn-sm btn-outline" style="background: #fff7ed; color: #c2410c; border-color: #fdba74;">Save Category Intro</button>
+              </div>
+              <textarea id="sectorHeroIntroInput" rows="2" placeholder="Hero banner intro paragraph displayed below the category title..." style="width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; resize: vertical;"></textarea>
+            </div>
+          </div>
+
+          <div class="cardBox" style="border-top: 4px solid #0f172a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+              <h3 id="sectorFormHeading" style="margin: 0;">Add New Category Topic</h3>
+              <button type="button" id="btnResetSectorToNew" class="btn-sm btn-outline">+ New Topic</button>
+            </div>
+
+            <form id="sectorInitiativeForm" novalidate>
               <input type="hidden" id="sectorItemId" />
               <div class="formGrid">
                 <div class="formGroup">
-                  <label>Select Target Sector Page</label>
-                  <select id="sectorPageSelect" required style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-weight: bold; background: #f8fafc;">
-                    <option value="education">🎓 Education (Namo Vidyanidhi & BEST)</option>
-                    <option value="health">🏥 Healthcare (Janaushadhi & Teleconsultation)</option>
-                    <option value="infrastructure">🚇 Infrastructure & Transport Mobility</option>
-                    <option value="labour">💼 Labour & Gig Workers Welfare</option>
-                    <option value="security">🛡️ Security & Public Safety</option>
-                    <option value="sports">🏆 Sports & Youth Festivals</option>
+                  <label>Category Page <span style="color: #ef4444;">*</span></label>
+                  <select id="sectorPageSelect" required>
+                    <option value="education">Education</option>
+                    <option value="health">Health</option>
+                    <option value="sports">Sports</option>
+                    <option value="leadership">Leadership</option>
+                    <option value="politics">Politics</option>
+                    <option value="initiatives">Initiatives</option>
                   </select>
                 </div>
                 <div class="formGroup">
-                  <label>Item Title</label>
-                  <input type="text" id="sectorItemTitle" required placeholder="e.g. Setting up Janaushadhi Kendras" />
+                  <label>Sub-Category / Topic Tag <span style="color: #ef4444;">*</span></label>
+                  <input type="text" id="sectorItemCategory" required placeholder="e.g. Scholarships, Affordable Medicines, Youth Governance" />
+                </div>
+                <div class="formGroup">
+                  <label>Topic Title <span style="color: #ef4444;">*</span></label>
+                  <input type="text" id="sectorItemTitle" required placeholder="e.g. NaMo Vidyanidhi - Scholarships for Meritorious Students" />
+                </div>
+                <div class="formGroup">
+                  <label>Published Date</label>
+                  <input type="date" id="sectorItemDate" />
                 </div>
                 <div class="formGroup fullWidth">
-                  <label>Issue / Focus Area Subtitle</label>
-                  <input type="text" id="sectorItemIssue" placeholder="e.g. Issue: Affordable Healthcare & Medicines" />
+                  <label>Associated Content (Paragraphs) <span style="color: #ef4444;">*</span></label>
+                  <textarea id="sectorItemDesc" rows="7" required placeholder="Write the full article content here. Separate multiple paragraphs with a blank line..."></textarea>
                 </div>
+
+                <!-- Multi-Photo Carousel Manager -->
                 <div class="formGroup fullWidth">
-                  <label>Full Content & Impact Description</label>
-                  <textarea id="sectorItemDesc" required placeholder="Describe the initiative, key outcomes, and constituent benefits..."></textarea>
+                  <label>Topic Photos (Carousel Images &amp; Captions)</label>
+                  <div class="sectorPhotoToolbar">
+                    <div class="sectorPhotoUploadBtnWrap">
+                      <input type="file" id="sectorPhotoUploadInput" accept="image/*" multiple />
+                      <small style="display: block; color: #64748b; font-size: 12px; margin-top: 4px;">Upload one or more photos (.jpg, .png, .webp, .gif). Multiple photos auto-rotate in the detail carousel.</small>
+                    </div>
+                    <div class="sectorPhotoUrlAdder">
+                      <input type="text" id="sectorPhotoUrlInput" placeholder="Or paste image path/URL (e.g. /uploads/... or /_next/static/media/...)" />
+                      <button type="button" id="btnAddSectorPhotoUrl" class="btn-sm btn-outline">Add URL</button>
+                    </div>
+                  </div>
+                  <div id="sectorPhotoUploadStatus" style="display: none; font-size: 13px; color: #0369a1; margin-top: 8px; font-weight: 600;"></div>
+                  <div id="sectorPhotosList" class="sectorPhotosGrid"></div>
                 </div>
               </div>
-              <div style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
-                <button type="submit" class="btnSubmit" id="btnSaveSectorItem">Save Sector Initiative Item</button>
-                <button type="button" id="btnCancelSectorItem" class="btnCancel" style="display:none; padding: 10px 18px; background: #64748b; color:#fff; border:none; border-radius:6px; font-weight:bold; cursor:pointer;">Cancel Edit</button>
+
+              <div id="sectorFormValidationError" class="sectorInlineError" style="display: none;"></div>
+              <div id="sectorFormSuccessMsg" class="sectorInlineSuccess" style="display: none;"></div>
+
+              <div style="display: flex; align-items: center; gap: 10px; margin-top: 18px; flex-wrap: wrap;">
+                <button type="submit" class="btnSubmit" id="btnSaveSectorItem">Save Topic</button>
+                <button type="button" id="btnCancelSectorItem" class="btnCancel" style="display:none; padding: 10px 18px; background: #64748b; color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Cancel Edit</button>
               </div>
             </form>
           </div>
 
           <div class="cardBox">
-            <h3>Existing Sector Sub-Pages Items</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+              <h3 id="sectorTableTitle" style="margin: 0;">Existing Category Topics</h3>
+              <span id="sectorTableCountBadge" style="font-size: 13px; color: #64748b; font-weight: 600;"></span>
+            </div>
             <table class="adminTable">
               <thead>
                 <tr>
-                  <th>Sector Page</th>
-                  <th>Title</th>
-                  <th>Issue / Focus</th>
-                  <th>Actions</th>
+                  <th style="width: 14%;">Category</th>
+                  <th style="width: 18%;">Photos</th>
+                  <th style="width: 48%;">Topic &amp; Content</th>
+                  <th style="width: 20%;">Actions</th>
                 </tr>
               </thead>
               <tbody id="sectorItemsTableBody"></tbody>
@@ -1161,8 +1222,8 @@
     </div>
   </div>
 
-  <script src="js/admin.service.js?v=20261125v3"></script>
-  <script src="js/admin.ui.js?v=20261125v3"></script>
-  <script src="js/admin.js?v=20261125v3"></script>
+  <script src="js/admin.service.js?v=20261125v6"></script>
+  <script src="js/admin.ui.js?v=20261125v6"></script>
+  <script src="js/admin.js?v=20261125v6"></script>
 </body>
 </html>

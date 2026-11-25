@@ -187,6 +187,36 @@ data-styled.g46[id="sc-iAfmwU"]{content:"etlfrS,"}/*!sc*/
 <script src="/js/api.service.js?v=1787833737597"></script>
 <script src="/js/renderers.js?v=1787833737597"></script>
 <script src="/js/app.js?v=1787833737597"></script>
+<script>
+  (function () {
+    var p = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+    var allowed = {
+      '/initiatives/education': true,
+      '/initiatives/education/index.html': true,
+      '/initiatives/health': true,
+      '/initiatives/health/index.html': true,
+      '/initiatives/sports': true,
+      '/initiatives/sports/index.html': true,
+      '/initiatives/leadership': true,
+      '/initiatives/leadership/index.html': true,
+      '/initiatives/politics': true,
+      '/initiatives/politics/index.html': true,
+      '/initiatives/initiative': true,
+      '/initiatives/initiative/index.html': true,
+      '/initiatives/initiatives': true,
+      '/initiatives/initiatives/index.html': true
+    };
+    if (allowed[p]) {
+      var link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/initiatives/education-showcase.css?v=20261125v15';
+      document.head.appendChild(link);
+      var script = document.createElement('script');
+      script.src = '/initiatives/education-showcase.js?v=20261125v15';
+      document.body.appendChild(script);
+    }
+  })();
+</script>
 </body>
 <!-- Mirrored from kunaltilak.in/education/ by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 18 Jul 2026 10:30:57 GMT -->
 </html>
