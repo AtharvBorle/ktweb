@@ -1458,26 +1458,41 @@ class UIRenderers {
   }
 
   /**
-   * 13. Interactive Contact Modal & Form Handler
+   * Smoothly scrolls down to the Contact Us section with gliding animation
+   * and highlights the contact form on arrival.
    */
-  setupContactModal() {
-    // Helper: Scroll smoothly to the Contact section with running animation
-    const scrollToContact = (e) => {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      const target = document.getElementById('contact-me') || document.querySelector('section.contactSection, .sc-fwdjSP, .sc-iUeHef, #contact');
-      if (target) {
-        const headerOffset = 70;
-        const targetPos = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+  scrollToContact(e) {
+    if (e) {
+      if (typeof e.preventDefault === 'function') e.preventDefault();
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+    }
 
-        window.scrollTo({
-          top: targetPos,
-          behavior: 'smooth'
-        });
+    const target = document.getElementById('contact-me') || 
+                   document.querySelector('section.contactSection, .sc-fwdjSP, .sc-iUeHef, #contact');
 
-        // Running animation on the contact form container
+    if (target) {
+      const headerOffset = 70;
+      const targetPos = target.getBoundingClientRect().top + (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0) - headerOffset;
+
+      // Universally smooth scroll through all container targets
+      try {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (err) {}
+
+      try {
+        window.scrollTo({ top: targetPos, behavior: 'smooth' });
+      } catch (err) {}
+
+      try {
+        document.documentElement.scrollTo({ top: targetPos, behavior: 'smooth' });
+      } catch (err) {}
+
+      try {
+        document.body.scrollTo({ top: targetPos, behavior: 'smooth' });
+      } catch (err) {}
+
+      // Trigger running highlight animation when the user arrives at the form (~1800ms)
+      setTimeout(() => {
         const formBox = target.querySelector('.getInTouch, form');
         if (formBox) {
           formBox.classList.remove('running-contact-glow');
@@ -1489,57 +1504,75 @@ class UIRenderers {
           }, 3200);
         }
 
-        // Focus first input field once scrolled into view
-        setTimeout(() => {
-          const firstInput = target.querySelector('input');
-          if (firstInput) {
+        // Focus first input field safely AFTER scrolling is fully complete WITHOUT jumping
+        const firstInput = target.querySelector('input');
+        if (firstInput) {
+          try {
+            firstInput.focus({ preventScroll: true });
+          } catch (err) {
             firstInput.focus();
-            firstInput.classList.add('running-input-glow');
-            setTimeout(() => firstInput.classList.remove('running-input-glow'), 1800);
           }
-        }, 600);
-      } else {
-        // Fallback for subpages without a local contact section
-        window.location.href = '/index.html#contact-me';
-      }
-    };
+          firstInput.classList.add('running-input-glow');
+          setTimeout(() => firstInput.classList.remove('running-input-glow'), 2000);
+        }
+      }, 1800);
+    } else {
+      // Fallback for subpages without a local contact section
+      window.location.href = '/index.html#contact-me';
+    }
+  }
+
+  /**
+   * 13. Interactive Contact Modal & Form Handler
+   */
+  setupContactModal() {
+    const handleScroll = (e) => this.scrollToContact(e);
 
     // Global document capture-phase delegation ensures "Contact Me" button always works reliably
     if (!this._contactDelegationAttached) {
       this._contactDelegationAttached = true;
       document.addEventListener('click', (e) => {
+        // Do not scroll if click originates inside the contact form itself (e.g. submit button)
+        if (e.target.closest('#contact-me, .getInTouch, form')) return;
+
         const btn = e.target.closest('.btnWrap button, .mobileMenuWrap button, button.contact-btn, .sc-bcPKhP.primary button, a[href*="#contact-me"], button[data-action="contact"], .contactBtn, .btnWrap .btn-text, .sc-bcPKhP.primary');
         if (btn) {
           const text = (btn.innerText || btn.textContent || '').trim().toLowerCase();
           if (text.includes('contact') || text.includes('connect') || btn.closest('a[href*="#contact-me"]')) {
-            scrollToContact(e);
+            handleScroll(e);
           }
         }
       }, true);
     }
 
     // A. Bind all Header & Banner "Contact Me" buttons directly as fallback
-    const headerButtons = document.querySelectorAll('.btnWrap button, .mobileMenuWrap button, button.contact-btn, .sc-bcPKhP.primary button');
+    const headerButtons = document.querySelectorAll('.btnWrap button, .mobileMenuWrap button, button.contact-btn, .sc-bcPKhP.primary button, .btnWrap .btn-text, .sc-bcPKhP.primary');
     headerButtons.forEach(btn => {
-      const text = (btn.innerText || '').trim().toLowerCase();
+      if (btn.closest('#contact-me, .getInTouch, form')) return;
+      const text = (btn.innerText || btn.textContent || '').trim().toLowerCase();
       if (text.includes('contact') || text.includes('connect')) {
         btn.style.cursor = 'pointer';
-        btn.setAttribute('type', 'button');
-        btn.removeEventListener('click', scrollToContact);
-        btn.addEventListener('click', scrollToContact);
+        btn.onclick = (e) => handleScroll(e);
       }
     });
 
     // Also bind any anchor links targeting #contact-me
     const contactLinks = document.querySelectorAll('a[href*="#contact-me"]');
     contactLinks.forEach(link => {
-      link.removeEventListener('click', scrollToContact);
-      link.addEventListener('click', (e) => {
+      link.onclick = (e) => {
         if (document.getElementById('contact-me')) {
-          scrollToContact(e);
+          handleScroll(e);
         }
-      });
+      };
     });
+
+    // If page is loaded with #contact-me in hash (e.g. redirected from subpage), animate scroll smoothly
+    if (window.location.hash === '#contact-me' && !this._hashContactScrolled) {
+      this._hashContactScrolled = true;
+      setTimeout(() => {
+        this.scrollToContact();
+      }, 350);
+    }
 
     // B. Bind Contact Form Submissions & Click Events
     const forms = document.querySelectorAll('form#contactForm, form.contactForm, section#contact-me form, .getInTouch form');
@@ -1794,16 +1827,10 @@ class UIRenderers {
 
           if (href.startsWith('#contact-me') || href === '#contact-me') {
             e.preventDefault();
-            const target = document.getElementById('contact-me') || document.querySelector('section.contactSection, .sc-fwdjSP, .sc-iUeHef');
-            if (target) {
-              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              setTimeout(() => {
-                const firstInput = target.querySelector('input');
-                if (firstInput) firstInput.focus();
-              }, 500);
-            } else {
-              window.location.href = '/index.html#contact-me';
-            }
+            // Allow drawer slide-out animation to finish and body overflow to restore before scrolling
+            setTimeout(() => {
+              this.scrollToContact(e);
+            }, 250);
           }
         });
       });

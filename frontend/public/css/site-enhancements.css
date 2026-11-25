@@ -510,6 +510,17 @@ a.reportButton {
 
 /* 14. Smooth Scrolling & Contact Button Interactivity */
 html {
+  height: auto !important;
+  min-height: 100% !important;
+  scroll-behavior: smooth !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: visible !important;
+  overflow-x: hidden !important;
   scroll-behavior: smooth !important;
 }
 
@@ -517,7 +528,7 @@ html {
 section.contactSection,
 .sc-fwdjSP,
 .sc-iUeHef {
-  scroll-margin-top: 50px !important;
+  scroll-margin-top: 70px !important;
 }
 
 .sc-bcPKhP button,
@@ -733,4 +744,46 @@ section.sc-jTIKuF:not(.has-initiatives) .left h2 {
   border-color: #F4821E !important;
   transition: all 0.3s ease !important;
 }
+
+/* 16. Ensure Contact Me Button Stays in Front of Hero Photo & Banner */
+.sc-hlDEJj .menuWrap,
+.menuWrap {
+  position: relative !important;
+}
+
+.menuWrap > .sc-eKQWOK,
+.menuWrap > .cttLvF,
+.menuWrap header,
+.sc-eKQWOK.cttLvF,
+header.sc-eKQWOK,
+header.cttLvF {
+  position: relative !important;
+  z-index: 50 !important;
+}
+
+.cttLvF .btnWrap,
+.sc-eKQWOK .btnWrap,
+.btnWrap,
+.mobileMenuWrap {
+  position: relative !important;
+  z-index: 55 !important;
+  pointer-events: auto !important;
+}
+
+.btnWrap button,
+.btnWrap .sc-bcPKhP,
+.btnWrap .sc-bcPKhP button,
+.btnWrap .btn-text,
+.mobileMenuWrap button {
+  position: relative !important;
+  z-index: 60 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+.sc-kIuKII.dIzsqs {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
 
