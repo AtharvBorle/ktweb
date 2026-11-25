@@ -227,14 +227,45 @@ class ContentService {
       throw new BadRequestError('Gallery item title is required.');
     }
     const type = galleryData.type || 'image';
+    if (type === 'video') {
+      const hasVideoPath = !!(galleryData.videoPath && String(galleryData.videoPath).trim());
+      const hasVideoUrl = !!(galleryData.videoUrl && String(galleryData.videoUrl).trim());
+      if (hasVideoPath && hasVideoUrl) {
+        throw new BadRequestError('Only one type of media input can be provided. Please provide either a video file upload or a video URL, not both.');
+      }
+    }
     if (!galleryData.url || !galleryData.url.trim()) {
       throw new BadRequestError(
         type === 'video'
-          ? 'Please enter a valid URL.'
+          ? 'Please provide either a video file upload or a valid video URL.'
           : 'Please upload an image.'
       );
     }
-    const sanitized = sanitizer.sanitizeObject(galleryData);
+    const cleanUrl = String(galleryData.url).trim();
+    if (type === 'video') {
+      if (cleanUrl.startsWith('/uploads') || cleanUrl.startsWith('uploads/')) {
+        const cleanPath = cleanUrl.split('?')[0].split('#')[0].toLowerCase();
+        if (!/\.(mp4|webm|mov|ogg)$/.test(cleanPath)) {
+          throw new BadRequestError('Invalid file format. Only video files (.mp4, .webm, .mov, .ogg) are allowed; photos and non-video files are not accepted.');
+        }
+      } else {
+        try {
+          const parsed = new URL(cleanUrl);
+          if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+            throw new Error('Invalid protocol');
+          }
+        } catch (e) {
+          throw new BadRequestError('Please enter a valid URL.');
+        }
+      }
+    }
+    const cleanPayload = {
+      ...(galleryData.id !== undefined && galleryData.id !== '' ? { id: galleryData.id } : {}),
+      title: galleryData.title,
+      type,
+      url: cleanUrl
+    };
+    const sanitized = sanitizer.sanitizeObject(cleanPayload);
     return dataRepo.saveGalleryItem(sanitized);
   }
 

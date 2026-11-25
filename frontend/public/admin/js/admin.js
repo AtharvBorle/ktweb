@@ -549,9 +549,15 @@ function setupFormSubmissions() {
   if (galleryForm) {
     galleryForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (typeof window.adminUI.clearGalleryFormError === 'function') {
+        window.adminUI.clearGalleryFormError();
+      }
+
       const title = (window.adminUI.getVal('galleryTitle') || '').trim();
       if (!title) {
-        alert('Please enter a title or caption.');
+        if (typeof window.adminUI.showGalleryFormError === 'function') {
+          window.adminUI.showGalleryFormError('Please enter a title or caption.');
+        }
         const titleEl = document.getElementById('galleryTitle');
         if (titleEl) titleEl.focus();
         return;
@@ -559,12 +565,42 @@ function setupFormSubmissions() {
 
       const type = window.adminUI.getVal('galleryType') || 'image';
       let mediaUrl = '';
+      let vidPath = '';
+      let vidUrl = '';
       if (type === 'video') {
-        const vidPath = (window.adminUI.getVal('galleryVideoPath') || '').trim();
-        const vidUrl = (window.adminUI.getVal('galleryVideoUrl') || '').trim();
-        mediaUrl = vidPath || vidUrl;
-        if (!mediaUrl) {
-          alert('Please enter a valid URL.');
+        vidPath = (window.adminUI.getVal('galleryVideoPath') || '').trim();
+        vidUrl = (window.adminUI.getVal('galleryVideoUrl') || '').trim();
+        const vidFileEl = document.getElementById('galleryVideoFile');
+        const hasSelectedFile = !!(vidFileEl && vidFileEl.files && vidFileEl.files.length > 0);
+        const hasFile = vidPath.length > 0 || hasSelectedFile;
+        const hasUrl = vidUrl.length > 0;
+
+        if (typeof window.adminUI.validateGalleryVideoInputs === 'function') {
+          window.adminUI.validateGalleryVideoInputs();
+        }
+
+        if (hasSelectedFile && typeof window.adminUI.isValidVideoFile === 'function' && !window.adminUI.isValidVideoFile(vidFileEl.files[0])) {
+          const fmtMsg = 'Invalid file format. Please upload a valid video file (.mp4, .webm, .mov, or .ogg) only — photos and non-video files are not allowed.';
+          vidFileEl.value = '';
+          if (typeof window.adminUI.showGalleryVideoError === 'function') {
+            window.adminUI.showGalleryVideoError(fmtMsg, 'file');
+          }
+          return;
+        }
+
+        if (vidPath && typeof window.adminUI.isValidVideoExtension === 'function' && !window.adminUI.isValidVideoExtension(vidPath)) {
+          const fmtMsg = 'Invalid file format. Only video files (.mp4, .webm, .mov, or .ogg) are allowed.';
+          if (typeof window.adminUI.showGalleryVideoError === 'function') {
+            window.adminUI.showGalleryVideoError(fmtMsg, 'file');
+          }
+          return;
+        }
+
+        if (hasFile && hasUrl) {
+          const bothMsg = 'Only one type of media input can be provided. Please provide either a video file upload or a video URL, not both.';
+          if (typeof window.adminUI.showGalleryVideoError === 'function') {
+            window.adminUI.showGalleryVideoError(bothMsg, 'both');
+          }
           const vidUrlEl = document.getElementById('galleryVideoUrl');
           if (vidUrlEl) {
             vidUrlEl.focus();
@@ -572,27 +608,56 @@ function setupFormSubmissions() {
           }
           return;
         }
-        if (vidUrl && !vidPath) {
+
+        if (!hasFile && !hasUrl) {
+          const emptyMsg = 'Please provide either a video file upload or a valid video URL.';
+          if (typeof window.adminUI.showGalleryVideoError === 'function') {
+            window.adminUI.showGalleryVideoError(emptyMsg, 'both');
+          }
+          const vidUrlEl = document.getElementById('galleryVideoUrl');
+          if (vidUrlEl) {
+            vidUrlEl.focus();
+            vidUrlEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          return;
+        }
+
+        if (hasSelectedFile && !vidPath) {
+          if (typeof window.adminUI.showGalleryVideoError === 'function') {
+            window.adminUI.showGalleryVideoError('The selected video file is still uploading or failed to upload. Please wait or re-upload.', 'file');
+          }
+          return;
+        }
+
+        if (hasUrl) {
           try {
             const parsed = new URL(vidUrl);
             if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
-              alert('Please enter a valid URL.');
+              if (typeof window.adminUI.showGalleryVideoError === 'function') {
+                window.adminUI.showGalleryVideoError('Please enter a valid video URL starting with http:// or https://.', 'url');
+              }
               const vidUrlEl = document.getElementById('galleryVideoUrl');
               if (vidUrlEl) vidUrlEl.focus();
               return;
             }
           } catch (e) {
-            alert('Please enter a valid URL.');
+            if (typeof window.adminUI.showGalleryVideoError === 'function') {
+              window.adminUI.showGalleryVideoError('Please enter a valid video URL.', 'url');
+            }
             const vidUrlEl = document.getElementById('galleryVideoUrl');
             if (vidUrlEl) vidUrlEl.focus();
             return;
           }
         }
+
+        mediaUrl = vidPath || vidUrl;
       } else {
         const imgPath = (window.adminUI.getVal('galleryImagePath') || '').trim();
         mediaUrl = imgPath;
         if (!mediaUrl) {
-          alert('Please upload an image.');
+          if (typeof window.adminUI.showGalleryFormError === 'function') {
+            window.adminUI.showGalleryFormError('Please upload an image.');
+          }
           const fileInput = document.getElementById('galleryImageFile');
           if (fileInput) {
             fileInput.focus();
@@ -608,6 +673,10 @@ function setupFormSubmissions() {
         type: type,
         url: mediaUrl
       };
+      if (type === 'video') {
+        payload.videoPath = vidPath;
+        payload.videoUrl = vidUrl;
+      }
 
       const res = await window.adminService.saveGallery(payload);
       if (res.success) {
@@ -628,7 +697,12 @@ function setupFormSubmissions() {
 
         await refreshAdminData();
       } else {
-        alert(res.message || 'Error saving gallery item');
+        const errMsg = res.message || 'Error saving gallery item';
+        if (type === 'video' && typeof window.adminUI.showGalleryVideoError === 'function') {
+          window.adminUI.showGalleryVideoError(errMsg, 'both');
+        } else if (typeof window.adminUI.showGalleryFormError === 'function') {
+          window.adminUI.showGalleryFormError(errMsg);
+        }
       }
     });
   }
@@ -1151,6 +1225,8 @@ function setupTableEventDelegation() {
         window.adminUI.setVal('galleryTitle', item.title || '');
         window.adminUI.syncGalleryTypeUI(item.type || 'image');
         if (item.type === 'video') {
+          const vidFileInput = document.getElementById('galleryVideoFile');
+          if (vidFileInput) vidFileInput.value = '';
           if (item.url && (item.url.startsWith('/uploads') || item.url.startsWith('uploads/'))) {
             window.adminUI.setVal('galleryVideoPath', item.url);
             window.adminUI.setVal('galleryVideoUrl', '');
@@ -1170,6 +1246,9 @@ function setupTableEventDelegation() {
               const btn = document.getElementById('btnRemoveVideo');
               if (btn) btn.style.display = 'none';
             }
+          }
+          if (typeof window.adminUI.validateGalleryVideoInputs === 'function') {
+            window.adminUI.validateGalleryVideoInputs();
           }
         } else {
           window.adminUI.setVal('galleryImagePath', item.url || '');

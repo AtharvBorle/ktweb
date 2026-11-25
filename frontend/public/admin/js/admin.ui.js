@@ -128,17 +128,125 @@ class AdminUIManager {
     const galleryVideoUrl = document.getElementById('galleryVideoUrl');
     if (galleryVideoUrl) {
       galleryVideoUrl.addEventListener('input', () => {
-        if (galleryVideoUrl.value.trim() !== '') {
-          this.setVal('galleryVideoPath', '');
-          const vidPrev = document.getElementById('galleryVideoPreview');
-          if (vidPrev) { vidPrev.src = ''; vidPrev.style.display = 'none'; }
-          const btn = document.getElementById('btnRemoveVideo');
-          if (btn) btn.style.display = 'none';
-          const fileInput = document.getElementById('galleryVideoFile');
-          if (fileInput) fileInput.value = '';
-        }
+        this.clearGalleryFormError();
+        this.validateGalleryVideoInputs();
       });
     }
+
+    const galleryTitle = document.getElementById('galleryTitle');
+    if (galleryTitle) {
+      galleryTitle.addEventListener('input', () => {
+        this.clearGalleryFormError();
+      });
+    }
+
+    const galleryImageFile = document.getElementById('galleryImageFile');
+    if (galleryImageFile) {
+      galleryImageFile.addEventListener('change', () => {
+        this.clearGalleryFormError();
+      });
+    }
+  }
+
+  isValidVideoExtension(nameOrPath) {
+    if (!nameOrPath) return false;
+    const clean = String(nameOrPath).split('?')[0].split('#')[0].trim().toLowerCase();
+    return /\.(mp4|webm|mov|ogg)$/.test(clean);
+  }
+
+  isValidVideoFile(file) {
+    if (!file) return false;
+    const allowedMimes = ['video/mp4', 'video/webm', 'video/quicktime', 'video/ogg'];
+    const hasValidExt = this.isValidVideoExtension(file.name);
+    const mime = (file.type || '').trim().toLowerCase();
+    // Require valid video extension, and reject any non-video MIME (e.g. image/*, application/pdf)
+    if (!hasValidExt) return false;
+    if (mime && !allowedMimes.includes(mime)) return false;
+    return true;
+  }
+
+  showGalleryFormError(msg) {
+    const formErrEl = document.getElementById('galleryFormValidationError');
+    if (formErrEl) {
+      formErrEl.textContent = msg;
+      formErrEl.style.display = 'block';
+    }
+  }
+
+  clearGalleryFormError() {
+    const formErrEl = document.getElementById('galleryFormValidationError');
+    if (formErrEl) {
+      formErrEl.textContent = '';
+      formErrEl.style.display = 'none';
+    }
+  }
+
+  clearGalleryVideoError() {
+    const errEl = document.getElementById('galleryVideoValidationError');
+    const urlInputEl = document.getElementById('galleryVideoUrl');
+    const uploadBoxEl = document.getElementById('galleryVideoUploadBox');
+    if (errEl) {
+      errEl.textContent = '';
+      errEl.style.display = 'none';
+    }
+    if (urlInputEl) {
+      urlInputEl.style.borderColor = '';
+    }
+    if (uploadBoxEl) {
+      uploadBoxEl.style.borderColor = '#cbd5e1';
+      uploadBoxEl.style.background = '#f8fafc';
+    }
+  }
+
+  showGalleryVideoError(msg, target = 'both') {
+    this.clearGalleryVideoError();
+    const errEl = document.getElementById('galleryVideoValidationError');
+    const urlInputEl = document.getElementById('galleryVideoUrl');
+    const uploadBoxEl = document.getElementById('galleryVideoUploadBox');
+
+    if (errEl) {
+      errEl.textContent = msg;
+      errEl.style.display = 'block';
+    }
+    if ((target === 'url' || target === 'both') && urlInputEl) {
+      urlInputEl.style.borderColor = '#ef4444';
+    }
+    if ((target === 'file' || target === 'both') && uploadBoxEl) {
+      uploadBoxEl.style.borderColor = '#ef4444';
+      uploadBoxEl.style.background = '#fef2f2';
+    }
+  }
+
+  validateGalleryVideoInputs() {
+    const vidPath = (this.getVal('galleryVideoPath') || '').trim();
+    const vidUrl = (this.getVal('galleryVideoUrl') || '').trim();
+    const fileInput = document.getElementById('galleryVideoFile');
+    const selectedFile = fileInput && fileInput.files && fileInput.files[0];
+    const hasSelectedFile = !!selectedFile;
+
+    if (hasSelectedFile && !this.isValidVideoFile(selectedFile)) {
+      const msg = 'Invalid file format. Please upload a valid video file (.mp4, .webm, .mov, or .ogg) only — photos and non-video files are not allowed.';
+      this.showGalleryVideoError(msg, 'file');
+      return { valid: false, reason: 'invalid_format', message: msg };
+    }
+
+    if (vidPath && !this.isValidVideoExtension(vidPath)) {
+      const msg = 'Invalid file format. Only video files (.mp4, .webm, .mov, or .ogg) are allowed.';
+      this.showGalleryVideoError(msg, 'file');
+      return { valid: false, reason: 'invalid_format', message: msg };
+    }
+
+    const hasFile = vidPath.length > 0 || hasSelectedFile;
+    const hasUrl = vidUrl.length > 0;
+
+    if (hasFile && hasUrl) {
+      const msg = 'Only one type of media input can be provided. Please provide either a video file upload or a video URL, not both.';
+      this.showGalleryVideoError(msg, 'both');
+      return { valid: false, reason: 'both', message: msg };
+    }
+
+    this.clearGalleryVideoError();
+    return { valid: true, hasFile, hasUrl };
   }
 
   syncGalleryTypeUI(preferredType) {
@@ -165,6 +273,8 @@ class AdminUIManager {
     const isVideo = type === 'video';
     imgGroup.style.display = isVideo ? 'none' : 'block';
     vidGroup.style.display = isVideo ? 'block' : 'none';
+    this.clearGalleryFormError();
+    this.validateGalleryVideoInputs();
   }
 
   populateForms(data) {
@@ -573,15 +683,31 @@ class AdminUIManager {
       if (fileInput) {
         fileInput.addEventListener('change', async (e) => {
           const file = e.target.files[0];
-          if (!file) return;
+          if (!file) {
+            if (mapping.isVideo) this.validateGalleryVideoInputs();
+            return;
+          }
 
-          const result = await window.adminService.uploadFile(file);
+          if (mapping.isVideo) {
+            if (!this.isValidVideoFile(file)) {
+              const errMsg = 'Invalid file format. Please upload a valid video file (.mp4, .webm, .mov, or .ogg) only — photos and non-video files are not allowed.';
+              if (typeof window.removeUploadedVideo === 'function') {
+                window.removeUploadedVideo();
+              } else {
+                fileInput.value = '';
+              }
+              this.showGalleryVideoError(errMsg, 'file');
+              return;
+            }
+            this.validateGalleryVideoInputs();
+          }
+
+          const result = await window.adminService.uploadFile(file, mapping.isVideo ? 'video' : '');
           if (result.success && result.data && result.data.url) {
             const url = result.data.url;
             this.setVal(mapping.path, url);
             if (mapping.preview) this.setPreview(mapping.preview, url);
             if (mapping.isVideo) {
-              this.setVal('galleryVideoUrl', '');
               const vidPrev = document.getElementById('galleryVideoPreview');
               if (vidPrev) {
                 vidPrev.src = this.bustingUrl(url);
@@ -589,6 +715,7 @@ class AdminUIManager {
               }
               const btn = document.getElementById('btnRemoveVideo');
               if (btn) btn.style.display = 'inline-block';
+              this.validateGalleryVideoInputs();
             }
             if (mapping.statusEl) {
               const sEl = document.getElementById(mapping.statusEl);
@@ -599,7 +726,12 @@ class AdminUIManager {
               if (nEl) nEl.innerText = file.name;
             }
           } else {
-            alert(result.message || 'File upload failed');
+            if (mapping.isVideo) {
+              fileInput.value = '';
+              this.showGalleryVideoError((result && result.message) || 'Video upload failed. Please ensure the file is a valid .mp4, .webm, .mov, or .ogg video.', 'file');
+            } else {
+              alert(result.message || 'File upload failed');
+            }
           }
         });
       }
@@ -628,4 +760,7 @@ window.removeUploadedVideo = function() {
   if (btn) btn.style.display = 'none';
   const fileInput = document.getElementById('galleryVideoFile');
   if (fileInput) fileInput.value = '';
+  if (typeof window.adminUI.validateGalleryVideoInputs === 'function') {
+    window.adminUI.validateGalleryVideoInputs();
+  }
 };

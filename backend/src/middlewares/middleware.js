@@ -228,8 +228,20 @@ const storage = multer.diskStorage({
   }
 });
 
+const VIDEO_MIME_TYPES = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime'];
+const VIDEO_EXTENSIONS = ['.mp4', '.webm', '.ogg', '.mov'];
+
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
+  const isVideoOnly = req.query && String(req.query.mediaType || '').toLowerCase() === 'video';
+
+  if (isVideoOnly) {
+    if (VIDEO_MIME_TYPES.includes(file.mimetype) && VIDEO_EXTENSIONS.includes(ext)) {
+      return cb(null, true);
+    }
+    return cb(new BadRequestError('Invalid file format. Only video files (.mp4, .webm, .mov, .ogg) are allowed; photos and non-video files are not accepted.'));
+  }
+
   if (
     config.upload.allowedMimeTypes.includes(file.mimetype) &&
     config.upload.allowedExtensions.includes(ext)
