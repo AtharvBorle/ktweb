@@ -890,16 +890,34 @@
   "blogs": [],
   "gallery": [
     {
-      "id": 1,
-      "title": "humpa",
+      "title": "Meet Kunal Tilak",
       "type": "image",
-      "url": "/uploads/caracter_sample_1788245218599_758575.png"
+      "url": "/uploads/images__1__1795677497584_496899.jpg",
+      "id": 1
     },
     {
-      "id": 2,
-      "title": "education",
+      "title": "Image 2",
       "type": "image",
-      "url": "/uploads/pic_sample_1788427047873_759458.png"
+      "url": "/uploads/images__3__1795677549766_673500.jpg",
+      "id": 2
+    },
+    {
+      "title": "Image 3",
+      "type": "image",
+      "url": "/uploads/images__4__1795677156420_803318.jpg",
+      "id": 3
+    },
+    {
+      "title": "Image 4",
+      "type": "image",
+      "url": "/uploads/images__2__1795677377301_72366.jpg",
+      "id": 4
+    },
+    {
+      "title": "Image 5",
+      "type": "image",
+      "url": "/uploads/images_1795677400611_747438.jpg",
+      "id": 5
     }
   ],
   "messages": [
