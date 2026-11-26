@@ -787,11 +787,13 @@
     root.id = 'educationShowcaseRoot';
     container.appendChild(root);
 
-    var items = (categoryConfig.items || []).slice();
+    var existingCmsInit = window.uiRenderers && window.uiRenderers.state && window.uiRenderers.state.data;
+    var hasCmsResolved = Boolean(existingCmsInit && Array.isArray(existingCmsInit.sectorInitiatives));
+    var items = hasCmsResolved ? [] : [];
     var lastCmsFingerprint = '';
 
     var state = {
-      selectedId: items.length ? String(items[0].id) : '',
+      selectedId: '',
       photoIndex: 0
     };
 
@@ -955,7 +957,7 @@
 
       var leftListHtml = '';
       if (!items.length) {
-        leftListHtml = '<div class="eduSimpleEmpty">No initiatives published yet.</div>';
+        leftListHtml = '<div class="eduSimpleEmpty">' + (hasCmsResolved ? 'No topics published in this category yet.' : 'Loading topics...') + '</div>';
       } else {
         leftListHtml = items.map(function (item) {
           var isActive = selected && String(item.id) === String(selected.id);
@@ -971,7 +973,7 @@
 
       var rightDetailHtml = '';
       if (!selected) {
-        rightDetailHtml = '<div class="eduSimpleDetail"><div class="eduSimpleEmpty">Select a topic from the left to read more.</div></div>';
+        rightDetailHtml = '<div class="eduSimpleDetail"><div class="eduSimpleEmpty">' + (hasCmsResolved ? 'Select a topic from the list to read more.' : 'Loading content...') + '</div></div>';
       } else {
         var mediaHtml = '';
         var photos = getItemPhotos(selected);
@@ -1126,43 +1128,63 @@
     }
 
     syncHeroBanner(categoryConfig);
-    var existingCms = window.uiRenderers && window.uiRenderers.state && window.uiRenderers.state.data;
-    if (existingCms) {
-      applyCmsData(existingCms);
+    if (existingCmsInit) {
+      applyCmsData(existingCmsInit);
     }
     render(true);
 
-    // Fetch live CMS content directly so edits/additions/deletions from Admin reflect immediately
+    // Fetch live CMS content directly with no-store so edits/additions/deletions from Admin reflect immediately
     (function fetchLiveCategoryContent() {
       try {
-        var base = (window.apiService && window.apiService.baseUrl) ? window.apiService.baseUrl : '/api';
-        fetch(base + '/content?_t=' + Date.now())
-          .then(function (r) { return r.json(); })
+        var reqPromise = (window.apiService && typeof window.apiService.getContent === 'function')
+          ? window.apiService.getContent()
+          : fetch('/api/content?_t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); });
+
+        Promise.resolve(reqPromise)
           .then(function (json) {
-            if (json && json.success && json.data) {
-              var updated = applyCmsData(json.data);
+            if (json && json.success && json.data && Array.isArray(json.data.sectorInitiatives)) {
+              hasCmsResolved = true;
+              applyCmsData(json.data);
               syncHeroBanner(categoryConfig);
-              if (updated) {
-                render(false);
-              }
+              render(false);
+            } else {
+              throw new Error('Invalid CMS payload');
             }
           })
-          .catch(function () {});
-      } catch (err) {}
+          .catch(function () {
+            if (!hasCmsResolved) {
+              hasCmsResolved = true;
+              items = (categoryConfig.items || []).slice();
+              state.selectedId = items.length ? String(items[0].id) : '';
+              render(true);
+            }
+          });
+      } catch (err) {
+        hasCmsResolved = true;
+        items = (categoryConfig.items || []).slice();
+        state.selectedId = items.length ? String(items[0].id) : '';
+        render(true);
+      }
     })();
 
     // Re-sync hero banner & "Other Categories" once dynamic CMS data settles if loaded after script execution
     setTimeout(function () {
       var latestCms = window.uiRenderers && window.uiRenderers.state && window.uiRenderers.state.data;
-      if (latestCms) applyCmsData(latestCms);
-      syncHeroBanner(categoryConfig);
-      render(false);
+      if (latestCms && Array.isArray(latestCms.sectorInitiatives)) {
+        hasCmsResolved = true;
+        var changed = applyCmsData(latestCms);
+        syncHeroBanner(categoryConfig);
+        if (changed) render(false);
+      }
     }, 350);
     setTimeout(function () {
       var latestCms = window.uiRenderers && window.uiRenderers.state && window.uiRenderers.state.data;
-      if (latestCms) applyCmsData(latestCms);
-      syncHeroBanner(categoryConfig);
-      render(false);
+      if (latestCms && Array.isArray(latestCms.sectorInitiatives)) {
+        hasCmsResolved = true;
+        var changed = applyCmsData(latestCms);
+        syncHeroBanner(categoryConfig);
+        if (changed) render(false);
+      }
     }, 1000);
   }
 

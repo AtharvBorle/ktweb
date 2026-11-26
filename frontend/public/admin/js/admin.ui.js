@@ -392,6 +392,7 @@ class AdminUIManager {
     }
   }
   populateTables(data) {
+    this.renderDashboardSectorSummary(data.sectorInitiatives || []);
     this.renderInitiativePillarsTable(data.initiativePillars || []);
     this.renderInitiativesTable(data.initiatives || []);
     this.renderKeyHighlightsTable(data.keyHighlights || []);
@@ -402,6 +403,27 @@ class AdminUIManager {
     this.renderBlogsTable(data.blogs || []);
     this.renderGalleryTable(data.gallery || []);
     this.renderReportCardsTable(data.reportCards || []);
+  }
+
+  renderDashboardSectorSummary(items) {
+    const grid = document.getElementById('dashboardSectorSummaryGrid');
+    if (!grid) return;
+    const allItems = Array.isArray(items) ? items : [];
+    const keys = ['education', 'health', 'sports', 'leadership', 'politics', 'initiatives'];
+    grid.innerHTML = keys.map(k => {
+      const meta = this.getSectorMeta(k);
+      const catItems = allItems.filter(it => this.normalizeSectorKey(it.sector) === k);
+      const latestTitle = catItems.length ? catItems[0].title : 'No topics yet';
+      return `
+        <button type="button" class="dashboardSectorCard" data-dashboard-sector="${k}">
+          <div class="dashboardSectorCardTop">
+            <span class="dashboardSectorCardTitle">${this.escapeHtml(meta.label)}</span>
+            <span class="dashboardSectorCardCount">${catItems.length} topic${catItems.length === 1 ? '' : 's'}</span>
+          </div>
+          <span class="dashboardSectorCardLatest" title="${this.escapeHtml(latestTitle)}">${this.escapeHtml(latestTitle)}</span>
+        </button>
+      `;
+    }).join('');
   }
 
   // --- Table Renderers ---
