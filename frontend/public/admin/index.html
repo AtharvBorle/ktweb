@@ -6,7 +6,7 @@
   <title>Kunal Tilak Admin CMS Dashboard</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="stylesheet" href="css/admin.css?v=20261125v6" />
+  <link rel="stylesheet" href="css/admin.css?v=20261126v7" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -51,7 +51,7 @@
         <li><a href="#" class="navTab" data-tab="initiatives">Constituency Initiatives</a></li>
         <li><a href="#" class="navTab" data-tab="parliament">In Parliament Page</a></li>
         <li><a href="#" class="navTab" data-tab="projects">Constituency Projects Page</a></li>
-        <li><a href="#" class="navTab" data-tab="sectors">Category Pages (6 Categories)</a></li>
+        <li><a href="#" class="navTab" data-tab="sectors">Blog Categories (6 Pages)</a></li>
 
         <li><a href="#" class="navTab" data-tab="org">BJYM & Organization</a></li>
         <li><a href="#" class="navTab" data-tab="blog">Blog & Press Coverage</a></li>
@@ -96,6 +96,10 @@
         <section class="tabSection active" id="tab-dashboard">
           <div class="statsGrid">
             <div class="statCard">
+              <h4>Blog Category Topics</h4>
+              <div class="statNumber" id="statSectorTopics">0</div>
+            </div>
+            <div class="statCard">
               <h4>Initiatives</h4>
               <div class="statNumber" id="statInitiatives">0</div>
             </div>
@@ -113,10 +117,22 @@
             </div>
           </div>
 
+          <div class="cardBox" style="border-top: 4px solid #F4821E;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+              <div>
+                <h3 style="margin: 0;">Blog Categories Overview (Live Topics)</h3>
+                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">Click any category below to add, edit, update, or delete its topics and photos.</p>
+              </div>
+              <button type="button" class="btnSubmit navTabTrigger" data-tab="sectors">Manage Blog Categories</button>
+            </div>
+            <div id="dashboardSectorSummaryGrid" class="dashboardSectorSummaryGrid"></div>
+          </div>
+
           <div class="cardBox">
             <h3>Quick Management Actions</h3>
             <p style="margin-bottom: 15px; color: #555;">Welcome to the official content management system for Kunal Tilak's website. Edit any image, title, card, or graphic live.</p>
             <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+              <button class="btnSubmit navTabTrigger" data-tab="sectors">Manage Blog Categories</button>
               <button class="btnSubmit navTabTrigger" data-tab="general">Edit Header & Logos</button>
               <button class="btnSubmit navTabTrigger" data-tab="hero">Edit Hero Cutout & PDF</button>
               <button class="btnSubmit navTabTrigger" data-tab="initiatives">Add / Edit Initiative</button>
@@ -944,7 +960,7 @@
           <div class="cardBox" style="border-top: 4px solid #F4821E;">
             <div class="sectorManagerHeader">
               <div>
-                <h3 style="margin-bottom: 4px;">Category Pages &amp; Content Manager</h3>
+                <h3 style="margin-bottom: 4px;">Blog Categories &amp; Content Manager</h3>
                 <p style="color: #64748b; font-size: 14px; margin: 0;">
                   Manage topics, multi-photo carousels, and detailed articles for all 6 category pages (Education, Health, Sports, Leadership, Politics, and Initiatives).
                 </p>
@@ -1222,8 +1238,8 @@
     </div>
   </div>
 
-  <script src="js/admin.service.js?v=20261125v6"></script>
-  <script src="js/admin.ui.js?v=20261125v6"></script>
-  <script src="js/admin.js?v=20261125v6"></script>
+  <script src="js/admin.service.js?v=20261126v7"></script>
+  <script src="js/admin.ui.js?v=20261126v7"></script>
+  <script src="js/admin.js?v=20261126v7"></script>
 </body>
 </html>

@@ -54,6 +54,7 @@ async function refreshAdminData() {
       const el = document.getElementById(id);
       if (el) el.innerText = count;
     };
+    setStat('statSectorTopics', res.data.sectorInitiatives ? res.data.sectorInitiatives.length : 0);
     setStat('statInitiatives', res.data.initiatives ? res.data.initiatives.length : 0);
     setStat('statBlogs', res.data.blogs ? res.data.blogs.length : 0);
     setStat('statGallery', res.data.gallery ? res.data.gallery.length : 0);
@@ -914,6 +915,23 @@ function setupFormSubmissions() {
       }
 
       applySectorFilterUI(filterVal);
+    });
+  }
+
+  const dashboardSectorGrid = document.getElementById('dashboardSectorSummaryGrid');
+  if (dashboardSectorGrid) {
+    dashboardSectorGrid.addEventListener('click', (e) => {
+      const card = e.target.closest('[data-dashboard-sector]');
+      if (!card) return;
+      const sectorKey = card.getAttribute('data-dashboard-sector');
+      const sectorsTab = document.querySelector('.navTab[data-tab="sectors"]');
+      if (sectorsTab) sectorsTab.click();
+      if (sectorKey) {
+        if (!window.adminUI.getVal('sectorItemId')) {
+          window.adminUI.setVal('sectorPageSelect', sectorKey);
+        }
+        applySectorFilterUI(sectorKey);
+      }
     });
   }
 

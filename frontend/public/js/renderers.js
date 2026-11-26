@@ -1146,15 +1146,18 @@ class UIRenderers {
       const k = (p.key || '').toLowerCase();
       const l = (p.link || '').toLowerCase().replace('/initiatives/', '').replace(/^\//, '').replace(/\/index\.html$/, '');
       const t = (p.title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      return k === s || l === s || t === s || s.includes(k) || (k && s.includes(k));
+      return k === s || l === s || t === s || (k && s.includes(k));
     });
+
+    const showcaseHandledSlugs = ['education', 'health', 'sports', 'leadership', 'politics', 'initiative', 'initiatives'];
+    const isShowcaseRoute = showcaseHandledSlugs.includes(s);
 
     const pageTitle = pillar ? pillar.title : slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
     const pageIntro = pillar ? pillar.intro : '';
 
     // 2. Set Page Title & Breadcrumb Header
     const featuredSpan = document.querySelector('.featured span');
-    if (featuredSpan) featuredSpan.innerText = 'INITIATIVE';
+    if (featuredSpan) featuredSpan.innerText = isShowcaseRoute ? pageTitle.toUpperCase() : 'INITIATIVE';
 
     const titleAnchor = document.querySelector('.content > a, .content h1, .featured + .content > a');
     if (titleAnchor) titleAnchor.innerText = pageTitle;
@@ -1167,9 +1170,11 @@ class UIRenderers {
       introP.innerText = pageIntro;
     }
 
-    // 4. Render Sector Initiatives matching this pillar
-    const sectorKey = (pillar && pillar.key) ? pillar.key : slug;
-    this.renderSectorSubpage(sectorKey, data.sectorInitiatives, data.settings);
+    // 4. Render Sector Initiatives matching this pillar (skip when minimalist showcase handles this category)
+    if (!isShowcaseRoute) {
+      const sectorKey = (pillar && pillar.key) ? pillar.key : slug;
+      this.renderSectorSubpage(sectorKey, data.sectorInitiatives, data.settings);
+    }
   }
 
   /**

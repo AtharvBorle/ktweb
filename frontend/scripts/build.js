@@ -40,6 +40,20 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+// 2.5. Sync static route HTML files for /initiatives/:category so Nginx & static dev servers serve 200 OK
+const initiativesTemplate = path.join(PUBLIC_DIR, 'initiatives', 'index.html');
+if (fs.existsSync(initiativesTemplate)) {
+  const categorySlugs = ['education', 'health', 'sports', 'leadership', 'politics', 'initiative', 'initiatives'];
+  for (const slug of categorySlugs) {
+    const destDir = path.join(PUBLIC_DIR, 'initiatives', slug);
+    if (!fs.existsSync(destDir)) {
+      fs.mkdirSync(destDir, { recursive: true });
+    }
+    fs.copyFileSync(initiativesTemplate, path.join(destDir, 'index.html'));
+  }
+  console.log(`Synced ${categorySlugs.length} static category entry points under initiatives/.`);
+}
+
 // 3. Count public assets
 const countFiles = (dir) => {
   let count = 0;
