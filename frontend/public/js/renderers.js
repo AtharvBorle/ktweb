@@ -857,7 +857,8 @@ class UIRenderers {
 
       const getStep = () => {
         const firstCard = track.querySelector('.sliderItem');
-        return firstCard ? (firstCard.offsetWidth + 25) : 375;
+        const gap = parseFloat(window.getComputedStyle(track).columnGap || window.getComputedStyle(track).gap) || (window.innerWidth <= 768 ? 14 : 25);
+        return firstCard ? (firstCard.offsetWidth + gap) : 375;
       };
 
       const updateArrowState = () => {
@@ -1045,8 +1046,15 @@ class UIRenderers {
     wrappers.forEach(wrapper => {
       if (reportCards && reportCards.length > 0) {
         wrapper.innerHTML = reportCards.map(c => `
-          <a href="${this.bustingUrl(c.pdfUrl)}" class="last" download="" target="_blank">
-            ${this.escapeHtml(c.title)}
+          <a href="${this.bustingUrl(c.pdfUrl)}" class="last reportCardInteractiveBtn" download="" target="_blank">
+            <span class="reportBtnLabel">${this.escapeHtml(c.title)}</span>
+            <span class="reportBtnIcon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </span>
           </a>
         `).join('');
       }
