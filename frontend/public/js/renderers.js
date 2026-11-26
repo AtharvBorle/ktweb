@@ -794,7 +794,7 @@ class UIRenderers {
 
     const tracks = document.querySelectorAll('.sc-dIEoRj .slick-track, #bengaluru .slick-track');
     tracks.forEach(track => {
-      track.style.transform = 'translateX(0px)';
+      track.style.transform = 'none';
       track.innerHTML = cards.map((card, idx) => `
         <div class="sliderItem" tabindex="-1" data-index="${idx}">
           ${card.image && card.image.trim() !== '' ? `<img alt="${this.escapeHtml(card.title)}" loading="lazy" src="${this.escapeHtml(this.bustingUrl(card.image))}" />` : ''}
@@ -832,34 +832,117 @@ class UIRenderers {
       });
     });
 
-    // Slider Smooth Arrows Navigation
+    // Interactive Arrows + Two-Finger Trackpad & Pointer Horizontal Scroll
     document.querySelectorAll('.sc-dIEoRj .sliderWrapper, #bengaluru .sliderWrapper').forEach(wrapper => {
+      const list = wrapper.querySelector('.slick-list');
       const track = wrapper.querySelector('.slick-track');
       const prevBtn = wrapper.querySelector('.slick-prev');
       const nextBtn = wrapper.querySelector('.slick-next');
 
-      if (track && prevBtn && nextBtn) {
-        let currentOffset = 0;
-        const getStep = () => {
-          const firstCard = track.querySelector('.sliderItem');
-          return firstCard ? (firstCard.offsetWidth + 25) : 375;
-        };
+      if (!list || !track || !prevBtn || !nextBtn) return;
 
-        prevBtn.onclick = (e) => {
-          e.preventDefault();
-          currentOffset = Math.min(0, currentOffset + getStep());
-          track.style.transform = `translateX(${currentOffset}px)`;
-        };
+      track.style.transform = 'none';
+      list.scrollLeft = 0;
 
-        nextBtn.onclick = (e) => {
-          e.preventDefault();
-          const maxScroll = -(track.scrollWidth - wrapper.clientWidth);
-          if (maxScroll < 0) {
-            currentOffset = Math.max(maxScroll, currentOffset - getStep());
-            track.style.transform = `translateX(${currentOffset}px)`;
+      // Upgrade static arrow images into crisp interactive vector buttons
+      prevBtn.setAttribute('role', 'button');
+      prevBtn.setAttribute('tabindex', '0');
+      prevBtn.setAttribute('aria-label', 'Previous category');
+      prevBtn.innerHTML = '<span class="eduInitArrowBtn" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></span>';
+
+      nextBtn.setAttribute('role', 'button');
+      nextBtn.setAttribute('tabindex', '0');
+      nextBtn.setAttribute('aria-label', 'Next category');
+      nextBtn.innerHTML = '<span class="eduInitArrowBtn" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></span>';
+
+      const getStep = () => {
+        const firstCard = track.querySelector('.sliderItem');
+        const gap = parseFloat(window.getComputedStyle(track).columnGap || window.getComputedStyle(track).gap) || (window.innerWidth <= 768 ? 14 : 25);
+        return firstCard ? (firstCard.offsetWidth + gap) : 375;
+      };
+
+      const updateArrowState = () => {
+        const maxScroll = Math.max(0, list.scrollWidth - list.clientWidth);
+        const atStart = list.scrollLeft <= 2;
+        const atEnd = list.scrollLeft >= maxScroll - 2;
+        prevBtn.classList.toggle('slick-disabled', atStart);
+        nextBtn.classList.toggle('slick-disabled', atEnd);
+        prevBtn.setAttribute('aria-disabled', String(atStart));
+        nextBtn.setAttribute('aria-disabled', String(atEnd));
+      };
+
+      const slideBy = (direction) => {
+        const step = getStep() * direction;
+        if (typeof list.scrollBy === 'function') {
+          list.scrollBy({ left: step, behavior: 'smooth' });
+        } else {
+          list.scrollLeft += step;
+        }
+      };
+
+      prevBtn.onclick = (e) => {
+        e.preventDefault();
+        slideBy(-1);
+      };
+
+      nextBtn.onclick = (e) => {
+        e.preventDefault();
+        slideBy(1);
+      };
+
+      [prevBtn, nextBtn].forEach((btn, idx) => {
+        btn.onkeydown = (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            slideBy(idx === 0 ? -1 : 1);
           }
         };
-      }
+      });
+
+      list.addEventListener('scroll', updateArrowState, { passive: true });
+      window.addEventListener('resize', updateArrowState, { passive: true });
+
+      // Smooth pointer drag-to-scroll on desktop without interfering with Read More links
+      let isDragging = false;
+      let dragStartX = 0;
+      let startScrollLeft = 0;
+      let didDrag = false;
+
+      list.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch' || e.target.closest('a.readMore, small.readMore, button')) return;
+        isDragging = true;
+        didDrag = false;
+        dragStartX = e.clientX;
+        startScrollLeft = list.scrollLeft;
+        list.classList.add('is-dragging');
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStartX;
+        if (Math.abs(dx) > 4) didDrag = true;
+        list.scrollLeft = startScrollLeft - dx;
+      });
+
+      window.addEventListener('pointerup', () => {
+        if (!isDragging) return;
+        isDragging = false;
+        list.classList.remove('is-dragging');
+      });
+
+      list.addEventListener('click', (e) => {
+        if (didDrag) {
+          e.preventDefault();
+          e.stopPropagation();
+          didDrag = false;
+        }
+      }, true);
+
+      updateArrowState();
+      requestAnimationFrame(() => {
+        list.scrollLeft = 0;
+        updateArrowState();
+      });
     });
   }
 
@@ -963,8 +1046,15 @@ class UIRenderers {
     wrappers.forEach(wrapper => {
       if (reportCards && reportCards.length > 0) {
         wrapper.innerHTML = reportCards.map(c => `
-          <a href="${this.bustingUrl(c.pdfUrl)}" class="last" download="" target="_blank">
-            ${this.escapeHtml(c.title)}
+          <a href="${this.bustingUrl(c.pdfUrl)}" class="last reportCardInteractiveBtn" download="" target="_blank">
+            <span class="reportBtnLabel">${this.escapeHtml(c.title)}</span>
+            <span class="reportBtnIcon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+              </svg>
+            </span>
           </a>
         `).join('');
       }
@@ -1316,7 +1406,7 @@ class UIRenderers {
       <div>
         <ul>
           <li><a href="/index.html">HOME</a></li>
-          <li><a href="/blog/index.html">BLOG</a></li>
+          <li><a href="/initiatives/initiative/">BLOG</a></li>
           <li><a href="/index.html#reportCardId">REPORTS</a></li>
           <li><a href="/index.html#videos">GALLERY</a></li>
           ${hasPillars ? `<li><a href="/index.html#myBlog">INITIATIVES</a></li>` : ''}
@@ -1809,7 +1899,7 @@ class UIRenderers {
           <li><a href="/constituency-projects/index.html">Constituency Initiatives</a></li>
           <li><a href="/policy-and-parliamentary-work/index.html">In Parliament</a></li>
           <li><a href="/index.html#bjym">BJYM Youth Wing</a></li>
-          <li><a href="/blog/index.html">Blog & Press</a></li>
+          <li><a href="/initiatives/initiative/">Blog & Press</a></li>
           <li><a href="/index.html#videos">Gallery</a></li>
           <li><a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Kunal &rarr;</a></li>
           <li><a href="/admin" target="_blank" style="color:#F4821E; font-weight:bold;">Admin CMS &rarr;</a></li>
@@ -1827,7 +1917,7 @@ class UIRenderers {
         'constituency': '/constituency-projects/index.html',
         'parliament': '/policy-and-parliamentary-work/index.html',
         'bjym': '/index.html#bjym',
-        'blog': '/blog/index.html',
+        'blog': '/initiatives/initiative/',
         'gallery': '/index.html#videos'
       };
 
