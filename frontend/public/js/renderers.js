@@ -732,34 +732,101 @@ class UIRenderers {
       if (s.initiativesSectionDesc) p.innerText = s.initiativesSectionDesc;
     });
 
-    if (!initiatives || !initiatives.length) return;
+    const stateData = (this.state && this.state.data) ? this.state.data : {};
+    const pillars = Array.isArray(stateData.initiativePillars) ? stateData.initiativePillars : [];
+    const sectorItems = Array.isArray(stateData.sectorInitiatives) ? stateData.sectorInitiatives : [];
+
+    const categoryFallbacks = {
+      education: { label: 'Education', link: '/initiatives/education', image: '/_next/static/media/best.f65e5294.jpg' },
+      health: { label: 'Health', link: '/initiatives/health', image: '/_next/static/media/pic3.f32ea54f.jpg' },
+      sports: { label: 'Sports', link: '/initiatives/sports', image: '/_next/static/media/slideone5.1a0ba9df.png' },
+      leadership: { label: 'Leadership', link: '/initiatives/leadership', image: '/_next/static/media/youth-can-lead.2458f56b.jpg' },
+      politics: { label: 'Politics', link: '/initiatives/politics', image: '/_next/static/media/slideone8.2150898b.png' },
+      initiatives: { label: 'Initiatives', link: '/initiatives/initiative', image: '/_next/static/media/mantri-serenity.77390ddf.jpg' }
+    };
+
+    const normalizeKey = (raw) => {
+      const k = String(raw || '').trim().toLowerCase();
+      return k === 'initiative' ? 'initiatives' : k;
+    };
+
+    let cards = [];
+    if (pillars.length || sectorItems.length) {
+      const orderedKeys = pillars.length
+        ? pillars.map(p => normalizeKey(p.key || p.title)).filter(Boolean)
+        : ['education', 'health', 'sports', 'leadership', 'politics', 'initiatives'];
+
+      const seen = new Set();
+      cards = orderedKeys.reduce((acc, rawKey, idx) => {
+        const key = normalizeKey(rawKey);
+        if (!key || seen.has(key)) return acc;
+        seen.add(key);
+
+        const fb = categoryFallbacks[key] || { label: rawKey, link: `/initiatives/${key}`, image: '/_next/static/media/best.f65e5294.jpg' };
+        const pillar = pillars[idx] && normalizeKey(pillars[idx].key || pillars[idx].title) === key
+          ? pillars[idx]
+          : pillars.find(p => normalizeKey(p.key || p.title) === key);
+
+        const matchingTopics = sectorItems.filter(it => normalizeKey(it.sector) === key);
+        const topicWithPhoto = matchingTopics.find(it => Array.isArray(it.photos) && it.photos.length && it.photos[0].src);
+        const photoSrc = (topicWithPhoto && topicWithPhoto.photos[0].src) || fb.image;
+
+        const firstTopic = matchingTopics[0];
+        const summaryText = (pillar && pillar.intro)
+          || (firstTopic && Array.isArray(firstTopic.paragraphs) && firstTopic.paragraphs[0])
+          || (firstTopic && firstTopic.description)
+          || '';
+
+        acc.push({
+          title: (pillar && pillar.title) || fb.label,
+          topicTitle: (firstTopic && firstTopic.title) || '',
+          image: photoSrc,
+          shortDesc: summaryText,
+          link: (pillar && pillar.link) || fb.link
+        });
+        return acc;
+      }, []);
+    } else if (initiatives && initiatives.length) {
+      cards = initiatives;
+    }
+
+    if (!cards.length) return;
 
     const tracks = document.querySelectorAll('.sc-dIEoRj .slick-track, #bengaluru .slick-track');
     tracks.forEach(track => {
-      track.innerHTML = initiatives.map((init, idx) => `
+      track.style.transform = 'translateX(0px)';
+      track.innerHTML = cards.map((card, idx) => `
         <div class="sliderItem" tabindex="-1" data-index="${idx}">
-          ${init.image && init.image.trim() !== '' ? `<img alt="${this.escapeHtml(init.title)}" loading="lazy" src="${this.bustingUrl(init.image)}" />` : ''}
+          ${card.image && card.image.trim() !== '' ? `<img alt="${this.escapeHtml(card.title)}" loading="lazy" src="${this.escapeHtml(this.bustingUrl(card.image))}" />` : ''}
           <div>
-            <strong>${this.escapeHtml(init.title)}</strong>
-            <p>${this.escapeHtml(init.shortDesc || init.fullDesc || '')}</p>
-            <small class="readMore" style="cursor:pointer; color:#F4821E; font-weight:bold;">Read more &rarr;</small>
+            <strong>${this.escapeHtml(card.title)}</strong>
+            ${card.topicTitle ? `<h4 class="sliderTopicTitle">${this.escapeHtml(card.topicTitle)}</h4>` : ''}
+            <p>${this.escapeHtml(card.shortDesc || card.fullDesc || '')}</p>
+            ${card.link
+              ? `<a class="readMore" href="${this.escapeHtml(card.link)}">Read More &rarr;</a>`
+              : `<small class="readMore" style="cursor:pointer; color:#F4821E; font-weight:bold;">Read more &rarr;</small>`
+            }
           </div>
         </div>
       `).join('');
 
       track.querySelectorAll('.sliderItem').forEach((itemEl, idx) => {
-        const initData = initiatives[idx];
+        const cardData = cards[idx];
         const readMoreBtn = itemEl.querySelector('.readMore');
-        if (readMoreBtn && initData) {
+        if (readMoreBtn && cardData) {
           readMoreBtn.onclick = (e) => {
             e.preventDefault();
             e.stopPropagation();
-            this.showDetailModal(
-              initData.title,
-              initData.image,
-              initData.fullDesc || initData.shortDesc,
-              initData.link || initData.pdfUrl
-            );
+            if (cardData.link) {
+              window.location.href = cardData.link;
+            } else {
+              this.showDetailModal(
+                cardData.title,
+                cardData.image,
+                cardData.fullDesc || cardData.shortDesc,
+                cardData.link || cardData.pdfUrl
+              );
+            }
           };
         }
       });
@@ -773,11 +840,14 @@ class UIRenderers {
 
       if (track && prevBtn && nextBtn) {
         let currentOffset = 0;
-        const itemWidth = 375; // Card width + gap
+        const getStep = () => {
+          const firstCard = track.querySelector('.sliderItem');
+          return firstCard ? (firstCard.offsetWidth + 25) : 375;
+        };
 
         prevBtn.onclick = (e) => {
           e.preventDefault();
-          currentOffset = Math.min(0, currentOffset + itemWidth);
+          currentOffset = Math.min(0, currentOffset + getStep());
           track.style.transform = `translateX(${currentOffset}px)`;
         };
 
@@ -785,7 +855,7 @@ class UIRenderers {
           e.preventDefault();
           const maxScroll = -(track.scrollWidth - wrapper.clientWidth);
           if (maxScroll < 0) {
-            currentOffset = Math.max(maxScroll, currentOffset - itemWidth);
+            currentOffset = Math.max(maxScroll, currentOffset - getStep());
             track.style.transform = `translateX(${currentOffset}px)`;
           }
         };
