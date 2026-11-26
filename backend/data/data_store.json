@@ -179,8 +179,8 @@
       "category": "Scholarships",
       "issue": "Scholarships",
       "title": "NaMo Vidyanidhi - Scholarships for Meritorious Students",
-      "relativeLabel": "Recently",
-      "publishedAt": 1795597031331,
+      "relativeLabel": "One day ago",
+      "publishedAt": 1795588200000,
       "description": "In response to financial constraints faced by underprivileged children aspiring for higher learning, the \"NaMo Vidyanidhi\" initiative offers annual scholarships of ₹10,000 each to 10,000 meritorious students across Kasba Peth, Pune.\n\nThese scholarships are paid directly to the respective schools and educational institutions, ensuring financial assistance reaches deserving families promptly without middlemen, paperwork bottlenecks, or delays. To date, scholarships have already been disbursed to more than 1,000 student beneficiaries.\n\nDedicated ward-level verification committees partner with school principals, class teachers, and parent representatives to identify diligent students from Class 8 through Class 10 who face economic hardship despite strong academic performance.\n\nBeyond tuition and examination fee relief, the NaMo Vidyanidhi network connects recipients with career mentors, textbook banks, and regular progress reviews so every scholar transitions smoothly into Class 11, diploma courses, and undergraduate studies.\n\nCitizen volunteers, alumni, and local community leaders continue to strengthen the endowment, transforming NaMo Vidyanidhi into a sustainable, citizen-driven movement for educational equity and social mobility.",
       "paragraphs": [
         "In response to financial constraints faced by underprivileged children aspiring for higher learning, the \"NaMo Vidyanidhi\" initiative offers annual scholarships of ₹10,000 each to 10,000 meritorious students across Kasba Peth, Pune.",
@@ -201,6 +201,10 @@
         {
           "src": "/_next/static/media/slideone1.703831d3.png",
           "caption": "Community student felicitation and mentorship forum."
+        },
+        {
+          "src": "/uploads/images__2__1795678085057_648101.jpg",
+          "caption": "Test"
         }
       ]
     },

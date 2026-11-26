@@ -96,18 +96,41 @@
   display: block !important;
 }
 
+.jKBbUA .cointainer .sliderWrapper .sliderItem > div,
+.initiativesSection .sliderWrapper .sliderItem > div {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 !important;
+}
+
 .jKBbUA .cointainer .sliderWrapper .sliderItem strong,
 .initiativesSection .sliderWrapper .sliderItem strong {
   font-family: 'Alegreya', serif !important;
   font-size: 19px !important;
   font-weight: 700 !important;
-  line-height: 1.3 !important;
+  line-height: 1.25 !important;
   letter-spacing: 0.2px !important;
   text-transform: uppercase !important;
   color: #212121 !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 6px !important;
   display: block !important;
-  min-height: 48px !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+
+.jKBbUA .cointainer .sliderWrapper .sliderItem .sliderTopicTitle,
+.initiativesSection .sliderWrapper .sliderItem .sliderTopicTitle {
+  font-family: 'IBM Plex Sans', sans-serif !important;
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+  line-height: 1.38 !important;
+  color: #d95d14 !important;
+  margin: 0 0 8px 0 !important;
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  min-height: 40px !important;
 }
 
 .jKBbUA .cointainer .sliderWrapper .sliderItem p,
@@ -125,17 +148,23 @@
 }
 
 .jKBbUA .cointainer .sliderWrapper .sliderItem small.readMore,
-.initiativesSection .sliderWrapper .sliderItem small.readMore {
+.initiativesSection .sliderWrapper .sliderItem small.readMore,
+.jKBbUA .cointainer .sliderWrapper .sliderItem a.readMore,
+.initiativesSection .sliderWrapper .sliderItem a.readMore {
   color: #F4821E !important;
   font-weight: 700 !important;
   font-size: 13px !important;
   cursor: pointer !important;
   display: inline-block !important;
   text-transform: uppercase !important;
+  text-decoration: none !important;
   margin-top: auto !important;
+  align-self: flex-start !important;
 }
 
-.jKBbUA .cointainer .sliderWrapper .sliderItem small.readMore:hover {
+.jKBbUA .cointainer .sliderWrapper .sliderItem small.readMore:hover,
+.jKBbUA .cointainer .sliderWrapper .sliderItem a.readMore:hover,
+.initiativesSection .sliderWrapper .sliderItem a.readMore:hover {
   text-decoration: underline !important;
 }
 
