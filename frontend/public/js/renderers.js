@@ -1805,7 +1805,7 @@ class UIRenderers {
         document.body.scrollTo({ top: targetPos, behavior: 'smooth' });
       } catch (err) {}
 
-      // Trigger running highlight animation when the user arrives at the form (~1800ms)
+      // Trigger subtle zero-shift backdrop highlight behind the form on arrival
       setTimeout(() => {
         const formBox = target.querySelector('.getInTouch, form');
         if (formBox) {
@@ -1815,7 +1815,7 @@ class UIRenderers {
 
           setTimeout(() => {
             formBox.classList.remove('running-contact-glow');
-          }, 3200);
+          }, 2600);
         }
 
         // Focus first input field safely AFTER scrolling is fully complete WITHOUT jumping
@@ -1829,7 +1829,7 @@ class UIRenderers {
           firstInput.classList.add('running-input-glow');
           setTimeout(() => firstInput.classList.remove('running-input-glow'), 2000);
         }
-      }, 1800);
+      }, 750);
     } else {
       // Fallback for subpages without a local contact section
       window.location.href = '/index.html#contact-me';

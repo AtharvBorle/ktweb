@@ -1867,45 +1867,69 @@ section.sc-jTIKuF:not(.has-initiatives) .left h2 {
   font-size: 0 !important;
 }
 
-/* Running Highlight Animation for Contact Us Form */
+/* Subtle Zero-Shift Backdrop Highlight Animation Behind Contact Us Form */
+.htpZlO .container .right .getInTouch form,
+#contact-me .getInTouch form {
+  position: relative !important;
+  z-index: 1 !important;
+  isolation: isolate;
+}
+
+.htpZlO .container .right .getInTouch form::before,
+#contact-me .getInTouch form::before {
+  content: "";
+  position: absolute;
+  inset: -14px -16px;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 10px 28px rgba(0, 0, 0, 0.25);
+  transform: scale(0.985);
+}
+
 @keyframes runningContactGlow {
   0% {
-    box-shadow: 0 0 0 0 rgba(244, 130, 30, 0.7), 0 10px 25px rgba(244, 130, 30, 0.2);
-    border-color: #F4821E;
-    transform: translateY(0);
+    opacity: 0;
+    transform: scale(0.985);
   }
   25% {
-    box-shadow: 0 0 0 6px rgba(244, 130, 30, 0.4), 0 14px 30px rgba(244, 130, 30, 0.25);
-    border-color: #ea580c;
-    transform: translateY(-2px);
+    opacity: 1;
+    transform: scale(1);
   }
-  50% {
-    box-shadow: 0 0 0 10px rgba(244, 130, 30, 0.25), 0 18px 36px rgba(244, 130, 30, 0.3);
-    border-color: #f97316;
-    transform: translateY(-3px);
-  }
-  75% {
-    box-shadow: 0 0 0 6px rgba(244, 130, 30, 0.15), 0 12px 28px rgba(244, 130, 30, 0.2);
-    border-color: #F4821E;
-    transform: translateY(-1px);
+  65% {
+    opacity: 0.9;
+    transform: scale(1);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(244, 130, 30, 0), 0 5px 15px rgba(0, 0, 0, 0.08);
-    border-color: transparent;
-    transform: translateY(0);
+    opacity: 0;
+    transform: scale(1);
   }
 }
 
 .running-contact-glow {
-  animation: runningContactGlow 3s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
-  border-radius: 12px !important;
-  border: 2px solid #F4821E !important;
+  animation: none !important;
+  transform: none !important;
+}
+
+.getInTouch.running-contact-glow form::before,
+form.running-contact-glow::before {
+  animation: runningContactGlow 2.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
 }
 
 .running-input-glow {
-  box-shadow: 0 0 0 3px rgba(244, 130, 30, 0.35) !important;
-  border-color: #F4821E !important;
-  transition: all 0.3s ease !important;
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14) !important;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+@media screen and (max-width: 768px) {
+  .htpZlO .container .right .getInTouch form::before,
+  #contact-me .getInTouch form::before {
+    inset: -10px -10px;
+    border-radius: 10px;
+  }
 }
 
 /* 16. Ensure Contact Me Button Stays in Front of Hero Photo & Banner */
