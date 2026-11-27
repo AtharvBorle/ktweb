@@ -502,6 +502,8 @@
   flex-shrink: 0 !important;
   padding: 0 !important;
   margin: 0 !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
 }
 
 .sliderWrapper .sliders .slideItem,
@@ -510,6 +512,8 @@
   display: block !important;
   padding-right: 0 !important;
   cursor: pointer !important;
+  -webkit-backface-visibility: hidden !important;
+  backface-visibility: hidden !important;
   transition: transform 0.25s ease, box-shadow 0.25s ease !important;
 }
 
@@ -530,6 +534,10 @@
   border-radius: 10px !important;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
   display: block !important;
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 @media screen and (max-width: 768px) {
