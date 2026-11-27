@@ -976,6 +976,33 @@ class UIRenderers {
           }
           const fullRow2 = r2.concat(r2);
 
+          // Cache resolved URLs once per unique item and preload/decode immediately
+          // so iOS Safari / iPadOS have every Gallery image ready before scroll.
+          const resolvedUrlCache = new Map();
+          const getGalleryUrl = (rawUrl) => {
+            if (!rawUrl) return '';
+            if (!resolvedUrlCache.has(rawUrl)) {
+              resolvedUrlCache.set(rawUrl, this.bustingUrl(rawUrl));
+            }
+            return resolvedUrlCache.get(rawUrl);
+          };
+
+          validItems.forEach(item => {
+            const isVideo = item.type === 'video';
+            const ytId = isVideo ? this.extractYouTubeId(item.url) : null;
+            const preloadSrc = ytId
+              ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
+              : (!isVideo ? getGalleryUrl(item.url) : '');
+            if (preloadSrc) {
+              const preImg = new Image();
+              preImg.decoding = 'sync';
+              preImg.src = preloadSrc;
+              if (typeof preImg.decode === 'function') {
+                preImg.decode().catch(() => {});
+              }
+            }
+          });
+
           const renderItems = (items) => items.map((item, i) => {
             const isVideo = item.type === 'video';
             const ytId = isVideo ? this.extractYouTubeId(item.url) : null;
@@ -983,12 +1010,12 @@ class UIRenderers {
 
             if (isVideo) {
               if (ytId) {
-                mediaMarkup = `<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt="${this.escapeHtml(item.title || 'Video')}" loading="lazy" style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block;" onerror="this.src='/uploads/video_placeholder.png'" />`;
+                mediaMarkup = `<img src="https://img.youtube.com/vi/${ytId}/hqdefault.jpg" alt="${this.escapeHtml(item.title || 'Video')}" loading="eager" decoding="sync" fetchpriority="high" style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block;" onerror="this.src='/uploads/video_placeholder.png'" />`;
               } else {
-                mediaMarkup = `<video src="${this.bustingUrl(item.url)}#t=0.5" preload="metadata" muted playsinline style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block; pointer-events: none;"></video>`;
+                mediaMarkup = `<video src="${getGalleryUrl(item.url)}#t=0.5" preload="metadata" muted playsinline style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block; pointer-events: none;"></video>`;
               }
             } else {
-              mediaMarkup = `<img src="${this.bustingUrl(item.url)}" alt="${this.escapeHtml(item.title || 'Gallery Item')}" loading="lazy" style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block;" />`;
+              mediaMarkup = `<img src="${getGalleryUrl(item.url)}" alt="${this.escapeHtml(item.title || 'Gallery Item')}" loading="eager" decoding="sync" fetchpriority="high" style="width: 290px; height: 190px; object-fit: cover; border-radius: 10px; display: block;" />`;
             }
 
             return `
@@ -1026,6 +1053,12 @@ class UIRenderers {
 
       // Default static fallback: duplicate existing static items so the CSS marquee loops seamlessly
       [row1Track, row2Track].forEach(track => {
+        if (track) {
+          track.querySelectorAll('img').forEach(img => {
+            img.setAttribute('loading', 'eager');
+            img.setAttribute('decoding', 'sync');
+          });
+        }
         if (track && track.children.length > 0 && !track.dataset.duplicated) {
           const original = Array.from(track.children);
           original.forEach(child => {
