@@ -1092,6 +1092,386 @@ a.reportButton .textWrapper .btn-text {
   white-space: nowrap !important;
 }
 
+/* 10.5. Tablet / iPad Viewports (769px–1200px): Preserve Desktop 3-Column Hero Alignment */
+@media screen and (min-width: 769px) and (max-width: 1200px) {
+  .dyPwnr.pageCenter,
+  .dyPwnr {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    gap: 20px !important;
+  }
+
+  .dyPwnr .menuWrap {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    width: auto !important;
+    padding-top: 16px !important;
+  }
+
+  .sNxBf {
+    flex: 0 0 60px !important;
+    max-width: 60px !important;
+  }
+
+  .cttLvF {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 16px !important;
+  }
+
+  .dIzsqs {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: stretch !important;
+    gap: 18px !important;
+    padding-left: 10px !important;
+    padding-bottom: 44px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .dIzsqs .left {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    gap: clamp(16px, 2.5vw, 36px) !important;
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    width: auto !important;
+    margin-top: 24px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap {
+    flex: 0 0 clamp(145px, 19vw, 210px) !important;
+    max-width: clamp(145px, 19vw, 210px) !important;
+    width: 100% !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap .bannerLink {
+    margin: 0 0 28px 0 !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap .bannerLink ul li {
+    margin-bottom: 15px !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap .bannerLink ul li a {
+    font-size: clamp(12.5px, 1.4vw, 15px) !important;
+    line-height: 1.35 !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap .bannerLink ul li a:before {
+    left: -18px !important;
+    width: 10px !important;
+    height: 10px !important;
+    top: 4px !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap .votes h3 {
+    font-size: clamp(16px, 1.8vw, 20px) !important;
+    line-height: 1.3 !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap .votes h3 strong {
+    font-size: clamp(22px, 2.5vw, 28px) !important;
+  }
+
+  .dIzsqs .left .bannerLinkWrap .votes p {
+    font-size: clamp(12.5px, 1.3vw, 15px) !important;
+    line-height: 1.45 !important;
+  }
+
+  .dIzsqs .left .leaderWrap {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    width: auto !important;
+  }
+
+  .dIzsqs .left .leaderWrap h1 {
+    font-size: clamp(24px, 2.8vw, 32px) !important;
+    line-height: 1.18 !important;
+    margin-bottom: 48px !important;
+  }
+
+  .dIzsqs .left .leaderWrap h1:after {
+    bottom: -22px !important;
+  }
+
+  .dIzsqs .left .leaderWrap p {
+    font-size: clamp(14px, 1.5vw, 17px) !important;
+    line-height: 1.5 !important;
+    margin-top: 0 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .dIzsqs .left .leaderWrap .urCodeWrapper > :first-child {
+    width: clamp(86px, 10vw, 115px) !important;
+    height: clamp(86px, 10vw, 115px) !important;
+    max-width: 115px !important;
+    max-height: 115px !important;
+  }
+
+  .dIzsqs .left .leaderWrap .urCodeWrapper > div h5,
+  .dIzsqs .left .leaderWrap .urCodeWrapper > div h6 {
+    font-size: clamp(13px, 1.4vw, 16px) !important;
+    line-height: 1.3 !important;
+  }
+
+  .dIzsqs .right.mobile {
+    display: none !important;
+  }
+
+  .dIzsqs .right.desktop {
+    display: flex !important;
+    flex: 0 0 clamp(245px, 31vw, 360px) !important;
+    max-width: clamp(245px, 31vw, 360px) !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding-bottom: 24px !important;
+    align-items: flex-end !important;
+    align-self: flex-end !important;
+    position: relative !important;
+  }
+
+  .dIzsqs .right.desktop > img:first-child {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  .dIzsqs .right.desktop .imgWrap > img:first-child {
+    max-width: 96% !important;
+    width: auto !important;
+    max-height: clamp(350px, 44vw, 520px) !important;
+    object-fit: contain !important;
+    top: 20px !important;
+    margin-bottom: 48px !important;
+  }
+
+  .dIzsqs .right.desktop .reportButton {
+    bottom: 14px !important;
+    padding: 8px 14px 8px 10px !important;
+    max-width: 230px !important;
+  }
+
+  .dIzsqs .right.desktop .reportButton .textWrapper {
+    gap: 8px !important;
+  }
+
+  .dIzsqs .right.desktop .reportButton .textWrapper .btnImgWrap {
+    min-width: 34px !important;
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .dIzsqs .right.desktop .reportButton .textWrapper .btn-text {
+    font-size: clamp(12.5px, 1.3vw, 15px) !important;
+  }
+}
+
+/* 10.6. Tablet / iPad Viewports (769px–1100px): Preserve Desktop 2-Column Key Issues Section */
+@media screen and (min-width: 769px) and (max-width: 1100px) {
+  .dnnknw,
+  .sc-hOayVG {
+    padding: 56px 0 48px !important;
+  }
+
+  .dnnknw .container,
+  .sc-hOayVG .container {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: clamp(24px, 3.5vw, 38px) !important;
+    width: 100% !important;
+    max-width: 1180px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+    box-sizing: border-box !important;
+  }
+
+  .dnnknw .left,
+  .sc-hOayVG .left {
+    flex: 1 1 52% !important;
+    max-width: 52% !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  .dnnknw .left h2,
+  .sc-hOayVG .left h2 {
+    font-size: clamp(24px, 3.2vw, 38px) !important;
+    line-height: 1.2 !important;
+    margin-bottom: 20px !important;
+  }
+
+  .dnnknw .left .imgWrap,
+  .sc-hOayVG .left .imgWrap {
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: flex-start !important;
+    min-height: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .dnnknw .left .imgWrap img:first-child,
+  .sc-hOayVG .left .imgWrap img:first-child {
+    padding-left: clamp(6px, 1.8vw, 28px) !important;
+    width: 100% !important;
+    max-width: 480px !important;
+    height: auto !important;
+    display: block !important;
+  }
+
+  .dnnknw .right,
+  .sc-hOayVG .right {
+    flex: 1 1 44% !important;
+    max-width: 44% !important;
+    min-width: 0 !important;
+    width: auto !important;
+    padding-top: 28px !important;
+    padding-bottom: 60px !important;
+  }
+
+  .dnnknw .right strong,
+  .sc-hOayVG .right strong {
+    margin: 18px 0 22px !important;
+    font-size: clamp(18px, 2vw, 21px) !important;
+  }
+
+  .dnnknw .right strong:after,
+  .sc-hOayVG .right strong:after {
+    max-width: 100% !important;
+  }
+
+  .dnnknw .right .imgWrap.mobile,
+  .sc-hOayVG .right .imgWrap.mobile {
+    display: none !important;
+  }
+
+  .dnnknw .right .slick-slide p,
+  .sc-hOayVG .right .slick-slide p {
+    font-size: clamp(14.5px, 1.6vw, 17.5px) !important;
+    line-height: 1.55 !important;
+    margin-bottom: 18px !important;
+  }
+
+  .dnnknw .right .slick-slide p:last-child,
+  .sc-hOayVG .right .slick-slide p:last-child {
+    margin-bottom: 52px !important;
+  }
+}
+
+/* 10.7. Tablet / iPad Viewports (769px–1125px): Preserve Desktop 2-Column Meet Kunal Section */
+@media screen and (min-width: 769px) and (max-width: 1125px) {
+  .dQDszw,
+  #press-coverage {
+    padding: 48px 0 56px !important;
+  }
+
+  .dQDszw .container .leaderContainer,
+  #press-coverage .leaderContainer {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    gap: clamp(20px, 3vw, 40px) !important;
+    margin-top: 36px !important;
+  }
+
+  .dQDszw .container .leaderContainer .left,
+  #press-coverage .leaderContainer .left {
+    flex: 0 0 46% !important;
+    max-width: 46% !important;
+    min-width: 0 !important;
+    width: auto !important;
+    position: relative !important;
+  }
+
+  .dQDszw .container .leaderContainer .left img,
+  #press-coverage .leaderContainer .left img {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    margin-left: 0 !important;
+    display: block !important;
+  }
+
+  .dQDszw .container .leaderContainer .left .blackLine,
+  #press-coverage .leaderContainer .left .blackLine {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .dQDszw .container .leaderContainer .right,
+  #press-coverage .leaderContainer .right {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    min-width: 0 !important;
+    width: auto !important;
+    padding-top: 12px !important;
+    padding-bottom: 52px !important;
+    overflow: visible !important;
+  }
+
+  .dQDszw .container .leaderContainer .right h2,
+  #press-coverage .leaderContainer .right h2 {
+    font-size: clamp(22px, 2.6vw, 30px) !important;
+    line-height: 1.3 !important;
+    margin-bottom: 18px !important;
+  }
+
+  .dQDszw .container .leaderContainer .right .meetKunalSlider,
+  #press-coverage .leaderContainer .right .meetKunalSlider {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  .dQDszw .container .leaderContainer .right .slick-list,
+  #press-coverage .leaderContainer .right .slick-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .dQDszw .container .leaderContainer .right .slick-slide,
+  #press-coverage .leaderContainer .right .slick-slide {
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .dQDszw .container .leaderContainer .right .sliderItem,
+  .dQDszw .container .leaderContainer .right .sliderItem strong,
+  .dQDszw .container .leaderContainer .right .sliderItem p,
+  #press-coverage .leaderContainer .right .sliderItem,
+  #press-coverage .leaderContainer .right .sliderItem strong,
+  #press-coverage .leaderContainer .right .sliderItem p {
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .dQDszw .container .leaderContainer .right .sliderItem strong,
+  #press-coverage .leaderContainer .right .sliderItem strong {
+    font-size: clamp(20px, 2.3vw, 28px) !important;
+    line-height: 1.25 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .dQDszw .container .leaderContainer .right .sliderItem p,
+  #press-coverage .leaderContainer .right .sliderItem p {
+    font-size: clamp(14.5px, 1.5vw, 17.5px) !important;
+    line-height: 1.55 !important;
+  }
+}
+
 /* 11. Key Highlights & Section Slider Arrow Interactivity */
 .sc-hOayVG .slick-arrow,
 .keyHighlightsSection .slick-arrow {
