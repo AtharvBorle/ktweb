@@ -45,18 +45,18 @@ class UIRenderers {
       modal.style.cssText = `
         position: fixed;
         top: 0; left: 0; width: 100vw; height: 100vh;
-        background: rgba(0, 0, 0, 0.75);
+        background: rgba(15, 23, 42, 0.82);
         z-index: 999999;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 20px;
         box-sizing: border-box;
-        backdrop-filter: blur(4px);
+        backdrop-filter: blur(6px);
       `;
       modal.innerHTML = `
-        <div style="background: #ffffff; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 14px; padding: 28px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3); box-sizing: border-box;">
-          <button type="button" id="closeDetailModal" style="position: absolute; top: 18px; right: 18px; background: #f0f0f0; border: none; font-size: 22px; font-weight: bold; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #333; z-index: 10;">&times;</button>
+        <div id="universalDetailCard" style="background: #ffffff; max-width: 680px; width: 100%; max-height: 90vh; overflow-y: auto; border-radius: 14px; padding: 28px; position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.3); box-sizing: border-box;">
+          <button type="button" id="closeDetailModal" aria-label="Close" style="position: absolute; top: 18px; right: 18px; background: #f0f0f0; border: none; font-size: 22px; font-weight: bold; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #333; z-index: 10;">&times;</button>
           <div id="detailModalBody"></div>
         </div>
       `;
@@ -69,7 +69,7 @@ class UIRenderers {
       };
 
       modal.addEventListener('click', (e) => {
-        if (e.target.id === 'universalDetailModal' || e.target.id === 'closeDetailModal') {
+        if (e.target.id === 'universalDetailModal' || e.target.closest('#closeDetailModal')) {
           closeModal();
         }
       });
@@ -80,37 +80,142 @@ class UIRenderers {
       });
     }
 
+    const card = modal.querySelector('#universalDetailCard');
+    const closeBtn = modal.querySelector('#closeDetailModal');
+    const body = modal.querySelector('#detailModalBody');
+    const mediaOnly = !title && !content && !link && Boolean(image && image.trim() !== '');
+
     const isVideo = mediaType === 'video' || (image && (image.includes('youtube.com') || image.includes('youtu.be') || /\.(mp4|webm|ogg|mov)$/i.test(image)));
     const ytId = isVideo && image ? this.extractYouTubeId(image) : null;
+
+    if (card && closeBtn) {
+      if (mediaOnly) {
+        card.style.cssText = `
+          background: ${isVideo ? '#000000' : 'transparent'};
+          width: ${isVideo ? 'min(92vw, 860px)' : 'auto'};
+          max-width: min(92vw, 860px);
+          max-height: 88vh;
+          overflow: hidden;
+          border-radius: 16px;
+          padding: 0;
+          position: relative;
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+          box-sizing: border-box;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `;
+        closeBtn.style.cssText = `
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          background: rgba(255, 255, 255, 0.94);
+          border: 1px solid rgba(15, 23, 42, 0.12);
+          font-size: 22px;
+          font-weight: bold;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #111827;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+          z-index: 10;
+        `;
+      } else {
+        card.style.cssText = `
+          background: #ffffff;
+          max-width: 680px;
+          width: 100%;
+          max-height: 90vh;
+          overflow-y: auto;
+          border-radius: 14px;
+          padding: 28px;
+          position: relative;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+          box-sizing: border-box;
+        `;
+        closeBtn.style.cssText = `
+          position: absolute;
+          top: 18px;
+          right: 18px;
+          background: #f0f0f0;
+          border: none;
+          font-size: 22px;
+          font-weight: bold;
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #333;
+          z-index: 10;
+        `;
+      }
+    }
 
     let mediaHtml = '';
     if (image && image.trim() !== '') {
       if (isVideo) {
         if (ytId) {
           mediaHtml = `
-            <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; border-radius:10px; overflow:hidden; margin-bottom:20px; background:#000; box-shadow:0 4px 14px rgba(0,0,0,0.2);">
+            <div style="position:relative; width:100%; padding-bottom:56.25%; height:0; border-radius:${mediaOnly ? '16px' : '10px'}; overflow:hidden; margin-bottom:${mediaOnly ? '0' : '20px'}; background:#000; box-shadow:${mediaOnly ? 'none' : '0 4px 14px rgba(0,0,0,0.2)'};">
               <iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"></iframe>
             </div>
           `;
         } else {
           mediaHtml = `
-            <div style="width:100%; max-height:400px; border-radius:10px; overflow:hidden; margin-bottom:20px; background:#000; box-shadow:0 4px 14px rgba(0,0,0,0.2);">
-              <video src="${this.bustingUrl(image)}" controls autoplay playsinline style="width:100%; max-height:400px; display:block; outline:none;"></video>
+            <div style="width:100%; max-height:${mediaOnly ? '84vh' : '400px'}; border-radius:${mediaOnly ? '16px' : '10px'}; overflow:hidden; margin-bottom:${mediaOnly ? '0' : '20px'}; background:#000; box-shadow:${mediaOnly ? 'none' : '0 4px 14px rgba(0,0,0,0.2)'};">
+              <video src="${this.bustingUrl(image)}" controls autoplay playsinline style="width:100%; max-height:${mediaOnly ? '84vh' : '400px'}; display:block; outline:none;"></video>
             </div>
           `;
         }
+      } else if (mediaOnly) {
+        mediaHtml = `<img id="universalLightboxImage" src="${this.bustingUrl(image)}" alt="Gallery Photo" style="width: min(88vw, 680px); height: auto; max-width: 90vw; max-height: 84vh; object-fit: contain; border-radius: 16px; display: block; background: #ffffff;" />`;
       } else {
         mediaHtml = `<img src="${this.bustingUrl(image)}" alt="${this.escapeHtml(title)}" style="width:100%; max-height:340px; object-fit:cover; border-radius:10px; margin-bottom:20px; display:block;" />`;
       }
     }
 
-    const body = modal.querySelector('#detailModalBody');
-    body.innerHTML = `
-      ${mediaHtml}
-      <h2 style="font-family:'Alegreya', serif; font-size:26px; font-weight:bold; color:#212121; margin-bottom:14px; line-height:1.3;">${this.escapeHtml(title)}</h2>
-      ${content ? `<div style="font-family:'IBM Plex Sans', sans-serif; font-size:15px; line-height:1.7; color:#444444; margin-bottom:24px; white-space:pre-line;">${this.escapeHtml(content)}</div>` : ''}
-      ${link && link.trim() !== '' ? `<a href="${this.bustingUrl(link)}" target="_blank" style="display:inline-block; padding:10px 22px; background:#F4821E; color:#ffffff; font-weight:bold; border-radius:24px; text-decoration:none; box-shadow: 0 4px 12px rgba(244,130,30,0.3);">Explore More &rarr;</a>` : ''}
-    `;
+    if (mediaOnly) {
+      body.style.cssText = 'width: 100%; display: flex; align-items: center; justify-content: center;';
+      body.innerHTML = mediaHtml;
+
+      const lightboxImg = body.querySelector('#universalLightboxImage');
+      if (lightboxImg && card) {
+        const fitLightboxImage = () => {
+          const nw = lightboxImg.naturalWidth;
+          const nh = lightboxImg.naturalHeight;
+          if (!nw || !nh) return;
+          const maxW = Math.min(window.innerWidth * 0.9, 780);
+          const maxH = window.innerHeight * 0.84;
+          const scale = Math.min(maxW / nw, maxH / nh, 2.6);
+          const fittedW = Math.round(nw * scale);
+          const fittedH = Math.round(nh * scale);
+          card.style.width = `${fittedW}px`;
+          card.style.height = `${fittedH}px`;
+          lightboxImg.style.width = `${fittedW}px`;
+          lightboxImg.style.height = `${fittedH}px`;
+        };
+        if (lightboxImg.complete && lightboxImg.naturalWidth > 0) {
+          fitLightboxImage();
+        } else {
+          lightboxImg.addEventListener('load', fitLightboxImage, { once: true });
+        }
+      }
+    } else {
+      body.style.cssText = '';
+      body.innerHTML = `
+        ${mediaHtml}
+        ${title ? `<h2 style="font-family:'Alegreya', serif; font-size:26px; font-weight:bold; color:#212121; margin-bottom:14px; line-height:1.3;">${this.escapeHtml(title)}</h2>` : ''}
+        ${content ? `<div style="font-family:'IBM Plex Sans', sans-serif; font-size:15px; line-height:1.7; color:#444444; margin-bottom:24px; white-space:pre-line;">${this.escapeHtml(content)}</div>` : ''}
+        ${link && link.trim() !== '' ? `<a href="${this.bustingUrl(link)}" target="_blank" style="display:inline-block; padding:10px 22px; background:#F4821E; color:#ffffff; font-weight:bold; border-radius:24px; text-decoration:none; box-shadow: 0 4px 12px rgba(244,130,30,0.3);">Explore More &rarr;</a>` : ''}
+      `;
+    }
 
     modal.style.display = 'flex';
   }
@@ -436,13 +541,20 @@ class UIRenderers {
     const bjymReadMores = document.querySelectorAll('.bjymLeft .leftTop small, #bjym .leftTop small');
     bjymReadMores.forEach(sm => {
       sm.style.cursor = 'pointer';
-      sm.onclick = (e) => {
-        e.preventDefault();
-        this.showDetailModal(
-          org.sectionTitle || s.bjymSectionTitle || 'Bharatiya Janata Yuva Morcha',
-          org.mainImage || s.bjymMainImage,
-          org.mainDesc || s.bjymMainDesc
-        );
+      sm.setAttribute('role', 'link');
+      sm.setAttribute('tabindex', '0');
+      const goToInitiatives = (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        window.location.href = '/initiatives/initiative/';
+      };
+      sm.onclick = goToInitiatives;
+      sm.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          goToInitiatives(e);
+        }
       };
     });
   }
@@ -820,12 +932,7 @@ class UIRenderers {
             if (cardData.link) {
               window.location.href = cardData.link;
             } else {
-              this.showDetailModal(
-                cardData.title,
-                cardData.image,
-                cardData.fullDesc || cardData.shortDesc,
-                cardData.link || cardData.pdfUrl
-              );
+              window.location.href = '/initiatives/initiative/';
             }
           };
         }
@@ -1036,7 +1143,7 @@ class UIRenderers {
             row1Track.innerHTML = renderItems(fullRow1);
             row1Track.querySelectorAll('.slideItem').forEach((el, idx) => {
               const itm = fullRow1[idx];
-              el.onclick = () => this.showDetailModal(itm.title || (itm.type === 'video' ? 'Gallery Video' : 'Gallery Photo'), itm.url, '', '', itm.type);
+              el.onclick = () => this.showDetailModal('', itm.url, '', '', itm.type);
             });
           }
 
@@ -1044,7 +1151,7 @@ class UIRenderers {
             row2Track.innerHTML = renderItems(fullRow2);
             row2Track.querySelectorAll('.slideItem').forEach((el, idx) => {
               const itm = fullRow2[idx];
-              el.onclick = () => this.showDetailModal(itm.title || (itm.type === 'video' ? 'Gallery Video' : 'Gallery Photo'), itm.url, '', '', itm.type);
+              el.onclick = () => this.showDetailModal('', itm.url, '', '', itm.type);
             });
           }
           return;
@@ -1066,6 +1173,15 @@ class UIRenderers {
             track.appendChild(clone);
           });
           track.dataset.duplicated = 'true';
+        }
+        if (track) {
+          track.querySelectorAll('.slideItem').forEach(el => {
+            const img = el.querySelector('img');
+            if (img && img.src) {
+              el.style.cursor = 'pointer';
+              el.onclick = () => this.showDetailModal('', img.src, '', '', 'image');
+            }
+          });
         }
       });
     });
