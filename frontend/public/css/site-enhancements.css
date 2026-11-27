@@ -1705,6 +1705,8 @@ section.contactSection,
 #mobileDrawer.active .mobileDrawerNav li:nth-child(7) { transition-delay: 0.22s; }
 #mobileDrawer.open .mobileDrawerNav li:nth-child(8),
 #mobileDrawer.active .mobileDrawerNav li:nth-child(8) { transition-delay: 0.25s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(9),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(9) { transition-delay: 0.28s; }
 
 .mobileDrawerNav li a {
   font-family: "IBM Plex Sans", sans-serif;
@@ -1720,6 +1722,7 @@ section.contactSection,
   transition: padding-left 0.22s cubic-bezier(0.25, 1, 0.5, 1), transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease, color 0.2s ease, border-left-color 0.2s ease;
 }
 
+.mobileDrawerNav li a[href*="/admin"],
 .mobileDrawerNav li a[href*="#contact-me"] {
   color: #F4821E !important;
 }
@@ -1735,6 +1738,9 @@ section.contactSection,
   outline: none;
 }
 
+.mobileDrawerNav li a[href*="/admin"]:hover,
+.mobileDrawerNav li a[href*="/admin"]:focus-visible,
+.mobileDrawerNav li a[href*="/admin"]:active,
 .mobileDrawerNav li a[href*="#contact-me"]:hover,
 .mobileDrawerNav li a[href*="#contact-me"]:focus-visible,
 .mobileDrawerNav li a[href*="#contact-me"]:active {
@@ -1761,7 +1767,9 @@ section.contactSection,
   .dyPwnr .menuWrap .primary,
   .cttLvF .primary,
   .cttLvF .btnWrap .primary,
-  .sc-eKQWOK .btnWrap .primary {
+  .sc-eKQWOK .btnWrap .primary,
+  .mobileDrawerNav li.mobileDrawerAdminItem,
+  .mobileDrawerNav li:has(a[href*="/admin"]) {
     display: none !important;
   }
 

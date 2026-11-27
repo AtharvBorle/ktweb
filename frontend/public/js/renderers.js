@@ -1901,6 +1901,7 @@ class UIRenderers {
           <li><a href="/index.html#bjym">BJYM Youth Wing</a></li>
           <li><a href="/initiatives/initiative/">Blog & Press</a></li>
           <li><a href="/index.html#videos">Gallery</a></li>
+          <li class="mobileDrawerAdminItem"><a href="/admin/" style="color:#F4821E; font-weight:600;">Admin CMS &rarr;</a></li>
           <li><a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Me &rarr;</a></li>
         </ul>
       `;
@@ -1930,15 +1931,27 @@ class UIRenderers {
         });
       });
 
-      // Remove Admin CMS link if present in static HTML
-      drawerNav.querySelectorAll('a[href*="/admin"]').forEach(a => {
-        const li = a.closest('li');
-        if (li) li.remove();
-        else a.remove();
-      });
+      // Ensure Admin CMS link exists for desktop drawer and is tagged for responsive hiding
+      let existingAdmin = drawerNav.querySelector('a[href*="/admin"]');
+      const existingContact = drawerNav.querySelector('a[href*="#contact-me"]');
+      if (existingAdmin) {
+        existingAdmin.setAttribute('href', '/admin/');
+        existingAdmin.innerHTML = 'Admin CMS &rarr;';
+        const adminLi = existingAdmin.closest('li');
+        if (adminLi) adminLi.classList.add('mobileDrawerAdminItem');
+      } else {
+        const adminLi = document.createElement('li');
+        adminLi.className = 'mobileDrawerAdminItem';
+        adminLi.innerHTML = '<a href="/admin/" style="color:#F4821E; font-weight:600;">Admin CMS &rarr;</a>';
+        const contactLi = existingContact ? existingContact.closest('li') : null;
+        if (contactLi && contactLi.parentNode === drawerNav) {
+          drawerNav.insertBefore(adminLi, contactLi);
+        } else {
+          drawerNav.appendChild(adminLi);
+        }
+      }
 
       // Normalize Contact Kunal -> Contact Me and ensure it exists
-      const existingContact = drawerNav.querySelector('a[href*="#contact-me"]');
       if (existingContact) {
         existingContact.innerHTML = 'Contact Me &rarr;';
       } else {
