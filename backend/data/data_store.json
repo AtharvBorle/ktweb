@@ -995,19 +995,19 @@
       "id": 1,
       "title": "Download Report 2022",
       "year": "2022",
-      "pdfUrl": "/assets/images/yearly-report-2022.pdf"
+      "pdfUrl": "/uploads/Sample_Test_1795778413421_444771.pdf"
     },
     {
       "id": 2,
       "title": "Download Report 2023",
       "year": "2023",
-      "pdfUrl": "/assets/images/yearly-report.pdf"
+      "pdfUrl": "/uploads/Sample_Test_1795778455995_886379.pdf"
     },
     {
       "id": 3,
       "title": "Download 5 Year Report Card",
       "year": "5 Years",
-      "pdfUrl": "/uploads/yearly-report_1795684384836_121642.pdf"
+      "pdfUrl": "/uploads/Sample_Test_1795778440565_393938.pdf"
     }
   ],
   "categories": [
