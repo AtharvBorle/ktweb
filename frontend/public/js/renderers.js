@@ -1897,12 +1897,12 @@ class UIRenderers {
           <li><a href="/index.html">Home</a></li>
           <li><a href="/index.html#press-coverage">About Kunal</a></li>
           <li><a href="/constituency-projects/index.html">Constituency Initiatives</a></li>
-          <li><a href="/policy-and-parliamentary-work/index.html">In Parliament</a></li>
+          <li><a href="/policy-and-parliamentary-work/index.html">In Corporation</a></li>
           <li><a href="/index.html#bjym">BJYM Youth Wing</a></li>
           <li><a href="/initiatives/initiative/">Blog & Press</a></li>
           <li><a href="/index.html#videos">Gallery</a></li>
-          <li><a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Kunal &rarr;</a></li>
-          <li><a href="/admin" target="_blank" style="color:#F4821E; font-weight:bold;">Admin CMS &rarr;</a></li>
+          <li class="mobileDrawerAdminItem"><a href="/admin/" style="color:#F4821E; font-weight:600;">Admin CMS &rarr;</a></li>
+          <li><a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Me &rarr;</a></li>
         </ul>
       `;
       document.body.appendChild(drawer);
@@ -1916,6 +1916,7 @@ class UIRenderers {
         'about': '/index.html#press-coverage',
         'constituency': '/constituency-projects/index.html',
         'parliament': '/policy-and-parliamentary-work/index.html',
+        'corporation': '/policy-and-parliamentary-work/index.html',
         'bjym': '/index.html#bjym',
         'blog': '/initiatives/initiative/',
         'gallery': '/index.html#videos'
@@ -1930,10 +1931,32 @@ class UIRenderers {
         });
       });
 
-      // Ensure Contact Kunal item is present
-      if (!drawerNav.querySelector('a[href*="#contact-me"]')) {
+      // Ensure Admin CMS link exists for desktop drawer and is tagged for responsive hiding
+      let existingAdmin = drawerNav.querySelector('a[href*="/admin"]');
+      const existingContact = drawerNav.querySelector('a[href*="#contact-me"]');
+      if (existingAdmin) {
+        existingAdmin.setAttribute('href', '/admin/');
+        existingAdmin.innerHTML = 'Admin CMS &rarr;';
+        const adminLi = existingAdmin.closest('li');
+        if (adminLi) adminLi.classList.add('mobileDrawerAdminItem');
+      } else {
+        const adminLi = document.createElement('li');
+        adminLi.className = 'mobileDrawerAdminItem';
+        adminLi.innerHTML = '<a href="/admin/" style="color:#F4821E; font-weight:600;">Admin CMS &rarr;</a>';
+        const contactLi = existingContact ? existingContact.closest('li') : null;
+        if (contactLi && contactLi.parentNode === drawerNav) {
+          drawerNav.insertBefore(adminLi, contactLi);
+        } else {
+          drawerNav.appendChild(adminLi);
+        }
+      }
+
+      // Normalize Contact Kunal -> Contact Me and ensure it exists
+      if (existingContact) {
+        existingContact.innerHTML = 'Contact Me &rarr;';
+      } else {
         const contactLi = document.createElement('li');
-        contactLi.innerHTML = '<a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Kunal &rarr;</a>';
+        contactLi.innerHTML = '<a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Me &rarr;</a>';
         drawerNav.appendChild(contactLi);
       }
     }
@@ -1964,13 +1987,24 @@ class UIRenderers {
       document.body.style.overflow = '';
     };
 
-    // 4.5. Remove any duplicate menu button placed right beside Contact Me
+    // 4.5. Remove any duplicate old .mobileMenu button placed right beside Contact Me and ensure responsive hamburger exists
     document.querySelectorAll('.btnWrap .mobileMenu, header .btnWrap .mobileMenu').forEach(btn => {
       btn.remove();
     });
 
-    // 5. Bind All Menu Buttons (.mobileMenu, div.mobileMenu, button.mobileMenu, .mobileMenu.lite, etc.)
-    const mobileMenuBtns = document.querySelectorAll('.sNxBf .mobileMenu, div.mobileMenu, .mobileMenuWrap .mobileMenu');
+    document.querySelectorAll('.cttLvF .btnWrap, .sc-eKQWOK .btnWrap').forEach(wrap => {
+      if (!wrap.querySelector('.responsiveHamburgerBtn')) {
+        const ham = document.createElement('button');
+        ham.type = 'button';
+        ham.className = 'responsiveHamburgerBtn';
+        ham.setAttribute('aria-label', 'Open menu');
+        ham.innerHTML = '<span></span><span></span><span></span>';
+        wrap.appendChild(ham);
+      }
+    });
+
+    // 5. Bind All Menu Buttons (.mobileMenu, div.mobileMenu, .mobileMenuWrap .mobileMenu, .responsiveHamburgerBtn)
+    const mobileMenuBtns = document.querySelectorAll('.sNxBf .mobileMenu, div.mobileMenu, .mobileMenuWrap .mobileMenu, .responsiveHamburgerBtn');
     mobileMenuBtns.forEach(btn => {
       btn.style.cursor = 'pointer';
       // Prevent duplicate event handlers

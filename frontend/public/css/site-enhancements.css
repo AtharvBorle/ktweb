@@ -1612,15 +1612,17 @@ section.contactSection,
   right: -450px;
   width: 360px;
   height: 100vh;
-  background: #151522;
-  color: #ffffff;
+  background: #ffffff !important;
+  color: #212121 !important;
   z-index: 99999;
-  box-shadow: -5px 0 35px rgba(0, 0, 0, 0.75);
+  box-shadow: -6px 0 32px rgba(15, 23, 42, 0.16) !important;
+  border-left: 1px solid #f1f5f9 !important;
   transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
   padding: 40px 30px;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -1639,7 +1641,7 @@ section.contactSection,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid #e2e8f0 !important;
   padding-bottom: 20px;
   margin-bottom: 30px;
 }
@@ -1647,7 +1649,7 @@ section.contactSection,
 .mobileDrawerHeader h3 {
   font-family: Alegreya, serif;
   font-size: 24px;
-  color: #F4821E;
+  color: #F4821E !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0;
@@ -1655,7 +1657,7 @@ section.contactSection,
 
 .mobileDrawerClose {
   font-size: 32px;
-  color: #aaaaaa;
+  color: #475569 !important;
   cursor: pointer;
   line-height: 1;
   transition: color 0.2s;
@@ -1663,32 +1665,151 @@ section.contactSection,
 }
 
 .mobileDrawerClose:hover {
-  color: #ffffff;
+  color: #111827 !important;
 }
 
 .mobileDrawerNav {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 6px;
   padding: 0;
   margin: 0;
 }
+
+.mobileDrawerNav li {
+  opacity: 0;
+  transform: translateX(14px);
+  transition: opacity 0.26s ease, transform 0.28s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+#mobileDrawer.open .mobileDrawerNav li,
+#mobileDrawer.active .mobileDrawerNav li {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+#mobileDrawer.open .mobileDrawerNav li:nth-child(1),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(1) { transition-delay: 0.04s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(2),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(2) { transition-delay: 0.07s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(3),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(3) { transition-delay: 0.10s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(4),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(4) { transition-delay: 0.13s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(5),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(5) { transition-delay: 0.16s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(6),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(6) { transition-delay: 0.19s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(7),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(7) { transition-delay: 0.22s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(8),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(8) { transition-delay: 0.25s; }
+#mobileDrawer.open .mobileDrawerNav li:nth-child(9),
+#mobileDrawer.active .mobileDrawerNav li:nth-child(9) { transition-delay: 0.28s; }
 
 .mobileDrawerNav li a {
   font-family: "IBM Plex Sans", sans-serif;
   font-size: 16px;
   font-weight: 600;
-  color: #dcdcdc;
+  color: #212121 !important;
   text-transform: uppercase;
   text-decoration: none;
   display: block;
-  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 10px 16px;
+  border-left: 4px solid transparent;
+  border-radius: 0 8px 8px 0;
+  transition: padding-left 0.22s cubic-bezier(0.25, 1, 0.5, 1), transform 0.22s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.2s ease, color 0.2s ease, border-left-color 0.2s ease;
 }
 
-.mobileDrawerNav li a:hover {
-  color: #F4821E;
-  transform: translateX(5px);
+.mobileDrawerNav li a[href*="/admin"],
+.mobileDrawerNav li a[href*="#contact-me"] {
+  color: #F4821E !important;
+}
+
+.mobileDrawerNav li a:hover,
+.mobileDrawerNav li a:focus-visible,
+.mobileDrawerNav li a:active {
+  color: #F4821E !important;
+  background-color: rgba(244, 130, 30, 0.08);
+  border-left-color: #F4821E;
+  padding-left: 22px;
+  transform: translateX(6px);
+  outline: none;
+}
+
+.mobileDrawerNav li a[href*="/admin"]:hover,
+.mobileDrawerNav li a[href*="/admin"]:focus-visible,
+.mobileDrawerNav li a[href*="/admin"]:active,
+.mobileDrawerNav li a[href*="#contact-me"]:hover,
+.mobileDrawerNav li a[href*="#contact-me"]:focus-visible,
+.mobileDrawerNav li a[href*="#contact-me"]:active {
+  background-color: rgba(244, 130, 30, 0.14);
+}
+
+.responsiveHamburgerBtn {
+  display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+  .cttLvF .btnWrap,
+  .sc-eKQWOK .btnWrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .cttLvF,
+  .sc-eKQWOK {
+    align-items: center !important;
+  }
+
+  .dyPwnr .menuWrap .primary,
+  .cttLvF .primary,
+  .cttLvF .btnWrap .primary,
+  .sc-eKQWOK .btnWrap .primary,
+  .mobileDrawerNav li.mobileDrawerAdminItem,
+  .mobileDrawerNav li:has(a[href*="/admin"]) {
+    display: none !important;
+  }
+
+  .responsiveHamburgerBtn {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4.5px !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
+  }
+
+  .responsiveHamburgerBtn span {
+    display: block !important;
+    width: 18px !important;
+    height: 2px !important;
+    background: #212121 !important;
+    border-radius: 2px !important;
+    transition: background 0.2s ease !important;
+  }
+
+  .responsiveHamburgerBtn:hover,
+  .responsiveHamburgerBtn:active {
+    background: #fff7ed !important;
+    border-color: #F4821E !important;
+  }
+
+  .responsiveHamburgerBtn:hover span,
+  .responsiveHamburgerBtn:active span {
+    background: #F4821E !important;
+  }
 }
 
 .sNxBf .mobileMenu,
