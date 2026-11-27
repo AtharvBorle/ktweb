@@ -1612,10 +1612,11 @@ section.contactSection,
   right: -450px;
   width: 360px;
   height: 100vh;
-  background: #151522;
-  color: #ffffff;
+  background: #ffffff !important;
+  color: #212121 !important;
   z-index: 99999;
-  box-shadow: -5px 0 35px rgba(0, 0, 0, 0.75);
+  box-shadow: -6px 0 32px rgba(15, 23, 42, 0.16) !important;
+  border-left: 1px solid #f1f5f9 !important;
   transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
@@ -1639,7 +1640,7 @@ section.contactSection,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid #e2e8f0 !important;
   padding-bottom: 20px;
   margin-bottom: 30px;
 }
@@ -1647,7 +1648,7 @@ section.contactSection,
 .mobileDrawerHeader h3 {
   font-family: Alegreya, serif;
   font-size: 24px;
-  color: #F4821E;
+  color: #F4821E !important;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 0;
@@ -1655,7 +1656,7 @@ section.contactSection,
 
 .mobileDrawerClose {
   font-size: 32px;
-  color: #aaaaaa;
+  color: #475569 !important;
   cursor: pointer;
   line-height: 1;
   transition: color 0.2s;
@@ -1663,7 +1664,7 @@ section.contactSection,
 }
 
 .mobileDrawerClose:hover {
-  color: #ffffff;
+  color: #111827 !important;
 }
 
 .mobileDrawerNav {
@@ -1679,16 +1680,83 @@ section.contactSection,
   font-family: "IBM Plex Sans", sans-serif;
   font-size: 16px;
   font-weight: 600;
-  color: #dcdcdc;
+  color: #212121 !important;
   text-transform: uppercase;
   text-decoration: none;
   display: block;
   transition: color 0.2s ease, transform 0.2s ease;
 }
 
+.mobileDrawerNav li a[href*="#contact-me"] {
+  color: #F4821E !important;
+}
+
 .mobileDrawerNav li a:hover {
-  color: #F4821E;
+  color: #F4821E !important;
   transform: translateX(5px);
+}
+
+.responsiveHamburgerBtn {
+  display: none !important;
+}
+
+@media screen and (max-width: 768px) {
+  .cttLvF .btnWrap,
+  .sc-eKQWOK .btnWrap {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .cttLvF,
+  .sc-eKQWOK {
+    align-items: center !important;
+  }
+
+  .dyPwnr .menuWrap .primary,
+  .cttLvF .primary,
+  .cttLvF .btnWrap .primary,
+  .sc-eKQWOK .btnWrap .primary {
+    display: none !important;
+  }
+
+  .responsiveHamburgerBtn {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4.5px !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 0 !important;
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease !important;
+  }
+
+  .responsiveHamburgerBtn span {
+    display: block !important;
+    width: 18px !important;
+    height: 2px !important;
+    background: #212121 !important;
+    border-radius: 2px !important;
+    transition: background 0.2s ease !important;
+  }
+
+  .responsiveHamburgerBtn:hover,
+  .responsiveHamburgerBtn:active {
+    background: #fff7ed !important;
+    border-color: #F4821E !important;
+  }
+
+  .responsiveHamburgerBtn:hover span,
+  .responsiveHamburgerBtn:active span {
+    background: #F4821E !important;
+  }
 }
 
 .sNxBf .mobileMenu,

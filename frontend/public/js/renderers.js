@@ -1901,8 +1901,7 @@ class UIRenderers {
           <li><a href="/index.html#bjym">BJYM Youth Wing</a></li>
           <li><a href="/initiatives/initiative/">Blog & Press</a></li>
           <li><a href="/index.html#videos">Gallery</a></li>
-          <li><a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Kunal &rarr;</a></li>
-          <li><a href="/admin" target="_blank" style="color:#F4821E; font-weight:bold;">Admin CMS &rarr;</a></li>
+          <li><a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Me &rarr;</a></li>
         </ul>
       `;
       document.body.appendChild(drawer);
@@ -1931,10 +1930,20 @@ class UIRenderers {
         });
       });
 
-      // Ensure Contact Kunal item is present
-      if (!drawerNav.querySelector('a[href*="#contact-me"]')) {
+      // Remove Admin CMS link if present in static HTML
+      drawerNav.querySelectorAll('a[href*="/admin"]').forEach(a => {
+        const li = a.closest('li');
+        if (li) li.remove();
+        else a.remove();
+      });
+
+      // Normalize Contact Kunal -> Contact Me and ensure it exists
+      const existingContact = drawerNav.querySelector('a[href*="#contact-me"]');
+      if (existingContact) {
+        existingContact.innerHTML = 'Contact Me &rarr;';
+      } else {
         const contactLi = document.createElement('li');
-        contactLi.innerHTML = '<a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Kunal &rarr;</a>';
+        contactLi.innerHTML = '<a href="#contact-me" style="color:#F4821E; font-weight:600;">Contact Me &rarr;</a>';
         drawerNav.appendChild(contactLi);
       }
     }
@@ -1965,13 +1974,24 @@ class UIRenderers {
       document.body.style.overflow = '';
     };
 
-    // 4.5. Remove any duplicate menu button placed right beside Contact Me
+    // 4.5. Remove any duplicate old .mobileMenu button placed right beside Contact Me and ensure responsive hamburger exists
     document.querySelectorAll('.btnWrap .mobileMenu, header .btnWrap .mobileMenu').forEach(btn => {
       btn.remove();
     });
 
-    // 5. Bind All Menu Buttons (.mobileMenu, div.mobileMenu, button.mobileMenu, .mobileMenu.lite, etc.)
-    const mobileMenuBtns = document.querySelectorAll('.sNxBf .mobileMenu, div.mobileMenu, .mobileMenuWrap .mobileMenu');
+    document.querySelectorAll('.cttLvF .btnWrap, .sc-eKQWOK .btnWrap').forEach(wrap => {
+      if (!wrap.querySelector('.responsiveHamburgerBtn')) {
+        const ham = document.createElement('button');
+        ham.type = 'button';
+        ham.className = 'responsiveHamburgerBtn';
+        ham.setAttribute('aria-label', 'Open menu');
+        ham.innerHTML = '<span></span><span></span><span></span>';
+        wrap.appendChild(ham);
+      }
+    });
+
+    // 5. Bind All Menu Buttons (.mobileMenu, div.mobileMenu, .mobileMenuWrap .mobileMenu, .responsiveHamburgerBtn)
+    const mobileMenuBtns = document.querySelectorAll('.sNxBf .mobileMenu, div.mobileMenu, .mobileMenuWrap .mobileMenu, .responsiveHamburgerBtn');
     mobileMenuBtns.forEach(btn => {
       btn.style.cursor = 'pointer';
       // Prevent duplicate event handlers
