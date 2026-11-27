@@ -1897,7 +1897,7 @@ class UIRenderers {
           <li><a href="/index.html">Home</a></li>
           <li><a href="/index.html#press-coverage">About Kunal</a></li>
           <li><a href="/constituency-projects/index.html">Constituency Initiatives</a></li>
-          <li><a href="/policy-and-parliamentary-work/index.html">In Parliament</a></li>
+          <li><a href="/policy-and-parliamentary-work/index.html">In Corporation</a></li>
           <li><a href="/index.html#bjym">BJYM Youth Wing</a></li>
           <li><a href="/initiatives/initiative/">Blog & Press</a></li>
           <li><a href="/index.html#videos">Gallery</a></li>
@@ -1916,6 +1916,7 @@ class UIRenderers {
         'about': '/index.html#press-coverage',
         'constituency': '/constituency-projects/index.html',
         'parliament': '/policy-and-parliamentary-work/index.html',
+        'corporation': '/policy-and-parliamentary-work/index.html',
         'bjym': '/index.html#bjym',
         'blog': '/initiatives/initiative/',
         'gallery': '/index.html#videos'
